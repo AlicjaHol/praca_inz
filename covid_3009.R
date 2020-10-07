@@ -28,7 +28,7 @@ covid <- covid %>%
 covid <- covid[covid$total_cases_per_million!=0,]
 
 
-covid$time <- with(covid, ave(rep(1, nrow(dane)), location, FUN = seq_along))
+covid$time <- with(covid, ave(rep(1, nrow(covid)), location, FUN = seq_along))
 
 library(lattice)
 xyplot(total_cases_per_million~time|location,
@@ -44,7 +44,7 @@ summary(mod)
 AIC(mod) # miara utraconej informacji - im mniej tym lepiej
 
 
-
+polska <- covid[covid$location=="Poland",]
 
 # dla krajow gdzie istnieja takie dane
 #mod1 <- lme(total_cases_per_million~time+total_tests_per_thousand,
