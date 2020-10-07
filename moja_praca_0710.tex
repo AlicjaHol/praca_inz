@@ -76,6 +76,8 @@
 \usepackage{longtable}
 \usepackage{array,hhline}
 
+
+
 %%%%%%%% hyperref po to by przeglądarka pedeef ukazywala na odwołania
 %%%%%%%% prawidłowo skonstruowane za pomocą \ref, \cite i.t.d. jako
 %%%%%%%% hiperłącza
@@ -298,6 +300,7 @@
                 %%     stron do jednakowej wysokości
 
 \linespread{1.3}
+
 \begin{document}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -400,6 +403,7 @@ nr albumu: 89892
 
 
 
+Bla bla bla koronaświrus...
 
 
 
@@ -411,19 +415,27 @@ nr albumu: 89892
 
 
 
+\chapter{Część teoretyczna}
 
-\chapter[Część teoretyczna]{Część teoretyczna}
-%% opcjonalna wersja w~nawiasie kwadratowym będzie umieszczona
-%% w~paginie  - sztuczka stosowana, gdy pełny
-%% tytuł jest nieco przydługi i~w~pagince zajmuje coś ponad jedną
-%% linię
-
+\section{Modele mieszane} 
+Rozważamy model postaci
+$$y=X\beta +Z u + \varepsilon$$
+gdzie $X$ - macierz zmiennych będących efektami stałymi, $Z$ - macierz zmiennych będących efektami losowymi \cite{biecek}.
 \chapter{Część praktyczna}
 
+\section{Zbiór danych i jego wstępne przygotowanie}
+
+Zbiór danych pochodzi z witryny internetowej Our World In Data, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
+
+W zbiorze znajdowało się wiele braków danych. W przypadku zmiennych takich jak liczba zachorowań, zostały one wypełnione poprzez przepisanie danych z poprzedniego dnia. Dla każdego kraju zostały usunięte dane sprzed rozpoczęcia się epidemii na jego terytorium (\texttt{total cases=0}), dni są numerowane kolejnymi liczbami całkowitymi.
+\section{Hipotezy badawcze}
+
+\subsection{Hipoteza 1}
+Wpływ kraju (efektu losowego) jest większy niż wpływ czasu (czynnika stałego) w modelu mieszanym.
 
 \chapter*{Podsumowanie i~wnioski}
 
-
+Wszyscy umrzemy.
 
 \begin{thebibliography}{99}
 
