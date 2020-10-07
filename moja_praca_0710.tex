@@ -1,0 +1,479 @@
+%
+% Szablon, v. 2.9
+% p.wlaz@pollub.pl
+%
+
+% PROSZĘ NIE USUWAĆ
+% KOMENTARZY Z~PREAMBUŁY
+% JEŻELI KTOŚ WAM WMAWIA, ŻE
+% TO PRZYSPIESZY COKOLWIEK
+% -- MYLI SIĘ!
+
+
+\documentclass[12pt]{mwbk}
+
+
+%%%%%%% marinesy, rozmiary, to warto dopasować do drukarki
+\usepackage[a4paper,twoside,top=2.6cm,bottom=2.6cm,inner=3cm,outer=2.6cm]{geometry}
+
+%%%%%%%% polszczyzna
+\usepackage[T1]{polski}
+
+
+%%%%%%%%% sposób kodowania literek w edytorze
+\usepackage[utf8]{inputenc}
+
+\usepackage[font=small,labelfont=bf,justification=centering]{caption}
+
+
+%%%% gdyby ktoś chciał powyklejać z~pedeefa
+%%%% teksty za pomocą AcroReadera, to 
+%%%% poniższe dwie linijki pomogą w~tym
+%%%% Może to być przydatne, gdyby ktoś na podstawie
+%%%% elektronicznej wersji chciał przygotować dane do 
+%%%% badania antyplagiatowego
+%%%% ponieważ prace są w
+%%%% tych czasach różnymi
+%%%% programami antyplagiatowymi
+%%%% proszę absolutni NIE
+%%%% USUWAĆ następujących
+%%%% dwu linijek
+\input glyphtounicode.tex
+\pdfgentounicode = 1
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% jeśli chcesz by główny tekst oraz wzory matematyczne były
+%%%%% składane czcionką typu Times Roman (w~odróżnieniu od standardowej
+%%%%% TeXowej, czyli Computer Modern Roman) to linia poniżej
+%%%%% ma być 'aktywna', następna nieaktywna, 
+%%%%% jeśli zrobisz odwrotnie (pierwsza nieaktywna,
+%%%%% druga aktywna) uzyskasz skład czcionką
+%%%%% Computer Modern Roman mającą wielu wiernych
+%%%%% fanów w~świecie TeXa). Konsekwencją jednak będą zmiany
+%%%%% rozmiarów czcionek dla rozdziałó i podrozdziałów - rzecz bez większego
+%%%%% znaczenia, wynikająca z pewnych zaszłości historycznych (ComputerModern
+%%%%% niegdyś były używane wyłącznie w postaci tzw. bitmap)
+%\usepackage{mathptmx} \usepackage{tgtermes}
+\usepackage{lmodern}
+
+%%% WSZELKIE ZMIANY W~PREAMBULE RÓB ROZWAŻNIE
+%%% NIE JESTEŚ PEWNY/PEWNA ICH EFEKTU TO~SPRAWDŹ 
+%%% CZY W~PRGRAMIE ADOBE READER (i~to dokładnie
+%%% o~ten program chodzi, nie o~jakikolwiek)
+%%% Z~WYNIKOWEGO PLIU PDF DA SIE PRAWIDŁOWO
+%%% WYKLEIĆ TEKST Z~POLSKIMI LITERAMI, BEZ KRZAKÓW,
+%%%% BEZ DZIWACTW.
+
+
+%%%%%%%%%%%%%% pozostałe pakiety używane w~pracy, to już zależy od
+%%%%%%%%%%%%%% autora, więc może być tego więcej
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{longtable}
+\usepackage{array,hhline}
+
+%%%%%%%% hyperref po to by przeglądarka pedeef ukazywala na odwołania
+%%%%%%%% prawidłowo skonstruowane za pomocą \ref, \cite i.t.d. jako
+%%%%%%%% hiperłącza
+\usepackage{hyperref}
+
+
+
+%%%%% dla fanów ``profesjonalnych'' tabel w~stylu zachodnich książek
+
+\usepackage{booktabs} \heavyrulewidth=1.5bp \lightrulewidth=0.5bp
+
+
+%%%%%%%%%%% poniżej uniwersalny sposób na ucywilizowanie znaków 
+%%%%%%%%%%% niewiększości, niezależny od pakietu {polski}, ale za to 
+%%%%%%%%%%% zależny od {amssymb}, ma tą zaletę, że działa np. z Timesem
+%%%%%%%%%%% w matematyce
+\let\leq\leqslant\let\le\leq\let\geq\geqslant\let\ge\geq
+
+
+%%%%%%% jeżeli będziesz chciał włączać do swojej pracy fragmenty programów, 
+%% to ponizsza linijka przyda się, jeśli nie - usuń ją
+
+\usepackage{fancyvrb}
+
+
+%%%%%%%%%%%%%%%%% struktury do tworzenia twierdzeń i~tym podobnych
+
+\theoremstyle{plain}
+\newtheorem{twier}{Twierdzenie}[chapter] % pierwsze to nazwa środowiska,
+                                      %drugie to wyświetlana nazwa
+				% to trzecie w~nawiasie kwadratowym
+				% wskazuje numer dolepiony z~lewej do
+				% numeru twierdzenia (tu numer
+				% 'chapter', 
+\newtheorem{lemat}{Lemat}[chapter]
+
+\theoremstyle{definition}
+\newtheorem{defi}{Definicja}[chapter]
+
+\theoremstyle{remark}
+\newtheorem{uwaga}{Uwaga}[chapter]
+\newtheorem{wniosek}{Wniosek}[chapter]
+
+%%%%% więcej możliwości w~dokumentacji amsthm
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%% wcięcie akapitowe %%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% ustawić w~zaleceń i~gustu %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% zalecenie na stronie wydziałowej
+%%%%%%%% było 1.25cm i wyglądało jakoś 
+%%%%%%%% śmiesznie duże, więc spłoszony nieco
+%%%%%%%% wpisałem 1cm, ale uważny czytelnik już
+%%%%%%%% zapewne się domyśli, że podmiana napisu 
+%%%%%%%% =1cm na =1.25cm sprawi, że wcięcia na początku
+%%%%%%%% akapitu ustawią się na (nieco przydużą)
+%%%%%%%% wartość 1.25cm 
+
+\parindent=1cm
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% tu pewne poluzowanie rozmieszczenia elementów tabelek
+%%%%% możecie sobie poeksperymentować, by dopasować do swych
+%%%%% gustów, a przede wszystkim gustów promotorów (promotorek)
+  \tabcolsep=4mm          
+  %\renewcommand\arraystretch{1.3}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%% teraz żywa pagina (aka 'running headline') i~numerowanie stron
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%na górze mają być śródtytuły, na dole (po stronie zewneętrznej)
+%%%%%numery stron. Poszedłem kapkę dalej i~na stronach ropoczynających
+%%%%%rozdział nie ma paginy (górki).
+%%%%% Oczywiście jeśli ostatnia strona
+%%%%% jest pusta (uzupełnia jeno parzystość) to tam żadnej stopki ani 
+%%%%% górki byc mnie może - ma być pusta.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhead{}% oczyszczenie
+\fancyhead[RO]{\rightmark} %% na nieparzystych 'podległe' śródtytuły
+\fancyhead[LE]{\leftmark} %% na parzystych 'ważniejsze'
+\fancyfoot{}% oczyszczenie
+\fancyfoot[RO,LE]{\arabic{page}}  %% numer na dole (po prawej na
+%% nieparzystych, po lewej na parzystych)
+\renewcommand\headrulewidth{0.4pt} %%% cienka hrulka oddzielająca paginę
+                                    %%% od kolumny tekstu
+\fancypagestyle{closing}{%%%%%% to styl dla stron zamykających rozdział
+\fancyhead{}% oczyszczenie
+\fancyhead[RO]{\rightmark} %% na nieparzystych 'podległe'
+\fancyhead[LE]{\leftmark} %% na parzystych 'ważniejsze'
+\fancyfoot{}% oczyszczenie
+\fancyfoot[RO,LE]{\arabic{page}}  %% numer na dole (po prawej na
+                                  %% powyższą linijkę usuń jeśli nie
+				  %% chcesz numerów na niepełnych
+				  %% kolumnach (zamykających rozdział)
+\renewcommand\headrulewidth{0.4pt}
+}
+\fancypagestyle{opening}{%%% styl stron rozpoczynających rozdział
+\fancyhead{}% oczyszczenie
+\fancyfoot{}% oczyszczenie
+\fancyfoot[RO,LE]{\arabic{page}}  %% numer na dole (po prawej na
+\renewcommand\headrulewidth{0pt}
+}
+\fancypagestyle{plain}{%%%% styl zwykły, niektóre konstrukcje
+                       %%%% (typu \titlepage, którego ja tu nie używam
+                       %%%% ale może są jakieś inne o których nawet nie chce 
+                       %%% mi się myśleć, więc dla spokoju robię to po swojemu
+\fancyhead{}% oczyszczenie
+\fancyfoot{}% oczyszczenie
+\fancyfoot[RO,LE]{\arabic{page}}  %% numer na dole (po prawej na
+\renewcommand\headrulewidth{0pt}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% lekka modyfikcja 'markow' do paginy
+%%% uznalem, ze jesli ktos nie da \section (np we wstepnie czy
+%%% podsumowaniu to niech na obu sronach w~paginie pojawia sie tytuł
+%%% chaptera, bo standardowo, to na nieparzystej stronie w takiej sytuacji
+%%% nad górną linią ziałaby pustka, co mogłoby wprowadzać konsternację
+\makeatletter
+    \def\chaptermark#1{%
+      \markboth{%
+        \ifHeadingNumbered
+     \if@mainmatter
+     \@chapapp\
+            \thechapter.\enspace
+          \fi
+        \fi
+        #1}{%
+        \ifHeadingNumbered
+     \if@mainmatter
+     \@chapapp\
+            \thechapter.\enspace
+          \fi
+        \fi
+        #1%
+	}}%
+    \def\sectionmark#1{%
+      \markright{%
+        \ifHeadingNumbered \thesection.\enspace \fi
+        #1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% wielkości czcionek dla chapter i~section
+%%%%%%%%%%%% 16 dla rozdziału, 14 dla podrozdziału - te domyślne
+%%%%%%%%%%%% w klasie mwbk były całkiem ładne, ale żeby nie było
+%%%%%%%%%%%% że nie potrafię ustawić
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SetSectionFormatting[breakbefore,wholewidth]{chapter}
+        {0\p@}
+        {\FormatRigidChapterHeading{6.4\baselineskip}{12\p@}%
+	{\large\@chapapp\space}{\fontsize{16}{19}\selectfont}}
+        {1.6\baselineskip}
+\SetSectionFormatting{section}
+        {24\p@\@plus5\p@\@minus2\p@}
+	{\FormatHangHeading{\fontsize{14}{16}\selectfont}}
+        {10\p@\@plus3\p@}
+\makeatother	
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% jakies inne pomocnicze definicje, ja na przykład lubię
+% \R
+%%%%%%%%%%%%%%%%%%%%%%%5
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%% tak naprawdę są t potrzebne tylko po to
+%%%% by zadziałały przykłady poniżej w tekście
+%%%% które w sposób dość losowy zostały 
+%%%% pobrane z jakichś moich starych plików
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% w realnej pracy te poniższe śmieci możecie oczywiście
+%%%% usunąć
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand\R{\mathbb{R}}
+\newcommand{\ff}{\mathbf{f}}
+\newcommand{\hh}{\mathbf{h}}
+\newcommand{\xx}{\mathbf{x}}
+\newcommand{\yy}{\mathbf{y}}
+\newcommand{\zz}{\mathbf{z}}
+\newcommand{\gggg}{\mathbf{g}}
+\newcommand{\skalar}[2]{\pmb{\langle}#1,#2\pmb{\rangle}}
+%%%%%%%%%%%% koniec tych dodatkowych definicji
+
+%%%%%% trocę więcej ``luzu'' przy rozmieszczaniu {fgur} i~{table}
+
+ \renewcommand{\topfraction}{0.9}	% max fraction of floats at top
+    \renewcommand{\bottomfraction}{0.8}	% max fraction of floats at bottom
+    %   Parameters for TEXT pages (not float pages):
+    \setcounter{topnumber}{2}
+    \setcounter{bottomnumber}{2}
+    \setcounter{totalnumber}{4}     % 2 may work better
+    \setcounter{dbltopnumber}{2}    % for 2-column pages
+    \renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
+    \renewcommand{\textfraction}{0.07}	% allow minimal text w. figs
+    %   Parameters for FLOAT pages (not text pages):
+    \renewcommand{\floatpagefraction}{0.7}	% require fuller float pages
+    % N.B.: floatpagefraction MUST be less than topfraction !!
+    \renewcommand{\dblfloatpagefraction}{0.7}	% require fuller float pages
+    % remember to use [htp] or [htpb] for placement
+
+    
+%%% DWA proste polecenia służące do ujednolicenia podawania źródeł przy rysunkach i~tabelkach    
+    
+    \newcommand\zrodlo[1]{\par\vspace{-3mm}{\small\textit{Źródło: }#1 }}
+    \newcommand\zrodlotab[1]{{\par\vspace{2mm}\small\textit{Źródło: }#1 }}
+
+\raggedbottom   %%% to znaczy, że nie będzie siłowego wyrównywania typowych
+                %%     stron do jednakowej wysokości
+
+\linespread{1.3}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% STRONA TYTUŁOWA %%%%%%%%%%%%%%%%
+
+\thispagestyle{empty}  % tu wszak nie chcemy żadnej numeracji stron
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%tytuły definiuje jako makrodefinicje, gdyż zamierzam je%%%
+%%%%%powtórzyć na stronie ze streszczeniami, to nic nie boli%%%
+%%%%%a gwarantuje, że będą one takie same, i~tak ma być.%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand\tytul{Zastosowanie modeli mieszanych w analizie rozwoju pandemii wywołanej wirusem Covid-19 na świecie}
+
+\newcommand\tytulangielski{The use of mixed-effects models in the analysis of the Covid-19 pandemic in the world}
+
+
+\begin{center}
+
+
+{\large \bf POLITECHNIKA LUBELSKA}
+
+{\bf WYDZIAŁ PODSTAW TECHNIKI}
+
+\emph{Kierunek:} MATEMATYKA
+
+%%% BEZ SPEC.!!! \emph{Specjalność:} Matematyka w~finansach i~ubezpieczeniach
+
+\vfill %%%% \vfill to taki rozpychacz w pionie, pcha ile mu pozwolą
+     
+
+\includegraphics[width=3.5cm]{rys/logopl}
+
+\vfill
+
+\textbf{Praca inżynierska}
+
+\vfill
+\vfill
+\vfill
+
+\large
+\tytul
+
+\vfill
+
+\emph{\tytulangielski}
+
+
+\vfill
+\vfill
+\vfill
+\vfill
+\vfill
+
+\begin{tabular}[t]{l}
+\emph{Praca wykonana pod kierunkiem:}
+\\
+dra Dariusza Majerka
+\end{tabular}
+\hfill
+\begin{tabular}[t]{l}
+	\emph{Autor:}
+\\
+Alicja Hołowiecka\\
+nr albumu: 89892 
+\end{tabular}
+
+\vfill
+\vfill
+\vfill
+
+\textbf{Lublin 2020}
+
+\end{center}
+
+
+%%%%% koniec tytułów
+
+
+%%%%%%%%%%%%%%%%%%%%%%%5
+%%%%%%%%%%%%%%%%%%%%%%
+%%% teraz spis treści
+%%%%%%%%%%%%%%%%%%%%%
+%%% pamiętaj! po jakiejkolwiek zmianie w tekście
+%%% która wpływa na zmianę spisu treści, spis będzie dobry co najmniej
+%%% po dwóch przebiegach latexa - to samo dotyczy odwołań do wzorów i literatury
+%%% ogólnie to przed wydrukiem warto przelatexować o jedne raz więcej niż
+%%% to się wydaje konieczne, no chyba że korzystamy z funkcji typu BUILD
+%%% w zintegrowanym systemie wspomagającym TeX, BUILD powinien takie sprawy 
+%%% wziąć pod uwagę
+
+\tableofcontents
+
+
+\chapter*{Wstęp}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter[Część teoretyczna]{Część teoretyczna}
+%% opcjonalna wersja w~nawiasie kwadratowym będzie umieszczona
+%% w~paginie  - sztuczka stosowana, gdy pełny
+%% tytuł jest nieco przydługi i~w~pagince zajmuje coś ponad jedną
+%% linię
+
+\chapter{Część praktyczna}
+
+
+\chapter*{Podsumowanie i~wnioski}
+
+
+
+\begin{thebibliography}{99}
+
+\bibitem{biecek} Przemysław Biecek, \emph{Analiza danych z programem R. Modele liniowe z efektami stałymi, losowymi i mieszanymi}, Wydawnictwo Naukowe PWN, Wydanie II, Warszawa 2013
+
+
+\end{thebibliography}
+
+
+
+\listoffigures
+
+\listoftables
+
+
+\chapter*{Załączniki}
+\begin{enumerate}
+%\item Oświadczenie o oryginalności pracy i możliwości jej wykorzystania. 
+%\item Opinia promotora na temat oryginalności pracy oraz w~sprawie dopuszczenia do obrony pracy dyplomowej.
+%\item Potwierdzenie analizy antyplagiatowej.
+\item Płyta CD z niniejszą pracą w wersji elektronicznej.
+\end{enumerate}
+
+
+
+
+\chapter*{Streszczenie (Summary)}
+
+\bigskip
+\bigskip
+
+\begin{center}
+  \textbf{\tytul}
+\end{center}
+
+
+
+
+\bigskip
+
+\begin{center}
+  \textbf{\textit{\tytulangielski}}
+\end{center}
+
+
+
+\selecthyphenation{english}
+{\it
+
+}
+
+\end{document}
+
