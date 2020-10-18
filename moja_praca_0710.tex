@@ -416,8 +416,22 @@ Bla bla bla koronaświrus...
 
 
 \chapter{Teoretyczne podstawy badań własnych}
+W tej części pracy przedstawimy metody matematyczne, które zostaną użyte w części praktycznej tej pracy. Zgodnie z tematem, będą to głównie modele mieszane.
+\section{Modele liniowe}
+Na początek przypomnimy podstawowe wiadomości o modelach liniowych.
 
+Model regresji prostej ma postać 
+$$y=x \beta_1+\beta_0 + \varepsilon$$
+
+gdzie oszacowania parametrów $\beta_1$, $\beta_0$ obliczamy następująco:
+
+$$\hat{\beta_1}=\frac{Cov(x,y)}{Var(x)},$$
+$$\hat{\beta_0}=\overline{y}-\overline{x}\hat{\beta_1}.$$
+
+Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zmienna $y$ zmieni się o $\beta_1$.
 \section{Modele mieszane} 
+W powyżej opisanych modelach liniowych z efektami stałymi zakładamy niezależność kolejnych pomiarów, dlatego nie są to odpowiednie modele, kiedy mamy np. kilka pomiarów dla pojedynczego elementu. W takim przypadku możemy użyć modeli liniowych z efektami mieszanymi (stałymi i losowymi), które krótko nazywamy modelami mieszanymi.
+
 Rozważamy model postaci
 $$y=X\beta +Z u + \varepsilon$$
 gdzie $X$ - macierz zmiennych będących efektami stałymi, $Z$ - macierz zmiennych będących efektami losowymi \cite{biecek}.
