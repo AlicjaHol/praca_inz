@@ -489,6 +489,41 @@ Te same metody co dla efektów stałych
 \section{Probelmy szczegółowe i cele}
 \subsection{Hipoteza 1}
 Wpływ kraju (efektu losowego) jest większy niż wpływ czasu (czynnika stałego) w modelu mieszanym.
+\subsection{Hipoteza 2}
+
+Ze względu na zmienną \texttt{life\_expectancy} dzielimy kraje na grupy co 5 lat: poniżej 50, 50-54, 55-59, ..., 80 i więcej.
+
+Hipoteza: kraje w różnych grupach ze względu na oczekiwaną długość życia różnią się liczbą zachorowań
+
+\subsection{Hipoteza 3}
+
+Kraje o różnej gęstości zaludnienia różnią się liczbą zachorowań.
+
+\subsection{Hipoteza 4}
+
+Kraje różniące się siłą obostrzeń mają istotne różnice w liczbie zachorowań.
+
+
+\subsection{Hipoteza 5}
+
+Kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań.
+
+\subsection{Hipoteza 6}
+
+Kraje o różnej wysokości odsetka śmierci z powodu chorób sercowych różnią się liczbą zachorowań.
+
+\subsection{Hipoteza 7}
+
+Kraje o różnej wysokości odsetka osób chorych na cukrzycę różnią się liczbą zachorowań.
+
+\subsection{Hipoteza 8}
+
+Kraje o różnej wysokości odsetka osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
+
+\subsection{Hipoteza 9}
+
+Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
+
 \section{Zbiór danych i jego wstępne przygotowanie}
 
 Zbiór danych pochodzi z witryny internetowej Our World In Data \cite{owid}, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
@@ -499,7 +534,46 @@ W zbiorze znajdowało się wiele braków danych. W przypadku zmiennych takich ja
 Pierwszy model, jaki przetestujemy, to zależność liczby zachorowań na milion mieszkańców w zależności od czasu, gdzie efektem losowym jest kraj.
 
 \begin{verbatim}
-mod <- lme(total_cases_per_million~time, random = ~1|location, data = covid)
+mod <- lme(total_cases_per_million~time, 
+random = ~1|location, 
+data = covid)
+
+mod2 <- lme(total_cases_per_million~time+age,
+random=~1|location,
+data=covid)
+
+
+mod3 <- lme(total_cases_per_million~time+population_density,
+random=~1|location,
+data = covid)
+
+covid_si <- drop_na(covid, stringency_index)
+mod4 <- lme(total_cases_per_million~time+stringency_index,
+random=~1|location,
+data = covid_si)
+
+covid_hdi <- drop_na(covid, human_development_index)
+mod5 <- lme(total_cases_per_million~time+human_development_index,
+random=~1|location,
+covid_hdi)
+
+mod6 <- lme(total_cases_per_million~time+cardiovasc_death_rate,
+random=~1|location,
+data= covid)
+
+mod7 <- lme(total_cases_per_million~time+diabetes_prevalence,
+random=~1|location,
+data= covid)
+
+covid_ep <- drop_na(covid, extreme_poverty)
+mod8 <- lme(total_cases_per_million~time+extreme_poverty,
+random=~1|location,
+data= covid_ep)
+
+covid_gdp <- drop_na(covid, gdp_per_capita)
+mod9 <- lme(total_cases_per_million~time+gdp_per_capita,
+random=~1|location,
+data= covid_gdp)
 \end{verbatim}
 
 \begin{figure}[htbp]
