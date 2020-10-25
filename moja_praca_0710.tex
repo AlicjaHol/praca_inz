@@ -403,7 +403,9 @@ nr albumu: 89892
 
 
 
-Bla bla bla koronaświrus...
+Pandemia choroby COVID-19 jest wydarzeniem, które wstrząsnęło całym światem w roku 2019. Właściwie nikt chyba nie może powiedzieć, że nie poczuł się dotknięty przez sytuację związaną z rozprzestrzenianiem się wirusa. Pierwsze przypadki pojawiły się pod koniec 2019 roku we wschodnich Chinach, w mieście Wuhan. Na początku 2020 roku chorowali już obywatele większości państw na świecie. Na moment pisania tej pracy, sytuacja nadal nie jest opanowana i nie wiadomo, jak się rozwinie.
+
+Biorąc to pod uwagę, tym ważniejszy wydaje się temat poruszany w tej pracy. Wiele jednostek naukowych podejmuje próby znalezienia odpowiedniego modelu, aby przewidzieć rozwój pandemii. Przedstawione w tej pracy modele mieszane co prawda nie pozwalają na dokładną predykcję, ale są dobrym narzędziem, aby odkryć, które czynniki mają wpływ na rozwój pandemii w przeciętnym kraju.
 
 
 
@@ -429,22 +431,85 @@ $$\hat{\beta_1}=\frac{Cov(x,y)}{Var(x)},$$
 $$\hat{\beta_0}=\overline{y}-\overline{x}\hat{\beta_1}.$$
 
 Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zmienna $y$ zmieni się o $\beta_1$.
+\subsection{Metody estymacji parametrów modelu liniowego}
+\begin{enumerate}
+	\item Metoda najmniejszych kwadratów, OLS (ang. \emph{Ordinary Least Squares}) - w metodzie tej minimalizujemy błąd kwadratowy, czyli sumę kwadratów reszt, którą oznaczamy RSS (ang. \emph{Residual Sum of Squares}).
+	
+	$$RSS= \sum_{i=1}^{n}(y_i-\hat{y_i})^2$$
+	
+	Twierdzenie Gaussa-Markowa: taki estymator jest BLUE (Best Linear Unbiased Estimator), przy odpowiednich założeniach.
+	
+	\item Metoda największej wiarogodności, ML (ang.\emph{Maximum Likelihood}) polega na maksymalizacji wartości funkcji prawdopodobieństwa ze względu na $\beta$ (w praktyce maksymalizujemy zwykle logarytm z tej funkcji)
+	
+	$$\hat{\sigma}^{2}_{ML}=RSS/n$$
+	
+	Estymując $\sigma^2$, maksymalizujemy funkcję wiarogodności zarówno ze względu na $\beta$, jak i $\sigma^2$.
+	
+	Estymatory uzyskane tą metodą są asymptotycznie nieobciążone.
+	
+	\item Resztowa metoda największej wiarogodności, REML (ang. \emph{Residual/Restricted Maximum Likelihood Method}) - z estymacji parametru $\sigma^2$ usuwamy wpływ parametrów zakłócających $\beta$.
+	
+	$$\hat{\sigma}^2_{REML}=RSS/(n-p)$$
+	
+	Estymatory uzyskane tą metodą są nieobciążone \cite{biecek}.
+\end{enumerate}
+
+\subsection{Badanie istotności parametrów}
+
+$$H_0: \beta_i = 0$$
+
 \section{Modele mieszane} 
 W powyżej opisanych modelach liniowych z efektami stałymi zakładamy niezależność kolejnych pomiarów, dlatego nie są to odpowiednie modele, kiedy mamy np. kilka pomiarów dla pojedynczego elementu. W takim przypadku możemy użyć modeli liniowych z efektami mieszanymi (stałymi i losowymi), które krótko nazywamy modelami mieszanymi.
 
+Modeli mieszanych używamy w przypadu powtarzanych pomiarów bądź w przypadku hierarchicznej lub zagnieżdżonej struktury. Takie dane charakteryzują się korelacją między obserwacjami z tej samej grupy, co nie pozwala na użycie modelu liniowego z efektami stałymi. Dlatego do modelu wprowadza się czynnik losowy. 
+
+Czynnik stały jest pewnym parametrem, którego wartość estymujemy na podstawie próbki, natomiast czynnik losowy jest zmienną losową, dla której próbujemy oszacować parametry jej rozkładu \cite{faraway}.
+	
+Przykładową sytuacją, gdzie możemy użyć modelu mieszanego, jest badanie działania leku na grupie pacjentów, gdzie dokonujemy kilku pomiarów na danym pacjencie. W tym przypadku nie interesuje nas konkretny pacjent, ale raczej wpływ leku na przeciętnego pacjenta. Dodatkowo, traktujemy pacjentów jako losowo wybranych. Podejście modelu mieszanego będzie polegało na potraktowaniu wpływu pacjenta jako czynnik zakłócający. 
+
 Rozważamy model postaci
 $$y=X\beta +Z u + \varepsilon$$
-gdzie $X$ - macierz zmiennych będących efektami stałymi, $Z$ - macierz zmiennych będących efektami losowymi \cite{biecek}.
-\chapter{Część praktyczna}
+gdzie $X$ - macierz zmiennych będących efektami stałymi, $Z$ - macierz zmiennych będących efektami losowymi, $\beta$ to wektor nieznanych efektów stałych, $\varepsilon \sim \mathcal{N}(0, \sigma^2 I_{n\times n})$ to zakłócenie losowe, a $u \sim \mathcal{N} (0, \sigma^2D)$ to wektor zmiennych losowych odpowiadających efektom losowym \cite{biecek}.
+
+Znając $D$, możemy estymować parametry $\beta$ uogólnioną metodą najmniejszych kwadratóW. Do estymowania nieznanego $D$ możemy użyć np. metodą największej wiarogodności.
+
+\subsection{Metody estymacji}
+
+Do oceny wartości parametrów modelu mieszanego można stosować metody ML (Największej Wiarogodności) oraz REML (Resztowej Największej Wiarogodności), wspomniane w tej pracy przy okazji modeli liniowych. W przypadku modeli mieszanych obydwoma metodami możemy uzyskać estymatory obciążone, ale to obciążenie jest zazwyczaj mniejsze w przypadku estymatorów uzyskanych metodą REML.
+
+Różnica między metodą REML i ML polega na tym, że w metodzie REML najpierw usuwamy wpływ efektów stałych.
+
+\subsection{Badanie istotności parametrów}
+
+$$H_0: \sigma^2_j=0$$
+
+Te same metody co dla efektów stałych
+
+\chapter{Badania własne}
 \section{Probelmy szczegółowe i cele}
 \subsection{Hipoteza 1}
 Wpływ kraju (efektu losowego) jest większy niż wpływ czasu (czynnika stałego) w modelu mieszanym.
 \section{Zbiór danych i jego wstępne przygotowanie}
 
-Zbiór danych pochodzi z witryny internetowej Our World In Data, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
+Zbiór danych pochodzi z witryny internetowej Our World In Data \cite{owid}, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
 
 W zbiorze znajdowało się wiele braków danych. W przypadku zmiennych takich jak liczba zachorowań, zostały one wypełnione poprzez przepisanie danych z poprzedniego dnia. Dla każdego kraju zostały usunięte dane sprzed rozpoczęcia się epidemii na jego terytorium (\texttt{total cases=0}), dni są numerowane kolejnymi liczbami całkowitymi.
 \section{Modele}
+
+Pierwszy model, jaki przetestujemy, to zależność liczby zachorowań na milion mieszkańców w zależności od czasu, gdzie efektem losowym jest kraj.
+
+\begin{verbatim}
+mod <- lme(total_cases_per_million~time, random = ~1|location, data = covid)
+\end{verbatim}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics{plot_all_countries.png}
+	\caption{Wykres przedstawiający rozwój pandemii we wszystkich krajach, tak, wiem, że nic na nim nie widać}
+	\label{fig:plot_all}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
 
 \section{Dyskusja wyników}
 
@@ -452,12 +517,18 @@ W zbiorze znajdowało się wiele braków danych. W przypadku zmiennych takich ja
 
 \chapter*{Podsumowanie i~wnioski}
 
-Wszyscy umrzemy.
+Badania jednoznacznie pokazują, że efekt kraju jako czynnika zakłócającego jest bardzo istotny, bardziej niż jakikolwiek inny czynnik stały (np. czas).
+
+Na to, co jest nazywane w tej pracy ,,efektem kraju'', składa się tak naprawdę wiele innych czynników, m. in. gęstość zaludnienia, sytuacja ekonomiczna danego kraju, odsetek osób z chorobami towarzyszącymi, rozkład wieku, jak również przyjęta strategia walki z koronawirusem, na którą z kolei składają się m. in. liczba wykonywanych testów, przepisy w sprawie zamykania szkół, miejsc publicznych, ograniczenie kontaktów międzyludzkich, i wiele innych.
+
+W mojej pracy nie zajmowałam się badaniem, w jaki sposób te czynniki wpływają na wzrost lub spadek liczby zachorowań, chcę jedynie zasygnalizować, że mogą być istotne, skoro wykazany został wpływ efektu kraju na liczbę zachorowań.
 
 \begin{thebibliography}{99}
 
 \bibitem{biecek} Przemysław Biecek, \emph{Analiza danych z programem R. Modele liniowe z efektami stałymi, losowymi i mieszanymi}, Wydawnictwo Naukowe PWN, Wydanie II, Warszawa 2013
+\bibitem{faraway} Julian J. Faraway, \emph{Extending the Linear Model with R. Generalized Linear, Mixed Effects and Nonparametric Regression Models. Second Edition}, CRC Press Taylor \& Francis  Group, 2016
 
+\bibitem{owid} \url{https://ourworldindata.org/coronavirus}
 
 \end{thebibliography}
 
@@ -488,7 +559,7 @@ Wszyscy umrzemy.
   \textbf{\tytul}
 \end{center}
 
-
+W tej pracy przedstawione są pojęcia związane z modelami liniowymi z efektami stałymi i losowymi. Następnie opisane są badania własne na zbiorze danych dotyczącym rozprzestrzeniania się choroby COVID-19 w różnych krajach na świecie.
 
 
 \bigskip
@@ -501,7 +572,7 @@ Wszyscy umrzemy.
 
 \selecthyphenation{english}
 {\it
-
+In this paper, concepts related to linear models with fixed and random effects are presented. Then, our own research is described on the dataset on the spread of COVID-19 in various countries around the world.
 }
 
 \end{document}
