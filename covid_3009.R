@@ -148,3 +148,16 @@ mod11 <- lme(total_tests_per_thousand~time+total_cases_per_million,
              random=~1|location,
              data=covid_na)
 summary(mod11)
+
+
+# random intercept and slope
+
+mod12 <- lme(total_cases_per_million~time,
+             random= ~time|location,
+             data = covid)
+summary(mod12)
+
+mod13 <- lme(total_cases_per_million~time+age,
+             random= ~time|location,
+             data = covid)
+summary(mod13)
