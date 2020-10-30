@@ -49,14 +49,26 @@ xyplot(total_cases_per_million~time|location,
 library(nlme) #lmer4
 # population density, liczba testow, PKB, extreme poverty, odsetek osob z problemami sercowymi, life expectancy (przecietny czas zycia)
 #library(lmer4)
+lmeControl(maxIter=1000, msMaxIter = 1000, niterEM = 1000)
 mod <- lme(total_cases_per_million~time, 
            random = ~1|location,
-           data = covid)
+           data = covid, method="ML")
 #mod <- lmer(total_cases_per_million~time+(1~location), data = covid)
 summary(mod)
 # oba wspolczynniki efektow stalych sa istotne (intercept i wsp przy time)
 # wyjaśniona wariancja przez efekt losowy 2943.93 - porównywalne z Residuals 2538.357
 AIC(mod) # miara utraconej informacji - im mniej tym lepiej
+
+kraje <- covid$location %>% unique()
+
+Beta <- vector(length = 152)
+for (i in 1:152){
+  mod_i <- summary(lm(total_cases_per_million ~ time,
+                        subset = (location==kraje[i]), data=covid))
+  Beta[i] <- mod_i$coefficients[2]
+}
+Beta
+cbind(kraje, Beta)
 
 aggregate(is.na(covid$total_tests_per_thousand), list(covid$location), FUN=sum)
 
@@ -161,3 +173,19 @@ mod13 <- lme(total_cases_per_million~time+age,
              random= ~time|location,
              data = covid)
 summary(mod13)
+
+akaike <- rbind(cbind('mod', AIC(mod)),
+      cbind('mod1', AIC(mod1)),
+      cbind('mod2', AIC(mod2)),
+      cbind('mod3', AIC(mod3)),
+      cbind('mod4', AIC(mod4)),
+      cbind('mod5', AIC(mod5)),
+      cbind('mod6', AIC(mod6)),
+      cbind('mod7', AIC(mod7)),
+      cbind('mod8', AIC(mod8)),
+      cbind('mod9', AIC(mod9)))
+akaike <- as.data.frame(akaike)
+colnames(akaike) <- c('Model', 'AIC')
+
+akaike$AIC <- as.numeric(as.character(akaike$AIC))
+akaike

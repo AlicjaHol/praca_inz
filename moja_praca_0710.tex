@@ -486,95 +486,60 @@ $$H_0: \sigma^2_j=0$$
 Te same metody co dla efektów stałych
 
 \chapter{Badania własne}
+\section{Zbiór danych i jego wstępne przygotowanie}
+
+Zbiór danych pochodzi z witryny internetowej Our World In Data \cite{owid}, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
+
+W zbiorze znajdowało się wiele braków danych. Dla każdego kraju zostały usunięte dane sprzed rozpoczęcia się epidemii na jego terytorium (\texttt{total cases=0}), dni są numerowane kolejnymi liczbami całkowitymi.
+
+OPISAĆ KTÓRE KRAJE I DLACZEGO ZOSTAŁY USUNIĘTE ZE ZBIORU, ZWRÓCIĆ UWAGĘ NA ZMIENNE KTÓRYCH BĘDZIEMY UŻYWAĆ W DALSZEJ CZĘŚCI PRACY
+
+
 \section{Probelmy szczegółowe i cele}
 \subsection{Hipoteza 1}
 Wpływ kraju (efektu losowego) jest większy niż wpływ czasu (czynnika stałego) w modelu mieszanym.
 \subsection{Hipoteza 2}
 
+Liczba wykonywanych testów na COVID-19 ma związek z liczbą zachorowań.
+
+\subsection{Hipoteza 3}
+
 Ze względu na zmienną \texttt{life\_expectancy} dzielimy kraje na grupy co 5 lat: poniżej 50, 50-54, 55-59, ..., 80 i więcej.
 
 Hipoteza: kraje w różnych grupach ze względu na oczekiwaną długość życia różnią się liczbą zachorowań
 
-\subsection{Hipoteza 3}
+\subsection{Hipoteza 4}
 
 Kraje o różnej gęstości zaludnienia różnią się liczbą zachorowań.
 
-\subsection{Hipoteza 4}
+\subsection{Hipoteza 5}
 
 Kraje różniące się siłą obostrzeń mają istotne różnice w liczbie zachorowań.
 
 
-\subsection{Hipoteza 5}
+\subsection{Hipoteza 6}
 
 Kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań.
 
-\subsection{Hipoteza 6}
+\subsection{Hipoteza 7}
 
 Kraje o różnej wysokości odsetka śmierci z powodu chorób sercowych różnią się liczbą zachorowań.
 
-\subsection{Hipoteza 7}
+\subsection{Hipoteza 8}
 
 Kraje o różnej wysokości odsetka osób chorych na cukrzycę różnią się liczbą zachorowań.
 
-\subsection{Hipoteza 8}
+\subsection{Hipoteza 9}
 
 Kraje o różnej wysokości odsetka osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
 
-\subsection{Hipoteza 9}
+\subsection{Hipoteza 10}
 
 Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
 
-\section{Zbiór danych i jego wstępne przygotowanie}
-
-Zbiór danych pochodzi z witryny internetowej Our World In Data \cite{owid}, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
-
-W zbiorze znajdowało się wiele braków danych. W przypadku zmiennych takich jak liczba zachorowań, zostały one wypełnione poprzez przepisanie danych z poprzedniego dnia. Dla każdego kraju zostały usunięte dane sprzed rozpoczęcia się epidemii na jego terytorium (\texttt{total cases=0}), dni są numerowane kolejnymi liczbami całkowitymi.
-\section{Modele}
-
-Pierwszy model, jaki przetestujemy, to zależność liczby zachorowań na milion mieszkańców w zależności od czasu, gdzie efektem losowym jest kraj.
-
-\begin{verbatim}
-mod <- lme(total_cases_per_million~time, 
-random = ~1|location, 
-data = covid)
-
-mod2 <- lme(total_cases_per_million~time+age,
-random=~1|location,
-data=covid)
 
 
-mod3 <- lme(total_cases_per_million~time+population_density,
-random=~1|location,
-data = covid)
 
-covid_si <- drop_na(covid, stringency_index)
-mod4 <- lme(total_cases_per_million~time+stringency_index,
-random=~1|location,
-data = covid_si)
-
-covid_hdi <- drop_na(covid, human_development_index)
-mod5 <- lme(total_cases_per_million~time+human_development_index,
-random=~1|location,
-covid_hdi)
-
-mod6 <- lme(total_cases_per_million~time+cardiovasc_death_rate,
-random=~1|location,
-data= covid)
-
-mod7 <- lme(total_cases_per_million~time+diabetes_prevalence,
-random=~1|location,
-data= covid)
-
-covid_ep <- drop_na(covid, extreme_poverty)
-mod8 <- lme(total_cases_per_million~time+extreme_poverty,
-random=~1|location,
-data= covid_ep)
-
-covid_gdp <- drop_na(covid, gdp_per_capita)
-mod9 <- lme(total_cases_per_million~time+gdp_per_capita,
-random=~1|location,
-data= covid_gdp)
-\end{verbatim}
 
 \begin{figure}[htbp]
 	\centering
@@ -587,8 +552,271 @@ data= covid_gdp)
 
 \section{Dyskusja wyników}
 
+\subsection{Model 1}
 
+Pierwszy model ma postać 
+\begin{verbatim}
+mod <- lme(total_cases_per_million~time, 
+random = ~1|location, 
+data = covid)
+\end{verbatim}
 
+a więc przedstawia zależność liczby zachorowań od czasu, a kraj jest efektem losowym.
+
+Dla efektu losowego otrzymujemy następujący wynik:
+
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+         (Intercept) Residual
+StdDev:    3241.434 4262.032
+\end{verbatim}
+
+Widać zatem, że efekt losowy jest odpowiedzialny za około 45\% wariancji całego modelu.
+
+Dla efektów stałych mamy następujący wynik:
+
+\begin{verbatim}
+Fixed effects: total_cases_per_million ~ time 
+            Value Std.Error    DF  t-value p-value
+(Intercept) 763.1050 225.19114 51584  3.38870   7e-04
+time         15.7823   0.25565 51584 61.73324   0e+00
+\end{verbatim}
+
+A więc zarówno wyraz wolny, jak i współczynnik przy zmiennej Czas, są istotne statystycznie. Dodatkowo, korelacja pomiędzy liczbą zachorowań a czasem jest dodatnia, więc wraz z upływem czasu liczba zachorowań rośnie dla przeciętnego kraju.
+\subsection{Model 2}
+Drugi model to:
+\begin{verbatim}
+mod1 <- lme(total_cases_per_million~time+total_tests_per_thousand,
+random = ~1|location,
+data = covid_na)
+\end{verbatim}
+
+Badamy tutaj, czy czas oraz liczba wykonywanych testów mają wpływ na liczbę zachorowań, jeżeli kraj traktujemy jako czynnik losowy.
+
+Dla tego modelu otrzymujemy następujące wyniki:
+
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+         (Intercept) Residual
+StdDev:    3677.593 2901.592
+
+Fixed effects: total_cases_per_million ~ time + total_tests_per_thousand 
+                             Value Std.Error    DF  t-value p-value
+(Intercept)              -558.9119  384.0912 17724 -1.45515  0.1456
+time                       17.5806    0.4263 17724 41.23543  0.0000
+total_tests_per_thousand   22.5888    0.3550 17724 63.63620  0.0000
+\end{verbatim}
+
+Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmienności modelu. Po drugie, widać, że oba efekty stałe są istotne statystycznie, i oba mają wpływ stymulujący na liczbę zachorowań.
+
+\subsection{Model 3}
+
+Trzeci model wygląda następująco:
+
+\begin{verbatim}
+mod2 <- lme(total_cases_per_million~time+age,
+random=~1|location,
+data=covid)
+
+\end{verbatim}
+
+Prezentuje on zależność liczby zachorowań od czasu i od oczekiwanej długości życia w danym kraju. Występuje także efekt losowy kraju.
+
+Dla modelu trzeciego otrzymujemy następujące wyniki:
+
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+        (Intercept) Residual
+StdDev:     3128.64 2993.161
+
+Fixed effects: total_cases_per_million ~ time + age 
+                    Value Std.Error    DF   t-value p-value
+(Intercept)     -2608.462  1280.159 35550  -2.03761  0.0416
+time               28.980     0.231 35550 125.46483  0.0000
+age60-64          -69.561  1430.972   145  -0.04861  0.9613
+age65-69         -324.578  1477.891   145  -0.21962  0.8265
+age70-74         1172.910  1406.069   145   0.83418  0.4056
+age75-79         2617.920  1368.246   145   1.91334  0.0577
+age80 and above  3195.777  1410.326   145   2.26598  0.0249
+agebelow 55      -184.197  1898.558   145  -0.09702  0.9228
+\end{verbatim}
+
+Ponownie efekt losowy odpowiada za większą część wariancji. Czas ponownie jest istotny i ma wpływ stymulujący. Dla grupy wiekowej 75-79 różnica w średniej liczbie zachorowań jest na granicy istotności statystycznej. Dopiero dla krajów o oczekiwanej długości życia powyżej 80 lat pojawia się istotna różnica - liczba zachorowań w tych krajach jest największa. W pozostałych grupach wiekowych nie można mówić o istotnych różnicach. 
+\subsection{Model 4}
+
+W czwartym modelu badamy zależnośc liczby zachorowań od czasu i gęstości zaludnienia, a kraj jest czynnikiem losowym.
+
+\begin{verbatim}
+mod3 <- lme(total_cases_per_million~time+population_density,
+random=~1|location,
+data = covid)
+\end{verbatim}
+
+\subsection{Model 5}
+
+Piaty model ma następującą postać:
+
+\begin{verbatim}
+covid_si <- drop_na(covid, stringency_index)
+mod4 <- lme(total_cases_per_million~time+stringency_index,
+random=~1|location,
+data = covid_si)
+\end{verbatim}
+
+W tym modelu sprawdzamy zależność liczby zachorowań od czasu i siły obostrzeń, kraj jest czynnikiem losowym.
+
+Otrzymujemy następujące wyniki:
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+         (Intercept) Residual
+StdDev:    3172.804 2854.192
+
+Fixed effects: total_cases_per_million ~ time + stringency_index 
+                       Value Std.Error    DF   t-value p-value
+(Intercept)      -1710.7939 269.33057 33756  -6.35202       0
+time                27.9374   0.23445 33756 119.16023       0
+stringency_index    10.1151   0.89377 33756  11.31725       0
+\end{verbatim}
+
+Tak jak w poprzednich modelach, czynnik losowy odpowiada za największą część zmienności. Czas jest istotny statystycznie. Wskaźnik siły obostrzeń także jest istotny i ma wpływ stymulujący, co oznaczałoby, że im silniejsze obostrzenia, tym więcej zachorowań. Ta interpretacja prawdopodobnie jest niepoprawna, można się domyślać, że raczej zachodzi odwrotna zależność - w krajach z największą liczbą zachorowań są wprowadzane najsurowsze obostrzenia.
+
+\subsection{Model 6}
+
+Szósty model przedstawia zależność liczby zachorowań od czasu i wskaźnika rozwoju społecznego, a kraj jest czynnikiem losowym.
+
+\begin{verbatim}
+covid_hdi <- drop_na(covid, human_development_index)
+mod5 <- lme(total_cases_per_million~time+human_development_index,
+random=~1|location,
+covid_hdi)
+\end{verbatim}
+
+Z tego modelu mamy następujący wynik:
+
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+         (Intercept) Residual
+StdDev:    3130.083 2984.162
+
+Fixed effects: total_cases_per_million ~ time + human_development_index 
+                           Value Std.Error    DF   t-value p-value
+(Intercept)             -6632.736 1173.8596 35117  -5.65037       0
+time                       28.795    0.2315 35117 124.40143       0
+human_development_index  7807.594 1623.1648   148   4.81011       0
+\end{verbatim}
+
+Efekt losowy jest odpowiedzialny za nieznacznie większą część wariancji niż wszystkie pozostałe czynniki. Efekty stałe są istotne i oba mają wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
+
+\subsection{Model 7}
+
+Model siódmy wygląda następująco:
+
+\begin{verbatim}
+mod6 <- lme(total_cases_per_million~time+cardiovasc_death_rate,
+random=~1|location,
+data= covid)
+\end{verbatim}
+
+i oprócz zależności liczby zachorowań od czasu zawiera także zależność od odsetka śmierci spowodowanych chorobami sercowymi. Kraj jest traktowany jako efekt losowy.
+
+Otrzymujemy następujące podsumowanie:
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+       (Intercept) Residual
+StdDev:    3241.687 2993.161
+
+Fixed effects: total_cases_per_million ~ time + cardiovasc_death_rate 
+                         Value Std.Error    DF   t-value p-value
+(Intercept)           830.9013  626.6099 35550   1.32603  0.1848
+time                   28.9831    0.2310 35550 125.48108  0.0000
+cardiovasc_death_rate  -7.4612    2.1624   150  -3.45041  0.0007
+\end{verbatim}
+
+Czynnik losowy zachowuje się podobnie jak we wszystkich poprzednich modelach. Oba czynniki stałe są istotne. Co ciekawe, odsetek śmierci spowodowanych chorobami serca wpływa ograniczająco na liczbę zachorowań. Może to być związane z tym, że osoby chore na serce bardziej uważają, aby się nie zarazić, tym samym zmniejszają liczbę zachorowań w danym kraju.
+
+\subsection{Model 8}
+
+\begin{verbatim}
+mod7 <- lme(total_cases_per_million~time+diabetes_prevalence,
+random=~1|location,
+data= covid)
+\end{verbatim}
+
+Model ten jest analogiczny do poprzedniego, z tym że zamiast chorób sercowych mamy tu odsetek chorych na cukrzycę.
+
+Otrzymujemy nastepujący wynik:
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+        (Intercept) Residual
+StdDev:    3173.523 2993.161
+
+Fixed effects: total_cases_per_million ~ time + diabetes_prevalence 
+                        Value Std.Error    DF   t-value p-value
+(Intercept)         -3320.595  566.8844 35550  -5.85762       0
+time                   28.984    0.2310 35550 125.48575       0
+diabetes_prevalence   300.581   69.1237   150   4.34845       0
+\end{verbatim}
+
+Czynnik losowy ma taką samą istotność jak poprzednio, czas także. Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
+\subsection{Model 9}
+
+W tym modelu sprawdzamy zależność liczby zachorowań od czasu i odsetka osób żyjących w skrajnym ubóstwie. Kraj jest czynnikiem losowym.
+
+\begin{verbatim}
+covid_ep <- drop_na(covid, extreme_poverty)
+mod8 <- lme(total_cases_per_million~time+extreme_poverty,
+random=~1|location,
+data= covid_ep)
+\end{verbatim}
+
+Model ten ma następujące podsumowanie:
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+         (Intercept) Residual
+StdDev:    2418.049 2562.526
+
+Fixed effects: total_cases_per_million ~ time + extreme_poverty 
+                     Value Std.Error    DF   t-value p-value
+(Intercept)     -479.1335 282.20423 25650  -1.69783  0.0896
+time              26.5944   0.23335 25650 113.96617  0.0000
+extreme_poverty  -42.5325  10.97942   108  -3.87384  0.0002
+\end{verbatim}
+
+Czynnik losowy jest odpowiedzialny za niecałą połowę zmienności. Oba czynniki stałe są istotne. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym wyższa liczba zachorowań (miejmy nadzieję, że nasz rząd tego nie usłyszy).
+
+\subsection{Model 10}
+W modelu dziesiątym pojawia się zależność liczby zachorowań od czasu i PKB. Kraj jest efektem losowym.
+
+\begin{verbatim}
+covid_gdp <- drop_na(covid, gdp_per_capita)
+mod9 <- lme(total_cases_per_million~time+gdp_per_capita,
+random=~1|location,
+data= covid_gdp)
+\end{verbatim}
+
+Wyniki są następujące:
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+        (Intercept) Residual
+StdDev:    2838.031 3005.475
+
+Fixed effects: total_cases_per_million ~ time + gdp_per_capita 
+                    Value Std.Error    DF   t-value p-value
+(Intercept)    -2892.4035  322.9109 35104  -8.95728       0
+time              29.2840    0.2332 35104 125.55885       0
+gdp_per_capita     0.0963    0.0122   148   7.87627       0
+\end{verbatim}
+
+Efekt losowy odpowiada za niecałą połowę zmienności modelu. Efekty stałe są istotne statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań.
 \chapter*{Podsumowanie i~wnioski}
 
 Badania jednoznacznie pokazują, że efekt kraju jako czynnika zakłócającego jest bardzo istotny, bardziej niż jakikolwiek inny czynnik stały (np. czas).
