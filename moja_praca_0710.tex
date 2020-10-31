@@ -492,67 +492,40 @@ Zbiór danych pochodzi z witryny internetowej Our World In Data \cite{owid}, gdz
 
 W zbiorze znajdowało się wiele braków danych. Dla każdego kraju zostały usunięte dane sprzed rozpoczęcia się epidemii na jego terytorium (\texttt{total cases=0}), dni są numerowane kolejnymi liczbami całkowitymi.
 
-OPISAĆ KTÓRE KRAJE I DLACZEGO ZOSTAŁY USUNIĘTE ZE ZBIORU, ZWRÓCIĆ UWAGĘ NA ZMIENNE KTÓRYCH BĘDZIEMY UŻYWAĆ W DALSZEJ CZĘŚCI PRACY
+Ze zbioru danych zostały usunięte wszystkie kraje o populacji poniżej miliona mieszkańców, ponieważ w większości były to nieduże wysepki, dla których dane były wybrakowane. Oprócz tego, kilka innych krajów zostało usuniętych, ponieważ mimo większej populacji, dane były niepełne.
 
+Do formułowania hipotez i budowania modeli będziemy się posługiwać następującymi zmiennymi:
 
-\section{Probelmy szczegółowe i cele}
-\subsection{Hipoteza 1}
-Wpływ kraju (efektu losowego) jest większy niż wpływ czasu (czynnika stałego) w modelu mieszanym.
-\subsection{Hipoteza 2}
-
-Liczba wykonywanych testów na COVID-19 ma związek z liczbą zachorowań.
-
-\subsection{Hipoteza 3}
-
-Ze względu na zmienną \texttt{life\_expectancy} dzielimy kraje na grupy co 5 lat: poniżej 50, 50-54, 55-59, ..., 80 i więcej.
-
-Hipoteza: kraje w różnych grupach ze względu na oczekiwaną długość życia różnią się liczbą zachorowań
-
-\subsection{Hipoteza 4}
-
-Kraje o różnej gęstości zaludnienia różnią się liczbą zachorowań.
-
-\subsection{Hipoteza 5}
-
-Kraje różniące się siłą obostrzeń mają istotne różnice w liczbie zachorowań.
-
-
-\subsection{Hipoteza 6}
-
-Kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań.
-
-\subsection{Hipoteza 7}
-
-Kraje o różnej wysokości odsetka śmierci z powodu chorób sercowych różnią się liczbą zachorowań.
-
-\subsection{Hipoteza 8}
-
-Kraje o różnej wysokości odsetka osób chorych na cukrzycę różnią się liczbą zachorowań.
-
-\subsection{Hipoteza 9}
-
-Kraje o różnej wysokości odsetka osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
-
-\subsection{Hipoteza 10}
-
-Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
+\begin{itemize}
+	\item liczba zachorowań - jest to liczba potwierdzonych przypadków koronawirusa w danym kraju od momentu rozpoczęcia epidemii. Zamiast wartośći liczby zachorowań, będziemy używać liczby zachorowań na milion mieszkańców (\texttt{total cases per million}),
+	\item liczba wykonanych testów - będziemy używać liczby wykonanych testów w przeliczeniu na tysiąc mieszkańców danego kraju (\texttt{total tests per thousand}),
+	\item wskaźnik siły obostrzeń (\texttt{sringency index}) - wskaźnik tego, jak silne obostrzenia wprowadził rząd danego kraju. Jest to kombinacja dziewięciu innych zmiennych, m.in. zamykanie szkół, polityka wykonywania testów, ograniczenie kontaktów międzyludzkich itp. Może przyjmować wartości od 0 do 100, im większa wartość, tym silniejsze obostrzenia w danym kraju \cite{stringency},
+	\item gęstość zaludnienia (\texttt{population density}),
+	\item PKP danego kraju na osobę (\texttt{GDP per capita}) - Produkt Krajowy Brutto, przeliczony na hipotetyczną walutę dolara międzynarodowego \cite{dollars},
+	\item część społeczeństwa żyjąca w skrajnym ubóstwie (\texttt{extreme poverty})
+	\item śmiertelność z powodu chorób sercowych (\texttt{cardiovasc death rate}) - stan na rok 2017
+	\item powszechność występowania cukrzycy (\texttt{diabetes prevalence}) - odsetek populacji z cukrzycą, brane pod uwagę są osoby w wieku od 20 do 70 lat, stan na rok 2017
+	\item oczekiwana długość życia (\texttt{life expectancy}) - kraje zostaną podzielone na kategorie ze wzgędu na tą zmienną, wyróżnimy kraje, w których oczekiwana długość życia jest poniżej 50 lat, między 50 a 54, między 55 a 59 i tak dalej aż do grupy krajów z oczekiwaną długością życia powyżej 80 lat.
+	
+\end{itemize}
 
 
 
 
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics{plot_all_countries.png}
-	\caption{Wykres przedstawiający rozwój pandemii we wszystkich krajach, tak, wiem, że nic na nim nie widać}
-	\label{fig:plot_all}
-	\zrodlo{Opracowanie własne}
-\end{figure}
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics{plot_all_countries.png}
+%	\caption{Wykres przedstawiający rozwój pandemii we wszystkich krajach, tak, wiem, że nic na nim nie widać}
+%	\label{fig:plot_all}
+%	\zrodlo{Opracowanie własne}
+%\end{figure}
 
 
 \section{Dyskusja wyników}
 
 \subsection{Model 1}
+
+Hipoteza 1: Wpływ kraju (efektu losowego) jest większy niż wpływ czasu (czynnika stałego) w modelu mieszanym.
 
 Pierwszy model ma postać 
 \begin{verbatim}
@@ -585,6 +558,9 @@ time         15.7823   0.25565 51584 61.73324   0e+00
 
 A więc zarówno wyraz wolny, jak i współczynnik przy zmiennej Czas, są istotne statystycznie. Dodatkowo, korelacja pomiędzy liczbą zachorowań a czasem jest dodatnia, więc wraz z upływem czasu liczba zachorowań rośnie dla przeciętnego kraju.
 \subsection{Model 2}
+
+Hipoteza 2: Liczba wykonywanych testów na COVID-19 ma związek z liczbą zachorowań.
+
 Drugi model to:
 \begin{verbatim}
 mod1 <- lme(total_cases_per_million~time+total_tests_per_thousand,
@@ -612,6 +588,9 @@ total_tests_per_thousand   22.5888    0.3550 17724 63.63620  0.0000
 Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmienności modelu. Po drugie, widać, że oba efekty stałe są istotne statystycznie, i oba mają wpływ stymulujący na liczbę zachorowań.
 
 \subsection{Model 3}
+
+
+Hipoteza 3: kraje o różnej oczekiwanej długości życia różnią się liczbą zachorowań.
 
 Trzeci model wygląda następująco:
 
@@ -647,6 +626,8 @@ agebelow 55      -184.197  1898.558   145  -0.09702  0.9228
 Ponownie efekt losowy odpowiada za większą część wariancji. Czas ponownie jest istotny i ma wpływ stymulujący. Dla grupy wiekowej 75-79 różnica w średniej liczbie zachorowań jest na granicy istotności statystycznej. Dopiero dla krajów o oczekiwanej długości życia powyżej 80 lat pojawia się istotna różnica - liczba zachorowań w tych krajach jest największa. W pozostałych grupach wiekowych nie można mówić o istotnych różnicach. 
 \subsection{Model 4}
 
+Hipoteza 4: Kraje o różnej gęstości zaludnienia różnią się liczbą zachorowań.
+
 W czwartym modelu badamy zależnośc liczby zachorowań od czasu i gęstości zaludnienia, a kraj jest czynnikiem losowym.
 
 \begin{verbatim}
@@ -655,7 +636,27 @@ random=~1|location,
 data = covid)
 \end{verbatim}
 
+Wyniki są następujące:
+
+\begin{verbatim}
+Random effects:
+Formula: ~1 | location
+         (Intercept) Residual
+StdDev:    3339.163 2993.161
+
+Fixed effects: total_cases_per_million ~ time + population_density 
+                        Value Std.Error    DF   t-value p-value
+(Intercept)        -1256.0762 283.81733 35550  -4.42565  0.0000
+time                  28.9851   0.23098 35550 125.48973  0.0000
+population_density     0.6593   0.40726   150   1.61895  0.1076
+\end{verbatim}
+
+Zatem gęstośc zaludnienia nie jest czynnikiem istotnie różnicującym liczbę zachorowań w krajach.
+
 \subsection{Model 5}
+
+Hipoteza 5: Kraje różniące się siłą obostrzeń mają istotne różnice w liczbie zachorowań.
+
 
 Piaty model ma następującą postać:
 
@@ -686,6 +687,8 @@ Tak jak w poprzednich modelach, czynnik losowy odpowiada za największą częś�
 
 \subsection{Model 6}
 
+Hipoteza 6: Kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań.
+
 Szósty model przedstawia zależność liczby zachorowań od czasu i wskaźnika rozwoju społecznego, a kraj jest czynnikiem losowym.
 
 \begin{verbatim}
@@ -713,6 +716,8 @@ human_development_index  7807.594 1623.1648   148   4.81011       0
 Efekt losowy jest odpowiedzialny za nieznacznie większą część wariancji niż wszystkie pozostałe czynniki. Efekty stałe są istotne i oba mają wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
 
 \subsection{Model 7}
+
+Hipoteza 7: Kraje o różnej wysokości odsetka śmierci z powodu chorób sercowych różnią się liczbą zachorowań.
 
 Model siódmy wygląda następująco:
 
@@ -742,6 +747,8 @@ Czynnik losowy zachowuje się podobnie jak we wszystkich poprzednich modelach. O
 
 \subsection{Model 8}
 
+Hipoteza 8: Kraje o różnej wysokości odsetka osób chorych na cukrzycę różnią się liczbą zachorowań.
+
 \begin{verbatim}
 mod7 <- lme(total_cases_per_million~time+diabetes_prevalence,
 random=~1|location,
@@ -766,6 +773,8 @@ diabetes_prevalence   300.581   69.1237   150   4.34845       0
 
 Czynnik losowy ma taką samą istotność jak poprzednio, czas także. Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
 \subsection{Model 9}
+
+Hipoteza 9: Kraje o różnej wysokości odsetka osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
 
 W tym modelu sprawdzamy zależność liczby zachorowań od czasu i odsetka osób żyjących w skrajnym ubóstwie. Kraj jest czynnikiem losowym.
 
@@ -793,6 +802,10 @@ extreme_poverty  -42.5325  10.97942   108  -3.87384  0.0002
 Czynnik losowy jest odpowiedzialny za niecałą połowę zmienności. Oba czynniki stałe są istotne. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym wyższa liczba zachorowań (miejmy nadzieję, że nasz rząd tego nie usłyszy).
 
 \subsection{Model 10}
+
+Hipoteza 10: Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
+
+
 W modelu dziesiątym pojawia się zależność liczby zachorowań od czasu i PKB. Kraj jest efektem losowym.
 
 \begin{verbatim}
@@ -819,7 +832,50 @@ gdp_per_capita     0.0963    0.0122   148   7.87627       0
 Efekt losowy odpowiada za niecałą połowę zmienności modelu. Efekty stałe są istotne statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań.
 \chapter*{Podsumowanie i~wnioski}
 
-Badania jednoznacznie pokazują, że efekt kraju jako czynnika zakłócającego jest bardzo istotny, bardziej niż jakikolwiek inny czynnik stały (np. czas).
+
+
+\begin{longtable}{| p{.30\textwidth} | p{.60\textwidth} |}
+	\hline
+	Cecha & Wpływ na liczbę zachorowań \\ \hline 
+	Czas & istotny, wraz z upływem czasu rośnie liczba zachorowań \\ \hline
+	Liczba wykonywanych testów na COVID-19 & istotny, wraz ze wzrostem liczby testów rośnie liczba zachorowań \\ \hline
+	Oczekiwana długość życia & istotny, o ile ta wartość przekracza 80 lat, wówczas zachorowań jest więcej niż dla krajów o krótszej oczekiwanej długości życia \\ \hline 
+	Gęstość zaludnienia & nieistotny \\ \hline
+	Wskaźnik siły obostrzeń & istotny, jest wysoki w krajach o dużej liczbie zachorowań \\ \hline
+	Wskaźnik rozwoju społecznego & istotny, w krajach o wysokim wskaźniku rozwoju jest więcej zachorowań \\ \hline
+	Śmiertelność z powodu chorób sercowych & istotny, im wyższy jest ten współczynnik, tym mniej zachorowań na COVID-19 \\ \hline
+	Powszechność występowania cukrzycy & istotny, im wyższy jest ten współczynnik, tym więcej zachorowań na COVID-19 \\ \hline
+	Część populacji żyjąca w skrajnym ubóstwie & istotny, im większa jest część mieszkańców żyjąca w biedzie, tym mniej zachorowań \\ \hline
+	PKB na osobę & istotny, im wyższe PKB, tym więcej zachorowań \\ \hline
+	\caption{Porównanie istotności i wpływu różnych czynników na liczbę zachorowań w przeciętnym kraju}
+	\label{tab:istotnosc}
+	\end{longtable}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		Nr modelu&   AIC \\ \hline
+		1 &  1013843.9 \\ \hline
+		2 &  335245.8 \\ \hline
+		3 &   673611.1 \\ \hline
+		4 &   673718.5 \\ \hline
+		5 &   636599.2 \\ \hline
+		6 &   665261.9 \\ \hline
+		7 &   673706.2 \\ \hline
+		8 &   673692.9 \\ \hline
+		9 &   478066.0 \\ \hline
+		10&   665511.1 \\ \hline
+	\end{tabular}
+\caption{Porównanie indeksów Akaike dla poszczególnych modeli}
+\label{tab:akaike}
+\end{table}
+
+Indeks Akaike jest miarą utraconej informacji. Im mniejszy jest indeks Akaike, tym lepiej model wyjaśnia badane zjawisko. Widzimy z tabeli \ref{tab:akaike}, że najmniejsze AIC występuje dla modelu nr 2. Jest to model, gdzie występuje zależność między liczbą zachorowań a liczbą wykonywanych testów. Ta zależność jest bardzo oczywista, ponieważ liczbę zachorowań zlicza się na podstawie tego, ile testów dało wynik pozytywny. Modelem z drugim najniższym AIC jest model nr 9, gdzie badamy istotność wskaźnika części populacji żyjącej w skrajnym ubóstwie.
+
+
+
+Wszystkie modele jednoznacznie pokazują, że efekt kraju jako czynnika zakłócającego jest bardzo istotny, w wielu przypadkach bardziej niż jakikolwiek inny czynnik stały (np. czas).
 
 Na to, co jest nazywane w tej pracy ,,efektem kraju'', składa się tak naprawdę wiele innych czynników, m. in. gęstość zaludnienia, sytuacja ekonomiczna danego kraju, odsetek osób z chorobami towarzyszącymi, rozkład wieku, jak również przyjęta strategia walki z koronawirusem, na którą z kolei składają się m. in. liczba wykonywanych testów, przepisy w sprawie zamykania szkół, miejsc publicznych, ograniczenie kontaktów międzyludzkich, i wiele innych.
 
@@ -831,6 +887,10 @@ W mojej pracy nie zajmowałam się badaniem, w jaki sposób te czynniki wpływaj
 \bibitem{faraway} Julian J. Faraway, \emph{Extending the Linear Model with R. Generalized Linear, Mixed Effects and Nonparametric Regression Models. Second Edition}, CRC Press Taylor \& Francis  Group, 2016
 
 \bibitem{owid} \url{https://ourworldindata.org/coronavirus}
+
+\bibitem{stringency} \url{https://www.bsg.ox.ac.uk/research/research-projects/coronavirus-government-response-tracker} (dostęp 31.10.2020)
+
+\bibitem{dollars} \url{https://ourworldindata.org/what-are-ppps} (dostęp 31.10.2020)
 
 \end{thebibliography}
 
