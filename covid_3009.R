@@ -7,18 +7,9 @@ head(covid)
 kraje <- covid %>% 
   distinct(location) %>% 
   as.data.frame()
-kraje_id <- c(1,2,3,4,5,8,9,11,12,13,15,16,18,19,20,21,23,24,26,27,28,31,32,34,
-              35,36,39,40,41,42,43,45,46,47,48,49,51,52,53,54,56,57,58,59,
-              63,64,68,69,71,72,73,74,75,77,81,89,90,91,92,93,94,95,97,98,100,
-              103,104,109,110,113,114,115,116,117,120,126,127,128,129, 130,
-              132,133,137,139,140,141,142,144,145,146,147,148,150,151,153,154,156,
-              157,158,159,165,166,167,170,172,173,175,176,177,178,179,180,181,183,
-              184,185,186,189,190,194,197,198,199,200,201,203,204,205,206,207,209,210,211)
-# 210 krajow + world + international 
-# pytanie czy brac pod uwage jakies male kraiki, wysepki itd
 
-#covid <- covid[(covid$location!="International"& covid$location!="World"& covid$location!="Aruba"),]
-#covid <- drop_na(covid, location)
+
+
 covid <- covid[!covid$location %in% c("International", "World", "Kosovo", 
                                       "South Sudan", "Syria", "Taiwan"),]
 covid <- covid[covid$population>1000000,]
@@ -48,42 +39,78 @@ xyplot(total_cases_per_million~time|location,
 
 library(nlme) #lmer4
 # population density, liczba testow, PKB, extreme poverty, odsetek osob z problemami sercowymi, life expectancy (przecietny czas zycia)
-#library(lmer4)
+library(lme4)
+library(lmerTest)
+library(stargazer)
+library(texreg)
+library(gghighlight)
+
+covid %>% 
+  group_by(location) %>% 
+  summarize(m=mean(total_cases_per_million)) %>% 
+  arrange(-m)
+
 lmeControl(maxIter=1000, msMaxIter = 1000, niterEM = 1000)
-mod <- lme(total_cases_per_million~time, 
-           random = ~1|location,
-           data = covid, method="ML")
+#mod <- lme(total_cases_per_million~time, 
+#           random = ~1|location,
+#           data = covid, method="ML")
+mod_lme <- lmer(total_cases_per_million~time+(1|location), covid)
+mod_lme_slope <- lmer(total_cases_per_million~time+(time|location), covid)
+summary(mod_lme_slope)
+summary(mod_lme)
+anova(mod_lme)
+stargazer(mod, type="latex")
+texreg(mod_lme)
+texreg(mod_lme_slope)
 #mod <- lmer(total_cases_per_million~time+(1~location), data = covid)
-summary(mod)
+#summary(mod)
 # oba wspolczynniki efektow stalych sa istotne (intercept i wsp przy time)
 # wyjaśniona wariancja przez efekt losowy 2943.93 - porównywalne z Residuals 2538.357
-AIC(mod) # miara utraconej informacji - im mniej tym lepiej
-
+AIC(mod_lme) # miara utraconej informacji - im mniej tym lepiej
+AIC(mod_lme_slope)
 kraje <- covid$location %>% unique()
 
-Beta <- vector(length = 152)
-for (i in 1:152){
-  mod_i <- summary(lm(total_cases_per_million ~ time,
-                        subset = (location==kraje[i]), data=covid))
-  Beta[i] <- mod_i$coefficients[2]
-}
-Beta
-cbind(kraje, Beta)
+# Beta <- vector(length = 152)
+# for (i in 1:152){
+#   mod_i <- summary(lm(total_cases_per_million ~ time,
+#                         subset = (location==kraje[i]), data=covid))
+#   Beta[i] <- mod_i$coefficients[2]
+# }
+# Beta
+# wsp_kraje <- cbind(as.character(kraje), Beta) %>% as.data.frame()
+# wsp_kraje$Beta <- as.numeric(wsp_kraje$Beta)
 
-aggregate(is.na(covid$total_tests_per_thousand), list(covid$location), FUN=sum)
+covid %>% 
+  ggplot(aes(time, total_cases_per_million, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil'), label_key=location)
+fit <- predict(mod_lme)
+cbind(covid, fit) %>% 
+  ggplot(aes(time, fit, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil'), label_key=location)
+fit_slope <- predict(mod_lme_slope)
+cbind(covid, fit_slope) %>% 
+  ggplot(aes(time, fit_slope, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil'), label_key=location)
+
+#aggregate(is.na(covid$total_tests_per_thousand), list(covid$location), FUN=sum)
 
 
 
 
 covid_na <- drop_na(covid, total_tests_per_thousand)
-
-
-# TRZEBA BEDZIE NAJPIERW WYBRAĆ KRAJE GDZIE JEST MALO BRAKOW
-mod1 <- lme(total_cases_per_million~time+total_tests_per_thousand,
-           random = ~1|location,
+mod1 <- lmer(total_cases_per_million~total_tests_per_thousand+(1|location),
            data = covid_na)
 summary(mod1)
-
+texreg(mod1)
 
 covid$age <- 0
 covid[covid$life_expectancy<55,]$age <- "below 55"
@@ -94,85 +121,65 @@ covid[covid$life_expectancy>=70&covid$life_expectancy<75,]$age <- "70-74"
 covid[covid$life_expectancy>=75&covid$life_expectancy<80,]$age <- "75-79"
 covid[covid$life_expectancy>=80,]$age<- "80 and above"
 covid$age <- as.factor(covid$age)
+covid$age <- relevel(covid$age, 'below 55')
 
 
 
 
 
+library(RColorBrewer)
 
-
-mod2 <- lme(total_cases_per_million~time+age,
-            random=~1|location,
+mod2 <- lmer(total_cases_per_million~+age+(1|location),
             data=covid)
 summary(mod2)
+texreg(mod2)
+covid %>% 
+  ggplot(aes(time, total_cases_per_million, group=location, colour=age))+
+  geom_line()+
+  scale_colour_brewer('Set1')
+  
 
 
-mod3 <- lme(total_cases_per_million~time+population_density,
-            random=~1|location,
+mod3 <- lmer(total_cases_per_million~population_density+(1|location),
             data = covid)
 summary(mod3)
-
+texreg(mod3)
 
 covid_si <- drop_na(covid, stringency_index)
-mod4 <- lme(total_cases_per_million~time+stringency_index,
-            random=~1|location,
+mod4 <- lmer(total_cases_per_million~stringency_index+(1|location),
             data = covid_si)
 summary(mod4)
+texreg(mod4)
+
 
 covid_hdi <- drop_na(covid, human_development_index)
-mod5 <- lme(total_cases_per_million~time+human_development_index,
-            random=~1|location,
+mod5 <- lmer(total_cases_per_million~human_development_index+(1|location),
             covid_hdi)
 summary(mod5)
+texreg(mod5)
 
-
-mod6 <- lme(total_cases_per_million~time+cardiovasc_death_rate,
-            random=~1|location,
+mod6 <- lmer(total_cases_per_million~cardiovasc_death_rate+(1|location),
             data= covid)
 summary(mod6)
+texreg(mod6)
 
-mod7 <- lme(total_cases_per_million~time+diabetes_prevalence,
-            random=~1|location,
+mod7 <- lmer(total_cases_per_million~diabetes_prevalence+(1|location),
             data= covid)
 summary(mod7)
-
+texreg(mod7)
 
 covid_ep <- drop_na(covid, extreme_poverty)
-mod8 <- lme(total_cases_per_million~time+extreme_poverty,
-            random=~1|location,
+mod8 <- lmer(total_cases_per_million~extreme_poverty+(1|location),
             data= covid_ep)
 summary(mod8)
-
+texreg(mod8)
 
 covid_gdp <- drop_na(covid, gdp_per_capita)
-mod9 <- lme(total_cases_per_million~time+gdp_per_capita,
-            random=~1|location,
+mod9 <- lmer(total_cases_per_million~gdp_per_capita+(1|location),
             data= covid_gdp)
 summary(mod9)
+texreg(mod9)
 
-
-mod10 <- lme(total_cases_per_million~time+age+stringency_index,
-             random=~1|location,
-             data=covid_si)
-summary(mod10)
-
-mod11 <- lme(total_tests_per_thousand~time+total_cases_per_million,
-             random=~1|location,
-             data=covid_na)
-summary(mod11)
-
-
-# random intercept and slope
-
-mod12 <- lme(total_cases_per_million~time,
-             random= ~time|location,
-             data = covid)
-summary(mod12)
-
-mod13 <- lme(total_cases_per_million~time+age,
-             random= ~time|location,
-             data = covid)
-summary(mod13)
 
 akaike <- rbind(cbind('mod', AIC(mod)),
       cbind('mod1', AIC(mod1)),
@@ -189,3 +196,12 @@ colnames(akaike) <- c('Model', 'AIC')
 
 akaike$AIC <- as.numeric(as.character(akaike$AIC))
 akaike
+
+
+
+
+# czas trwania epidemii w poszczegolnych krajach
+czas_kraj <- covid %>% select(location, time)%>% group_by(location) %>% top_n(1, time)
+min(czas_kraj$time)
+
+

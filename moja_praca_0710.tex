@@ -315,9 +315,9 @@
 %%%%%powtórzyć na stronie ze streszczeniami, to nic nie boli%%%
 %%%%%a gwarantuje, że będą one takie same, i~tak ma być.%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand\tytul{Zastosowanie modeli mieszanych w analizie rozwoju pandemii wywołanej wirusem Covid-19 na świecie}
+\newcommand\tytul{Zastosowanie modeli mieszanych w analizie rozwoju pandemii choroby COVID-19 na świecie}
 
-\newcommand\tytulangielski{The use of mixed-effects models in the analysis of the Covid-19 pandemic in the world}
+\newcommand\tytulangielski{The use of mixed-effects models in the analysis of the COVID-19 pandemic in the world}
 
 
 \begin{center}
@@ -483,8 +483,40 @@ Różnica między metodą REML i ML polega na tym, że w metodzie REML najpierw 
 
 $$H_0: \sigma^2_j=0$$
 
-Te same metody co dla efektów stałych
 
+\subsection{Wybór najlepszego modelu}
+
+Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie zawsze dają się zastosować w przypadku modeli mieszanych. Wymienimy teraz kilka metod doboru najlepszego modelu i opiszemy, które z nich są najskuteczniejsze \cite{faraway}.
+
+\begin{enumerate}
+	\item Wskaźnik wiarygodności(ang. \texttt{likelihood ratio}) - tworzymy dwa modele, model 0, który nie zawiera elementów, których istotność chcemy zbadać, i model 1, który zawiera te elementy. Pozostałe zmienne muszą być takie same w obu modelach.
+	
+	Statystyka testowa wygląda następująco:
+	$$2(l(\hat{\beta_1}, \hat{\sigma_1}, \hat{D_1}|y)-l(\hat{\beta_0}, \hat{\sigma_0}, \hat{D_0}|y)),$$
+	gdzie l - logarytm z funkcji prawdopodobieństwa.
+	
+	Tego testu nie można używać do modeli wyznaczonych metodą \texttt{REML}.
+	
+	\item Test F dla efektów stałych - metoda taka sama jak ta używana przy modelach z efektami stałymi. W przypadku modeli mieszanych może sprawiać problemy, ponieważ statystyka testowa niekoniecznie musi mieć rozkład F. Należy także wprowadzać poprawkę na liczbę stopni swobody.
+	
+	Na ogół ta metoda daje dobre rezultaty dla mniej skomplikowanych modeli, gdy układ jest zbalansowany (wszystkie grupy są równoliczne). Dla modeli bardziej skomplikowanych, lub kiedy brak równoliczności, wartości p oraz statystyki t mogą być błędne.
+	
+	\item Użycie metod \textit{bootstrapowych}, aby znaleźć dokładniejsze wartości p-value. Należy wygenerować dane z modelu 0 (na podstawie oszacowanych parametrów) i obliczyć statystykę \textit{likelihood ratio}. Tą procedurę powtarzamy wielokrotnie i oceniamy istotność.
+	
+	\item Kryteria informacyjne - służą do wyboru najlepszego spośród modeli. Najpopularniejszym jest Kryterium Informacyjne Akaikego (ang. \texttt{Akaike Information Criterion, AIC}). Jest ono zdefiniowane następującym wzorem:
+	
+	$$-2(\texttt{max log likelihood})+ 2p,$$
+	
+	gdzie $p$ to liczba parametrów modelu.
+	
+	Można stosować to kryterium do modeli, które różnią się jedynie efektami stałymi, gdzie liczba efektów losowych jest identyczna dla wszystkich modeli, które porównujemy. Gdyby modele różniły się liczbą efektów losowych, należałoby rozważyć, w jaki sposób zliczyć liczbę parametrów $p$.
+	
+	Kryterium Akaikego jest miarą utraconej informacji, więc po obliczeniu go dla roważanych modeli, należy wybrać ten, gdzie otrzymana wartość jest najmniejsza.
+
+\end{enumerate}
+
+\subsection{Interpretacja parametrów modelu mieszanego}
+\subsection{Predykcja z modelu mieszanego}
 \chapter{Badania własne}
 \section{Zbiór danych i jego wstępne przygotowanie}
 
@@ -525,7 +557,17 @@ Do formułowania hipotez i budowania modeli będziemy się posługiwać następu
 
 \subsection{Model 1}
 
-Hipoteza 1: Wpływ kraju (efektu losowego) jest większy niż wpływ czasu (czynnika stałego) w modelu mieszanym.
+Hipoteza 1: Czas ma istotny wpływ na liczbę zachorowań.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/total_cases_countries.png}
+	\caption{Wykres przedstawiający zależność liczby zachorowań na milion mieszkańców w zależności od czasu z podziałem na kraje}
+	\label{fig:total_cases_countries}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+
 
 Pierwszy model ma postać 
 \begin{verbatim}
@@ -536,27 +578,58 @@ data = covid)
 
 a więc przedstawia zależność liczby zachorowań od czasu, a kraj jest efektem losowym.
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod1_predict.png}
+	\caption{Wykres przedstawiający zależność między liczbą zachorowań a czasem oszacowaną za pomocą Modelu 1}
+	\label{fig:mod1_predict}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod1_slope_predict.png}
+	\caption{Wykres przedstawiający zależność między liczbą zachorowań a czasem oszacowaną za pomocą modelu typu random intercept and slope}
+	\label{fig:mod1_slope_predict}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
 Dla efektu losowego otrzymujemy następujący wynik:
 
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-         (Intercept) Residual
-StdDev:    3241.434 4262.032
-\end{verbatim}
 
-Widać zatem, że efekt losowy jest odpowiedzialny za około 45\% wariancji całego modelu.
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $-1321.86^{***}$ \\
+			& $(294.61)$       \\
+			time                      & $31.27^{***}$    \\
+			& $(0.24)$         \\
+			\hline
+			AIC                       & $715285.90$      \\
+			BIC                       & $715320.03$      \\
+			Log Likelihood            & $-357638.95$     \\
+			Num. obs.                 & $37529$          \\
+			Num. groups: location     & $152$            \\
+			Var: location (Intercept) & $13018644.39$    \\
+			Var: Residual             & $10840327.89$    \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 1}
+		\label{table:model1}
+	\end{center}
+\end{table}
 
-Dla efektów stałych mamy następujący wynik:
 
-\begin{verbatim}
-Fixed effects: total_cases_per_million ~ time 
-            Value Std.Error    DF  t-value p-value
-(Intercept) 763.1050 225.19114 51584  3.38870   7e-04
-time         15.7823   0.25565 51584 61.73324   0e+00
-\end{verbatim}
 
-A więc zarówno wyraz wolny, jak i współczynnik przy zmiennej Czas, są istotne statystycznie. Dodatkowo, korelacja pomiędzy liczbą zachorowań a czasem jest dodatnia, więc wraz z upływem czasu liczba zachorowań rośnie dla przeciętnego kraju.
+Widać zatem, że efekt losowy jest odpowiedzialny za około 45\% wariancji resztowej.
+
+
+
+Zarówno wyraz wolny, jak i współczynnik przy zmiennej Czas, są istotne statystycznie. Dodatkowo, korelacja pomiędzy liczbą zachorowań a czasem jest dodatnia, więc wraz z upływem czasu liczba zachorowań rośnie dla przeciętnego kraju.
 \subsection{Model 2}
 
 Hipoteza 2: Liczba wykonywanych testów na COVID-19 ma związek z liczbą zachorowań.
@@ -571,21 +644,33 @@ data = covid_na)
 Badamy tutaj, czy czas oraz liczba wykonywanych testów mają wpływ na liczbę zachorowań, jeżeli kraj traktujemy jako czynnik losowy.
 
 Dla tego modelu otrzymujemy następujące wyniki:
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)                 & $1319.61^{***}$ \\
+			& $(399.12)$      \\
+			total\_tests\_per\_thousand & $31.95^{***}$   \\
+			& $(0.28)$        \\
+			\hline
+			AIC                         & $363631.09$     \\
+			BIC                         & $363662.51$     \\
+			Log Likelihood              & $-181811.54$    \\
+			Num. obs.                   & $19045$         \\
+			Num. groups: location       & $95$            \\
+			Var: location (Intercept)   & $14965179.24$   \\
+			Var: Residual               & $11168063.61$   \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 2}
+		\label{table:model2}
+	\end{center}
+\end{table}
 
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-         (Intercept) Residual
-StdDev:    3677.593 2901.592
-
-Fixed effects: total_cases_per_million ~ time + total_tests_per_thousand 
-                             Value Std.Error    DF  t-value p-value
-(Intercept)              -558.9119  384.0912 17724 -1.45515  0.1456
-time                       17.5806    0.4263 17724 41.23543  0.0000
-total_tests_per_thousand   22.5888    0.3550 17724 63.63620  0.0000
-\end{verbatim}
-
-Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmienności modelu. Po drugie, widać, że oba efekty stałe są istotne statystycznie, i oba mają wpływ stymulujący na liczbę zachorowań.
+Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmienności resztowej modelu. Po drugie, widać, że oba efekty stałe są istotne statystycznie, i oba mają wpływ stymulujący na liczbę zachorowań.
 
 \subsection{Model 3}
 
@@ -605,25 +690,43 @@ Prezentuje on zależność liczby zachorowań od czasu i od oczekiwanej długoś
 
 Dla modelu trzeciego otrzymujemy następujące wyniki:
 
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-        (Intercept) Residual
-StdDev:     3128.64 2993.161
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $640.36$       \\
+			& $(1343.96)$    \\
+			age60-64                  & $-41.47$       \\
+			& $(1502.59)$    \\
+			age65-69                  & $-248.44$      \\
+			& $(1551.85)$    \\
+			age70-74                  & $1509.97$      \\
+			& $(1476.43)$    \\
+			age75-79                  & $3319.36^{*}$  \\
+			& $(1436.70)$    \\
+			age80 and above           & $4104.39^{**}$ \\
+			& $(1480.87)$    \\
+			agebelow 55               & $-371.40$      \\
+			& $(1993.64)$    \\
+			\hline
+			AIC                       & $729555.23$    \\
+			BIC                       & $729632.03$    \\
+			Log Likelihood            & $-364768.62$   \\
+			Num. obs.                 & $37529$        \\
+			Num. groups: location     & $152$          \\
+			Var: location (Intercept) & $10768986.56$  \\
+			Var: Residual             & $15929745.12$  \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 3}
+		\label{table:model3}
+	\end{center}
+\end{table}
 
-Fixed effects: total_cases_per_million ~ time + age 
-                    Value Std.Error    DF   t-value p-value
-(Intercept)     -2608.462  1280.159 35550  -2.03761  0.0416
-time               28.980     0.231 35550 125.46483  0.0000
-age60-64          -69.561  1430.972   145  -0.04861  0.9613
-age65-69         -324.578  1477.891   145  -0.21962  0.8265
-age70-74         1172.910  1406.069   145   0.83418  0.4056
-age75-79         2617.920  1368.246   145   1.91334  0.0577
-age80 and above  3195.777  1410.326   145   2.26598  0.0249
-agebelow 55      -184.197  1898.558   145  -0.09702  0.9228
-\end{verbatim}
-
-Ponownie efekt losowy odpowiada za większą część wariancji. Czas ponownie jest istotny i ma wpływ stymulujący. Dla grupy wiekowej 75-79 różnica w średniej liczbie zachorowań jest na granicy istotności statystycznej. Dopiero dla krajów o oczekiwanej długości życia powyżej 80 lat pojawia się istotna różnica - liczba zachorowań w tych krajach jest największa. W pozostałych grupach wiekowych nie można mówić o istotnych różnicach. 
+Ponownie efekt losowy odpowiada za większą część wariancji resztowej. Czas ponownie jest istotny i ma wpływ stymulujący. Dla grupy wiekowej 75-79 różnica w średniej liczbie zachorowań jest na granicy istotności statystycznej. Dopiero dla krajów o oczekiwanej długości życia powyżej 80 lat pojawia się istotna różnica - liczba zachorowań w tych krajach jest największa. W pozostałych grupach wiekowych nie można mówić o istotnych różnicach. 
 \subsection{Model 4}
 
 Hipoteza 4: Kraje o różnej gęstości zaludnienia różnią się liczbą zachorowań.
@@ -638,18 +741,31 @@ data = covid)
 
 Wyniki są następujące:
 
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-         (Intercept) Residual
-StdDev:    3339.163 2993.161
-
-Fixed effects: total_cases_per_million ~ time + population_density 
-                        Value Std.Error    DF   t-value p-value
-(Intercept)        -1256.0762 283.81733 35550  -4.42565  0.0000
-time                  28.9851   0.23098 35550 125.48973  0.0000
-population_density     0.6593   0.40726   150   1.61895  0.1076
-\end{verbatim}
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $2402.87^{***}$ \\
+			& $(306.53)$      \\
+			population\_density       & $0.78$          \\
+			& $(0.44)$        \\
+			\hline
+			AIC                       & $729672.88$     \\
+			BIC                       & $729707.01$     \\
+			Log Likelihood            & $-364832.44$    \\
+			Num. obs.                 & $37529$         \\
+			Num. groups: location     & $152$           \\
+			Var: location (Intercept) & $13106475.48$   \\
+			Var: Residual             & $15929750.91$   \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 4}
+		\label{table:model4}
+	\end{center}
+\end{table}
 
 Zatem gęstośc zaludnienia nie jest czynnikiem istotnie różnicującym liczbę zachorowań w krajach.
 
@@ -670,20 +786,33 @@ data = covid_si)
 W tym modelu sprawdzamy zależność liczby zachorowań od czasu i siły obostrzeń, kraj jest czynnikiem losowym.
 
 Otrzymujemy następujące wyniki:
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-         (Intercept) Residual
-StdDev:    3172.804 2854.192
 
-Fixed effects: total_cases_per_million ~ time + stringency_index 
-                       Value Std.Error    DF   t-value p-value
-(Intercept)      -1710.7939 269.33057 33756  -6.35202       0
-time                27.9374   0.23445 33756 119.16023       0
-stringency_index    10.1151   0.89377 33756  11.31725       0
-\end{verbatim}
-
-Tak jak w poprzednich modelach, czynnik losowy odpowiada za największą część zmienności. Czas jest istotny statystycznie. Wskaźnik siły obostrzeń także jest istotny i ma wpływ stymulujący, co oznaczałoby, że im silniejsze obostrzenia, tym więcej zachorowań. Ta interpretacja prawdopodobnie jest niepoprawna, można się domyślać, że raczej zachodzi odwrotna zależność - w krajach z największą liczbą zachorowań są wprowadzane najsurowsze obostrzenia.
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $2932.54^{***}$ \\
+			& $(301.93)$      \\
+			stringency\_index         & $-9.12^{***}$   \\
+			& $(1.16)$        \\
+			\hline
+			AIC                       & $687061.29$     \\
+			BIC                       & $687095.20$     \\
+			Log Likelihood            & $-343526.65$    \\
+			Num. obs.                 & $35524$         \\
+			Num. groups: location     & $148$           \\
+			Var: location (Intercept) & $12678743.39$   \\
+			Var: Residual             & $14372604.68$   \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 5}
+		\label{table:model5}
+	\end{center}
+\end{table}
+Tak jak w poprzednich modelach, czynnik losowy odpowiada za największą część zmienności resztowej. Czas jest istotny statystycznie. Wskaźnik siły obostrzeń także jest istotny i ma wpływ stymulujący, co oznaczałoby, że im silniejsze obostrzenia, tym więcej zachorowań. Ta interpretacja prawdopodobnie jest niepoprawna, można się domyślać, że raczej zachodzi odwrotna zależność - w krajach z największą liczbą zachorowań są wprowadzane najsurowsze obostrzenia.
 
 \subsection{Model 6}
 
@@ -700,20 +829,33 @@ covid_hdi)
 
 Z tego modelu mamy następujący wynik:
 
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-         (Intercept) Residual
-StdDev:    3130.083 2984.162
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $-4489.15^{***}$ \\
+			& $(1237.25)$      \\
+			human\_development\_index & $9957.74^{***}$  \\
+			& $(1711.04)$      \\
+			\hline
+			AIC                       & $720398.99$      \\
+			BIC                       & $720433.07$      \\
+			Log Likelihood            & $-360195.50$     \\
+			Num. obs.                 & $37070$          \\
+			Num. groups: location     & $150$            \\
+			Var: location (Intercept) & $10865235.65$    \\
+			Var: Residual             & $15798887.42$    \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 6}
+		\label{table:model6}
+	\end{center}
+\end{table}
 
-Fixed effects: total_cases_per_million ~ time + human_development_index 
-                           Value Std.Error    DF   t-value p-value
-(Intercept)             -6632.736 1173.8596 35117  -5.65037       0
-time                       28.795    0.2315 35117 124.40143       0
-human_development_index  7807.594 1623.1648   148   4.81011       0
-\end{verbatim}
-
-Efekt losowy jest odpowiedzialny za nieznacznie większą część wariancji niż wszystkie pozostałe czynniki. Efekty stałe są istotne i oba mają wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
+ Efekty stałe są istotne i oba mają wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
 
 \subsection{Model 7}
 
@@ -730,18 +872,32 @@ data= covid)
 i oprócz zależności liczby zachorowań od czasu zawiera także zależność od odsetka śmierci spowodowanych chorobami sercowymi. Kraj jest traktowany jako efekt losowy.
 
 Otrzymujemy następujące podsumowanie:
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-       (Intercept) Residual
-StdDev:    3241.687 2993.161
 
-Fixed effects: total_cases_per_million ~ time + cardiovasc_death_rate 
-                         Value Std.Error    DF   t-value p-value
-(Intercept)           830.9013  626.6099 35550   1.32603  0.1848
-time                   28.9831    0.2310 35550 125.48108  0.0000
-cardiovasc_death_rate  -7.4612    2.1624   150  -3.45041  0.0007
-\end{verbatim}
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $4982.81^{***}$ \\
+			& $(672.06)$      \\
+			cardiovasc\_death\_rate   & $-9.25^{***}$   \\
+			& $(2.32)$        \\
+			\hline
+			AIC                       & $729657.48$     \\
+			BIC                       & $729691.61$     \\
+			Log Likelihood            & $-364824.74$    \\
+			Num. obs.                 & $37529$         \\
+			Num. groups: location     & $152$           \\
+			Var: location (Intercept) & $12094158.57$   \\
+			Var: Residual             & $15929749.88$   \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 7}
+		\label{table:model7}
+	\end{center}
+\end{table}
 
 Czynnik losowy zachowuje się podobnie jak we wszystkich poprzednich modelach. Oba czynniki stałe są istotne. Co ciekawe, odsetek śmierci spowodowanych chorobami serca wpływa ograniczająco na liczbę zachorowań. Może to być związane z tym, że osoby chore na serce bardziej uważają, aby się nie zarazić, tym samym zmniejszają liczbę zachorowań w danym kraju.
 
@@ -758,18 +914,31 @@ data= covid)
 Model ten jest analogiczny do poprzedniego, z tym że zamiast chorób sercowych mamy tu odsetek chorych na cukrzycę.
 
 Otrzymujemy nastepujący wynik:
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-        (Intercept) Residual
-StdDev:    3173.523 2993.161
-
-Fixed effects: total_cases_per_million ~ time + diabetes_prevalence 
-                        Value Std.Error    DF   t-value p-value
-(Intercept)         -3320.595  566.8844 35550  -5.85762       0
-time                   28.984    0.2310 35550 125.48575       0
-diabetes_prevalence   300.581   69.1237   150   4.34845       0
-\end{verbatim}
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $93.18$        \\
+			& $(612.83)$     \\
+			diabetes\_prevalence      & $337.40^{***}$ \\
+			& $(74.81)$      \\
+			\hline
+			AIC                       & $729646.52$    \\
+			BIC                       & $729680.65$    \\
+			Log Likelihood            & $-364819.26$   \\
+			Num. obs.                 & $37529$        \\
+			Num. groups: location     & $152$          \\
+			Var: location (Intercept) & $11775109.20$  \\
+			Var: Residual             & $15929749.48$  \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 8}
+		\label{table:model8}
+	\end{center}
+\end{table}
 
 Czynnik losowy ma taką samą istotność jak poprzednio, czas także. Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
 \subsection{Model 9}
@@ -786,20 +955,34 @@ data= covid_ep)
 \end{verbatim}
 
 Model ten ma następujące podsumowanie:
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-         (Intercept) Residual
-StdDev:    2418.049 2562.526
 
-Fixed effects: total_cases_per_million ~ time + extreme_poverty 
-                     Value Std.Error    DF   t-value p-value
-(Intercept)     -479.1335 282.20423 25650  -1.69783  0.0896
-time              26.5944   0.23335 25650 113.96617  0.0000
-extreme_poverty  -42.5325  10.97942   108  -3.87384  0.0002
-\end{verbatim}
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $3074.37^{***}$ \\
+			& $(306.39)$      \\
+			extreme\_poverty          & $-55.02^{***}$  \\
+			& $(11.98)$       \\
+			\hline
+			AIC                       & $520055.39$     \\
+			BIC                       & $520088.22$     \\
+			Log Likelihood            & $-260023.70$    \\
+			Num. obs.                 & $27083$         \\
+			Num. groups: location     & $110$           \\
+			Var: location (Intercept) & $6944468.09$    \\
+			Var: Residual             & $12546263.85$   \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 9}
+		\label{table:model9}
+	\end{center}
+\end{table}
 
-Czynnik losowy jest odpowiedzialny za niecałą połowę zmienności. Oba czynniki stałe są istotne. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym wyższa liczba zachorowań (miejmy nadzieję, że nasz rząd tego nie usłyszy).
+Czynnik losowy jest odpowiedzialny za niecałą połowę zmienności resztowej. Oba czynniki stałe są istotne. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym wyższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów.
 
 \subsection{Model 10}
 
@@ -816,20 +999,33 @@ data= covid_gdp)
 \end{verbatim}
 
 Wyniki są następujące:
-\begin{verbatim}
-Random effects:
-Formula: ~1 | location
-        (Intercept) Residual
-StdDev:    2838.031 3005.475
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $546.41$      \\
+			& $(338.86)$    \\
+			gdp\_per\_capita          & $0.11^{***}$  \\
+			& $(0.01)$      \\
+			\hline
+			AIC                       & $720911.67$   \\
+			BIC                       & $720945.75$   \\
+			Log Likelihood            & $-360451.83$  \\
+			Num. obs.                 & $37057$       \\
+			Num. groups: location     & $150$         \\
+			Var: location (Intercept) & $8906070.23$  \\
+			Var: Residual             & $16132368.91$ \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 10}
+		\label{table:model10}
+	\end{center}
+\end{table}
 
-Fixed effects: total_cases_per_million ~ time + gdp_per_capita 
-                    Value Std.Error    DF   t-value p-value
-(Intercept)    -2892.4035  322.9109 35104  -8.95728       0
-time              29.2840    0.2332 35104 125.55885       0
-gdp_per_capita     0.0963    0.0122   148   7.87627       0
-\end{verbatim}
-
-Efekt losowy odpowiada za niecałą połowę zmienności modelu. Efekty stałe są istotne statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań.
+Efekt losowy odpowiada za niecałą połowę zmienności resztowej modelu. Efekty stałe są istotne statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań.
 \chapter*{Podsumowanie i~wnioski}
 
 
@@ -856,16 +1052,16 @@ Efekt losowy odpowiada za niecałą połowę zmienności modelu. Efekty stałe s
 	\begin{tabular}{|c|c|}
 		\hline 
 		Nr modelu&   AIC \\ \hline
-		1 &  1013843.9 \\ \hline
-		2 &  335245.8 \\ \hline
-		3 &   673611.1 \\ \hline
-		4 &   673718.5 \\ \hline
-		5 &   636599.2 \\ \hline
-		6 &   665261.9 \\ \hline
-		7 &   673706.2 \\ \hline
-		8 &   673692.9 \\ \hline
-		9 &   478066.0 \\ \hline
-		10&   665511.1 \\ \hline
+		1 &  715298.0  \\ \hline
+		2 &  363631.1  \\ \hline
+		3 &   729555.2  \\ \hline
+		4 &   729672.9  \\ \hline
+		5 &   687061.3  \\ \hline
+		6 &   720399.0  \\ \hline
+		7 &   729657.5  \\ \hline
+		8 &   729646.5 \\ \hline
+		9 &   520055.4 \\ \hline
+		10&   720911.7 \\ \hline
 	\end{tabular}
 \caption{Porównanie indeksów Akaike dla poszczególnych modeli}
 \label{tab:akaike}
