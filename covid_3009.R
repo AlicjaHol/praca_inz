@@ -44,11 +44,24 @@ library(lmerTest)
 library(stargazer)
 library(texreg)
 library(gghighlight)
+library(kableExtra)
+
 
 covid %>% 
   group_by(location) %>% 
   summarize(m=mean(total_cases_per_million)) %>% 
   arrange(-m)
+
+
+distinct(covid, location, population_density, life_expectancy, human_development_index,
+         cardiovasc_death_rate) %>% 
+  kable( "latex") %>% 
+  kable_styling(full_width = TRUE)
+
+distinct(covid, location, diabetes_prevalence, extreme_poverty,
+         gdp_per_capita) %>% 
+  kable( "latex") %>% 
+  kable_styling(full_width = TRUE)
 
 lmeControl(maxIter=1000, msMaxIter = 1000, niterEM = 1000)
 #mod <- lme(total_cases_per_million~time, 
@@ -133,17 +146,45 @@ mod2 <- lmer(total_cases_per_million~+age+(1|location),
             data=covid)
 summary(mod2)
 texreg(mod2)
+fit <- predict(mod2)
+cbind(covid, fit) %>% 
+  ggplot(aes(time, fit, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil'), label_key=location)
+
+#mod2_slope <- lmer(total_cases_per_million~+age+(age|location),
+#                   data=covid)
+#fit_slope <- predict(mod2_slope)
+#cbind(covid, fit_slope) %>% 
+#  ggplot(aes(time, fit_slope, col=location))+
+#  geom_line()+
+#  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+#                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+#                              'Qatar', 'Bahrain','Brazil'), label_key=location)
+
+
+
 covid %>% 
   ggplot(aes(time, total_cases_per_million, group=location, colour=age))+
-  geom_line()+
-  scale_colour_brewer('Set1')
-  
+  geom_line()
 
+library(ggpubr)  
+covid %>% 
+  ggboxplot('age', 'total_cases_per_million',
+            fill='age', 
+            ggtheme = theme_gray())
 
 mod3 <- lmer(total_cases_per_million~population_density+(1|location),
             data = covid)
 summary(mod3)
 texreg(mod3)
+
+
+covid %>% 
+  ggplot(aes(time, total_cases_per_million, group=location, colour=population_density))+
+  geom_line()
 
 covid_si <- drop_na(covid, stringency_index)
 mod4 <- lmer(total_cases_per_million~stringency_index+(1|location),
@@ -181,7 +222,8 @@ summary(mod9)
 texreg(mod9)
 
 
-akaike <- rbind(cbind('mod', AIC(mod)),
+akaike <- rbind(cbind('mod_lme', AIC(mod_lme)),
+                cbind('mod_lme_slope', AIC(mod_lme_slope)),
       cbind('mod1', AIC(mod1)),
       cbind('mod2', AIC(mod2)),
       cbind('mod3', AIC(mod3)),

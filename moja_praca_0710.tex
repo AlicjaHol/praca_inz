@@ -75,7 +75,7 @@
 \usepackage{url}
 \usepackage{longtable}
 \usepackage{array,hhline}
-
+\usepackage{tabu}
 
 
 %%%%%%%% hyperref po to by przeglądarka pedeef ukazywala na odwołania
@@ -431,6 +431,14 @@ $$\hat{\beta_1}=\frac{Cov(x,y)}{Var(x)},$$
 $$\hat{\beta_0}=\overline{y}-\overline{x}\hat{\beta_1}.$$
 
 Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zmienna $y$ zmieni się o $\beta_1$.
+
+Zmienną $y$ nazywamy zmienną zależną, a $x$ - niezależną.
+
+Jeżeli w modelu występuje więcej niż jedna zmienna niezależna, to mówimy o regresji wielorakiej (lub wielokrotnej). Wówczas model ma postać:
+
+$$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k + \varepsilon,$$
+lub w zapisie macierzowym
+$$\yy=\mathbf{X}\beta+\varepsilon$$
 \subsection{Metody estymacji parametrów modelu liniowego}
 \begin{enumerate}
 	\item Metoda najmniejszych kwadratów, OLS (ang. \emph{Ordinary Least Squares}) - w metodzie tej minimalizujemy błąd kwadratowy, czyli sumę kwadratów reszt, którą oznaczamy RSS (ang. \emph{Residual Sum of Squares}).
@@ -439,7 +447,7 @@ Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zm
 	
 	Twierdzenie Gaussa-Markowa: taki estymator jest BLUE (Best Linear Unbiased Estimator), przy odpowiednich założeniach.
 	
-	\item Metoda największej wiarogodności, ML (ang.\emph{Maximum Likelihood}) polega na maksymalizacji wartości funkcji prawdopodobieństwa ze względu na $\beta$ (w praktyce maksymalizujemy zwykle logarytm z tej funkcji)
+	\item Metoda największej wiarogodności, ML (ang.\texttt{Maximum Likelihood}) polega na maksymalizacji wartości funkcji prawdopodobieństwa ze względu na $\beta$ (w praktyce maksymalizujemy zwykle logarytm z tej funkcji)
 	
 	$$\hat{\sigma}^{2}_{ML}=RSS/n$$
 	
@@ -447,7 +455,7 @@ Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zm
 	
 	Estymatory uzyskane tą metodą są asymptotycznie nieobciążone.
 	
-	\item Resztowa metoda największej wiarogodności, REML (ang. \emph{Residual/Restricted Maximum Likelihood Method}) - z estymacji parametru $\sigma^2$ usuwamy wpływ parametrów zakłócających $\beta$.
+	\item Resztowa metoda największej wiarogodności, REML (ang. \texttt{Residual/Restricted Maximum Likelihood Method}) - z estymacji parametru $\sigma^2$ usuwamy wpływ parametrów zakłócających $\beta$.
 	
 	$$\hat{\sigma}^2_{REML}=RSS/(n-p)$$
 	
@@ -456,7 +464,24 @@ Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zm
 
 \subsection{Badanie istotności parametrów}
 
+Aby zbadać istotność współczynników modelu liniowego, weryfikujemy hipotezę postaci
+
 $$H_0: \beta_i = 0$$
+
+przeciw hipotezie alternatywnej $$H_1: \beta_i \neq 0.																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													$$
+
+Do zweryfikowania tej hipotezy wykorzystujemy test Walda.
+Statystyka testowa ma postać $$T=\hat{\beta_i}/se(\hat{\beta_i})$$
+i jest nazywana statystyką t (ang. \texttt{t-value}).
+
+Przy założeniu prawdziwości $H_0$ statystyka ta ma rozkład t-Studenta o $n-k-1$ stopniach swobody ($n$ - liczba obserwacji, $k$ - liczba parametrów w modelu).
+
+Można także użyć testu F (testu globalnego), aby zweryfikować hipotezę
+
+$$H_0: \beta_1=\beta_2=\ldots=\beta_k=0$$
+
+przeciwko hipotezie alternatywnej
+$$H_1: \exists{j} \beta_j \neq 0 $$
 
 \section{Modele mieszane} 
 W powyżej opisanych modelach liniowych z efektami stałymi zakładamy niezależność kolejnych pomiarów, dlatego nie są to odpowiednie modele, kiedy mamy np. kilka pomiarów dla pojedynczego elementu. W takim przypadku możemy użyć modeli liniowych z efektami mieszanymi (stałymi i losowymi), które krótko nazywamy modelami mieszanymi.
@@ -477,19 +502,31 @@ Znając $D$, możemy estymować parametry $\beta$ uogólnioną metodą najmniejs
 
 Do oceny wartości parametrów modelu mieszanego można stosować metody ML (Największej Wiarogodności) oraz REML (Resztowej Największej Wiarogodności), wspomniane w tej pracy przy okazji modeli liniowych. W przypadku modeli mieszanych obydwoma metodami możemy uzyskać estymatory obciążone, ale to obciążenie jest zazwyczaj mniejsze w przypadku estymatorów uzyskanych metodą REML.
 
-Różnica między metodą REML i ML polega na tym, że w metodzie REML najpierw usuwamy wpływ efektów stałych.
+Różnica między metodą REML i ML polega na tym, że w metodzie REML najpierw usuwamy wpływ efektów stałych, które w modelach mieszanych są czynnikami zakłócającymi.
 
-\subsection{Badanie istotności parametrów}
+\subsection{Badanie istotności parametrów i wybór najlepszego modelu}
+
+W modelach mieszanych konieczne jest zbadanie istotności dla efektów stałych oraz dla efektów losowych.
+
+Dla efektów stałych testujemy hipotezę
+
+$$H_0: \beta_i=0$$
+
+przeciwko hipotezie alternatywnej $$H_1: \beta_i \neq 0,$$
+
+a dla komponentów wariancyjnych weryfikujemy hipotezę
 
 $$H_0: \sigma^2_j=0$$
 
+przy jednostronnej hipotezie alternatywnej 
+$$H_1: \sigma^2_j>0.$$
 
-\subsection{Wybór najlepszego modelu}
+
 
 Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie zawsze dają się zastosować w przypadku modeli mieszanych. Wymienimy teraz kilka metod doboru najlepszego modelu i opiszemy, które z nich są najskuteczniejsze \cite{faraway}.
 
 \begin{enumerate}
-	\item Wskaźnik wiarygodności(ang. \texttt{likelihood ratio}) - tworzymy dwa modele, model 0, który nie zawiera elementów, których istotność chcemy zbadać, i model 1, który zawiera te elementy. Pozostałe zmienne muszą być takie same w obu modelach.
+	\item Iloraz wiarygodności(ang. \texttt{likelihood ratio}) - tworzymy dwa modele, model 0, który nie zawiera elementów, których istotność chcemy zbadać, i model 1, który zawiera te elementy. Pozostałe zmienne muszą być takie same w obu modelach.
 	
 	Statystyka testowa wygląda następująco:
 	$$2(l(\hat{\beta_1}, \hat{\sigma_1}, \hat{D_1}|y)-l(\hat{\beta_0}, \hat{\sigma_0}, \hat{D_0}|y)),$$
@@ -501,9 +538,9 @@ Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie 
 	
 	Na ogół ta metoda daje dobre rezultaty dla mniej skomplikowanych modeli, gdy układ jest zbalansowany (wszystkie grupy są równoliczne). Dla modeli bardziej skomplikowanych, lub kiedy brak równoliczności, wartości p oraz statystyki t mogą być błędne.
 	
-	\item Użycie metod \textit{bootstrapowych}, aby znaleźć dokładniejsze wartości p-value. Należy wygenerować dane z modelu 0 (na podstawie oszacowanych parametrów) i obliczyć statystykę \textit{likelihood ratio}. Tą procedurę powtarzamy wielokrotnie i oceniamy istotność.
+	\item Test permutacyjny - można użyć metod \textit{bootstrapowych}, aby znaleźć dokładniejsze wartości p-value. Należy wygenerować dane z modelu 0 (na podstawie oszacowanych parametrów) i obliczyć statystykę \textit{likelihood ratio}. Tą procedurę powtarzamy wielokrotnie i oceniamy istotność.
 	
-	\item Kryteria informacyjne - służą do wyboru najlepszego spośród modeli. Najpopularniejszym jest Kryterium Informacyjne Akaikego (ang. \texttt{Akaike Information Criterion, AIC}). Jest ono zdefiniowane następującym wzorem:
+	\item Kryteria informacyjne - służą do wyboru najlepszego spośród modeli. Najpopularniejszym jest Kryterium Informacyjne Akaikego (ang. \texttt{Akaike Information \\Criterion, AIC}). Jest ono zdefiniowane następującym wzorem:
 	
 	$$-2(\texttt{max log likelihood})+ 2p,$$
 	
@@ -515,8 +552,46 @@ Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie 
 
 \end{enumerate}
 
+Przy obliczeniach dotyczących stosunkowo małych zbiorów danych, można użyć każdej z tych metod, ale w przypadku dużej liczby obserwacji, niektóre obliczenia mogą zająć zbyt wiele czasu. Najmniej skomplikowany obliczeniowo jest test Walda, gdzie dokonujemy tylko jednej estymacji współczynników. Przy użyciu testu ilorazu wiarygodności, należy dokonać dwóch estymacji - dla modelu z i bez testowanego efektu. Stosując testy permutacyjne, musimy dokonać obliczeń setki lub tysiące razy. Dlatego w przypadku najbardziej skomplikowanych problemów zwykle stosuje się test Walda, mimo jego gorszych właściwości statystycznych \cite{biecek}.
+
 \subsection{Interpretacja parametrów modelu mieszanego}
+W modelu mieszanym efekty stałe należy interpretować tak jak w przypadku regresji, analizy wariancji lub analizy kowariancji, w zależności od rodzaju zmiennej niezależnej. Trzeba jednak pamiętać, że oszacowane wartości współczynników reprezentują wartość średnią dla całej populacji, a dla poszczególnych obiektów badania będą się różnić o wartość oceny efektu osobniczego.
+
+Dla efektu losowego możemy oszacować jego wariancję. Informuje nas ona o tym, jak bardzo mogą się różnić współczynniki efektów stałych dla poszczególnych obiektów badania
+\cite{experimental}.
+
+Można wyróżnić dwa rodzaje efektów losowych: losowy wyraz wolny (rysunek \ref{fig:random_types}, wykres A) oraz losowy wyraz wolny i współczynnik nachylenia (rysunek \ref{fig:random_types}, wykres B). W pierwszym przypadku, prosta regresji dla poszczególnych obiektów badań może być przesunięta w górę lub w dół w stosunku do średniej, a w drugim przypadku może także być nachylona do osi OX pod mniejszym lub większym kątem.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/random_types.jpg}
+	\caption{Rodzaje modeli mieszanych}
+	\label{fig:random_types}
+	\zrodlo{\cite{brief}}
+\end{figure}
+
 \subsection{Predykcja z modelu mieszanego}
+Proces predykcji jest trudniejszy w przypadku modelu mieszanego niż dla zwykłego modelu liniowego. Musimy zdecydować, czy uwzględnić, czy wykluczyć efekt losowy z predykcji. Efekty losowe mogą mieć różny wkład w predykcję. Mogą być całkowicie pominięte, mogą być uśrednione lub mogą być na pewnym ustalonym poziomie. Uśrednienie efektów losowych powoduje predykcję zależną od wartości efektów losowych, które zostały zaobserwowane do tej pory. Pominięcie efektów losowych powoduje predykcję na poziomie średniej populacyjnej
+ \cite{prediction}.
+ 
+ Aby lepiej przybliżyć zagadnienie predykcji z modelu mieszanego, posłużymy się przykładem badania mleczości krów. Dla 10 krów (oznaczonych literami od A do J) zmierzono ilość mleka wyprodukowaną przez każdą z nich w ciągu dnia. Pomiary powtórzono pięciokrotnie \cite{biecek}.
+ 
+ Model ma postać 
+ $$y_{milk.amount}=\mu+Z_{cow}u_{cow}+\varepsilon,$$
+
+$$u_{cow} \sim \mathcal{N}(0, \sigma^2_{cow}).$$
+ 
+ Jeżeli chcielibyśmy dokonać predykcji dla nieznanej lub do tej pory niezbadanej przez nas krowy, to wynikiem byłaby ocena średniej dla całej populacji, czyli $\hat{\mu}$.
+ 
+ Aby dokonać predykcji dla konkretnej krowy spośród tych przebadanych, potrzebne nam są oceny efektów osobniczych krów.
+ 
+ Znając macierz $D$ i parametry $\beta$, predykcje efektów losowych $\widetilde{u}$ można wyznaczyć ze wzoru
+ 
+ $$\widetilde{u}=DZ^TV^{-1}(y-X\beta),$$
+ gdzie $V$ to macierz $\sigma^2(I+ZDZ^T)$ \cite{biecek}.
+ 
+ Wówczas predykcja będzie sumą $\hat{\mu}$ oraz oceny efektu losowego dla odpowiedniego osobnika.
+ 
 \chapter{Badania własne}
 \section{Zbiór danych i jego wstępne przygotowanie}
 
@@ -543,7 +618,7 @@ Do formułowania hipotez i budowania modeli będziemy się posługiwać następu
 
 
 
-
+ 
 %\begin{figure}[htbp]
 %	\centering
 %	\includegraphics{plot_all_countries.png}
@@ -554,6 +629,11 @@ Do formułowania hipotez i budowania modeli będziemy się posługiwać następu
 
 
 \section{Dyskusja wyników}
+
+We wszystkich opisanych poniżej modelach, kraj (\texttt{location}) jest efektem losowym.
+
+
+\newpage
 
 \subsection{Model 1}
 
@@ -570,31 +650,14 @@ Hipoteza 1: Czas ma istotny wpływ na liczbę zachorowań.
 
 
 Pierwszy model ma postać 
-\begin{verbatim}
-mod <- lme(total_cases_per_million~time, 
-random = ~1|location, 
-data = covid)
-\end{verbatim}
+
+$$y_{total\_cases}=\beta_0 + X_{time}\beta_{time}+Z_{location}u_{location}+\varepsilon$$
 
 a więc przedstawia zależność liczby zachorowań od czasu, a kraj jest efektem losowym.
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\linewidth]{rys/mod1_predict.png}
-	\caption{Wykres przedstawiający zależność między liczbą zachorowań a czasem oszacowaną za pomocą Modelu 1}
-	\label{fig:mod1_predict}
-	\zrodlo{Opracowanie własne}
-\end{figure}
+\newpage
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\linewidth]{rys/mod1_slope_predict.png}
-	\caption{Wykres przedstawiający zależność między liczbą zachorowań a czasem oszacowaną za pomocą modelu typu random intercept and slope}
-	\label{fig:mod1_slope_predict}
-	\zrodlo{Opracowanie własne}
-\end{figure}
 
-Dla efektu losowego otrzymujemy następujący wynik:
 
 
 \begin{table}[!htbp]
@@ -620,31 +683,60 @@ Dla efektu losowego otrzymujemy następujący wynik:
 		\end{tabular}
 		\caption{Wyniki dla modelu 1}
 		\label{table:model1}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
 
 
-Widać zatem, że efekt losowy jest odpowiedzialny za około 45\% wariancji resztowej.
+Widać, że efekt losowy jest odpowiedzialny za ponad połowę wariancji resztowej. Oznacza to, że zmienność liczby zachorowań dla danego kraju jest ponad dwukrotnie mniejsza niż zmienność liczby zachorowań dla różnych krajów.
 
 
 
-Zarówno wyraz wolny, jak i współczynnik przy zmiennej Czas, są istotne statystycznie. Dodatkowo, korelacja pomiędzy liczbą zachorowań a czasem jest dodatnia, więc wraz z upływem czasu liczba zachorowań rośnie dla przeciętnego kraju.
+Zarówno wyraz wolny, jak i współczynnik przy zmiennej \texttt{time}, są istotne statystycznie. Dodatkowo, korelacja pomiędzy liczbą zachorowań a czasem jest dodatnia, więc wraz z upływem czasu liczba zachorowań rośnie.
+
+\newpage
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod1_predict.png}
+	\caption{Wykres przedstawiający zależność między liczbą zachorowań a czasem oszacowaną za pomocą Modelu 1}
+	\label{fig:mod1_predict}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+Na rysunku \ref{fig:mod1_predict} widzimy linie dopasowane do liczby zachorowań w porzczególnych krajach. Każda prosta ma taki sam współczynnik kierunkowy, jedynie punkt przecięcia z osią OY (\texttt{Intercept}) różni się pomiędzy poszczególnymi krajami. Z tego wykresu możemy odczytać, jak różnią się średnie poziomy liczby zachorowań między krajami.
+
+\newpage
+
+Oprócz powyższego modelu, w którym tylko wyraz wolny różni się pomiędzy krajami, można rozważyć także model, gdzie współczynnik nachylenia prostej także będzie zależał od efektu losowego, czyli model postaci:
+
+$$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+Z_{0,location}u_{0,location}+$$$$+Z_{time,location}u_{time,location}+\varepsilon$$
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod1_slope_predict.png}
+	\caption{Wykres przedstawiający zależność między liczbą zachorowań a czasem oszacowaną za pomocą modelu, gdzie zarówno wyraz wolny, jak i współczynnik nachylenia prostej różnią się pomiędzy krajami}
+	\label{fig:mod1_slope_predict}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+Na rysunku \ref{fig:mod1_slope_predict} można zaobserwować, jak różnią się tendencje rozwojowe pandemii w poszczególnych krajach.
+
+\newpage
+
 \subsection{Model 2}
 
 Hipoteza 2: Liczba wykonywanych testów na COVID-19 ma związek z liczbą zachorowań.
 
 Drugi model to:
-\begin{verbatim}
-mod1 <- lme(total_cases_per_million~time+total_tests_per_thousand,
-random = ~1|location,
-data = covid_na)
-\end{verbatim}
 
-Badamy tutaj, czy czas oraz liczba wykonywanych testów mają wpływ na liczbę zachorowań, jeżeli kraj traktujemy jako czynnik losowy.
+$$y_{total\_ cases}=\beta_0 + X_{total\_tests}\beta_{total\_ tests}+Z_{location}u_{location}+\varepsilon$$
+
+Badamy tutaj, czy liczba wykonywanych testów (w przeliczeniu na 1000 mieszkańców) ma wpływ na liczbę zachorowań.
 
 Dla tego modelu otrzymujemy następujące wyniki:
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -667,10 +759,13 @@ Dla tego modelu otrzymujemy następujące wyniki:
 		\end{tabular}
 		\caption{Wyniki dla modelu 2}
 		\label{table:model2}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
-Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmienności resztowej modelu. Po drugie, widać, że oba efekty stałe są istotne statystycznie, i oba mają wpływ stymulujący na liczbę zachorowań.
+Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmienności resztowej modelu. Po drugie, widać, że efekt stały liczby wykonywanych testów jest istotny statystycznie, i ma wpływ stymulujący na liczbę zachorowań.
+
+\newpage
 
 \subsection{Model 3}
 
@@ -679,18 +774,13 @@ Hipoteza 3: kraje o różnej oczekiwanej długości życia różnią się liczb�
 
 Trzeci model wygląda następująco:
 
-\begin{verbatim}
-mod2 <- lme(total_cases_per_million~time+age,
-random=~1|location,
-data=covid)
+$$y_{total\_cases}=\beta_0+X_{age}\beta_{age}+Z_{location}u_{location}+\varepsilon$$
 
-\end{verbatim}
-
-Prezentuje on zależność liczby zachorowań od czasu i od oczekiwanej długości życia w danym kraju. Występuje także efekt losowy kraju.
+Prezentuje on zależność liczby zachorowań od oczekiwanej długości życia w danym kraju.
 
 Dla modelu trzeciego otrzymujemy następujące wyniki:
 
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -723,25 +813,26 @@ Dla modelu trzeciego otrzymujemy następujące wyniki:
 		\end{tabular}
 		\caption{Wyniki dla modelu 3}
 		\label{table:model3}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
-Ponownie efekt losowy odpowiada za większą część wariancji resztowej. Czas ponownie jest istotny i ma wpływ stymulujący. Dla grupy wiekowej 75-79 różnica w średniej liczbie zachorowań jest na granicy istotności statystycznej. Dopiero dla krajów o oczekiwanej długości życia powyżej 80 lat pojawia się istotna różnica - liczba zachorowań w tych krajach jest największa. W pozostałych grupach wiekowych nie można mówić o istotnych różnicach. 
+Ponownie efekt losowy odpowiada za mniej niż połowę wariancji resztowej. Dla grupy wiekowej 75-79 różnica w średniej liczbie zachorowań jest na granicy istotności statystycznej. Dopiero dla krajów o oczekiwanej długości życia powyżej 80 lat pojawia się istotna różnica - liczba zachorowań w tych krajach jest największa. W pozostałych grupach wiekowych nie można mówić o istotnych różnicach. 
+
+\newpage
+
 \subsection{Model 4}
 
 Hipoteza 4: Kraje o różnej gęstości zaludnienia różnią się liczbą zachorowań.
 
-W czwartym modelu badamy zależnośc liczby zachorowań od czasu i gęstości zaludnienia, a kraj jest czynnikiem losowym.
+W czwartym modelu badamy zależnośc liczby zachorowań od gęstości zaludnienia:
 
-\begin{verbatim}
-mod3 <- lme(total_cases_per_million~time+population_density,
-random=~1|location,
-data = covid)
-\end{verbatim}
+$$y_{total\_cases}=\beta_0+X_{population\_density}\beta_{population\_density}+Z_{location}u_{location}+\varepsilon$$
+
 
 Wyniki są następujące:
 
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -764,10 +855,13 @@ Wyniki są następujące:
 		\end{tabular}
 		\caption{Wyniki dla modelu 4}
 		\label{table:model4}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
 Zatem gęstośc zaludnienia nie jest czynnikiem istotnie różnicującym liczbę zachorowań w krajach.
+
+\newpage
 
 \subsection{Model 5}
 
@@ -776,18 +870,13 @@ Hipoteza 5: Kraje różniące się siłą obostrzeń mają istotne różnice w l
 
 Piaty model ma następującą postać:
 
-\begin{verbatim}
-covid_si <- drop_na(covid, stringency_index)
-mod4 <- lme(total_cases_per_million~time+stringency_index,
-random=~1|location,
-data = covid_si)
-\end{verbatim}
+$$y_{total\_cases}=\beta_0+X_{stringency\_index}\beta_{stringency\_index}+Z_{location}u_{location}+\varepsilon$$
 
-W tym modelu sprawdzamy zależność liczby zachorowań od czasu i siły obostrzeń, kraj jest czynnikiem losowym.
+W tym modelu sprawdzamy zależność liczby zachorowań od siły obostrzeń.
 
 Otrzymujemy następujące wyniki:
 
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -810,26 +899,24 @@ Otrzymujemy następujące wyniki:
 		\end{tabular}
 		\caption{Wyniki dla modelu 5}
 		\label{table:model5}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
-Tak jak w poprzednich modelach, czynnik losowy odpowiada za największą część zmienności resztowej. Czas jest istotny statystycznie. Wskaźnik siły obostrzeń także jest istotny i ma wpływ stymulujący, co oznaczałoby, że im silniejsze obostrzenia, tym więcej zachorowań. Ta interpretacja prawdopodobnie jest niepoprawna, można się domyślać, że raczej zachodzi odwrotna zależność - w krajach z największą liczbą zachorowań są wprowadzane najsurowsze obostrzenia.
+Tak jak w poprzednim modelu, czynnik losowy odpowiada za niecałą część zmienności resztowej. Wskaźnik siły obostrzeń także jest istotny statystycznie i ma wpływ ograniczający, co oznacza, że im silniejsze obostrzenia, tym mniejsza liczba zachorowań w danym kraju.
+
+\newpage
 
 \subsection{Model 6}
 
 Hipoteza 6: Kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań.
 
-Szósty model przedstawia zależność liczby zachorowań od czasu i wskaźnika rozwoju społecznego, a kraj jest czynnikiem losowym.
+Szósty model przedstawia zależność liczby zachorowań od wskaźnika rozwoju społecznego:
 
-\begin{verbatim}
-covid_hdi <- drop_na(covid, human_development_index)
-mod5 <- lme(total_cases_per_million~time+human_development_index,
-random=~1|location,
-covid_hdi)
-\end{verbatim}
+$$y_{total\_cases}=\beta_0+X_{HDI}\beta_{HDI}+Z_{location}u_{location}+\varepsilon$$
 
 Z tego modelu mamy następujący wynik:
 
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -852,10 +939,13 @@ Z tego modelu mamy następujący wynik:
 		\end{tabular}
 		\caption{Wyniki dla modelu 6}
 		\label{table:model6}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
- Efekty stałe są istotne i oba mają wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
+ Efekt stały jest istotny i ma wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
+
+\newpage
 
 \subsection{Model 7}
 
@@ -863,17 +953,13 @@ Hipoteza 7: Kraje o różnej wysokości odsetka śmierci z powodu chorób sercow
 
 Model siódmy wygląda następująco:
 
-\begin{verbatim}
-mod6 <- lme(total_cases_per_million~time+cardiovasc_death_rate,
-random=~1|location,
-data= covid)
-\end{verbatim}
+$$y_{total\_cases}=\beta_0+X_{cardiovasc\_death\_rate}\beta_{cardiovasc\_death\_rate}+$$$$+Z_{location}u_{location}+\varepsilon$$
 
-i oprócz zależności liczby zachorowań od czasu zawiera także zależność od odsetka śmierci spowodowanych chorobami sercowymi. Kraj jest traktowany jako efekt losowy.
+i zawiera zależność od odsetka śmierci spowodowanych chorobami sercowymi w danym kraju. 
 
 Otrzymujemy następujące podsumowanie:
 
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -896,25 +982,24 @@ Otrzymujemy następujące podsumowanie:
 		\end{tabular}
 		\caption{Wyniki dla modelu 7}
 		\label{table:model7}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
-Czynnik losowy zachowuje się podobnie jak we wszystkich poprzednich modelach. Oba czynniki stałe są istotne. Co ciekawe, odsetek śmierci spowodowanych chorobami serca wpływa ograniczająco na liczbę zachorowań. Może to być związane z tym, że osoby chore na serce bardziej uważają, aby się nie zarazić, tym samym zmniejszają liczbę zachorowań w danym kraju.
+Czynnik losowy zachowuje się podobnie jak we wszystkich poprzednich modelach. Efekt stały jest istotny statystycznie. Co ciekawe, odsetek śmierci spowodowanych chorobami serca wpływa ograniczająco na liczbę zachorowań. Może to być związane z tym, że osoby chore na serce bardziej uważają, aby się nie zarazić, tym samym zmniejszają liczbę zachorowań w danym kraju.
+
+\newpage
 
 \subsection{Model 8}
 
 Hipoteza 8: Kraje o różnej wysokości odsetka osób chorych na cukrzycę różnią się liczbą zachorowań.
 
-\begin{verbatim}
-mod7 <- lme(total_cases_per_million~time+diabetes_prevalence,
-random=~1|location,
-data= covid)
-\end{verbatim}
+$$y_{total\_cases}=\beta_0+X_{diabetes\_prevalence}\beta_{diabetes\_prevalence}+Z_{location}u_{location}+\varepsilon$$
 
 Model ten jest analogiczny do poprzedniego, z tym że zamiast chorób sercowych mamy tu odsetek chorych na cukrzycę.
 
 Otrzymujemy nastepujący wynik:
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -937,26 +1022,25 @@ Otrzymujemy nastepujący wynik:
 		\end{tabular}
 		\caption{Wyniki dla modelu 8}
 		\label{table:model8}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
-Czynnik losowy ma taką samą istotność jak poprzednio, czas także. Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
+Czynnik losowy ma taką samą istotność jak poprzednio. Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
+
+\newpage
+
 \subsection{Model 9}
 
 Hipoteza 9: Kraje o różnej wysokości odsetka osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
 
-W tym modelu sprawdzamy zależność liczby zachorowań od czasu i odsetka osób żyjących w skrajnym ubóstwie. Kraj jest czynnikiem losowym.
+W tym modelu sprawdzamy zależność liczby zachorowań od odsetka osób żyjących w skrajnym ubóstwie:
 
-\begin{verbatim}
-covid_ep <- drop_na(covid, extreme_poverty)
-mod8 <- lme(total_cases_per_million~time+extreme_poverty,
-random=~1|location,
-data= covid_ep)
-\end{verbatim}
+$$y_{total\_cases}=\beta_0+X_{extreme\_poverty}\beta_{extreme\_poverty}+Z_{location}u_{location}+\varepsilon$$
 
 Model ten ma następujące podsumowanie:
 
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -979,27 +1063,25 @@ Model ten ma następujące podsumowanie:
 		\end{tabular}
 		\caption{Wyniki dla modelu 9}
 		\label{table:model9}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
-Czynnik losowy jest odpowiedzialny za niecałą połowę zmienności resztowej. Oba czynniki stałe są istotne. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym wyższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów.
+ Czynnik stały jest istotny statystycznie. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów.
+
+\newpage
 
 \subsection{Model 10}
 
 Hipoteza 10: Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
 
 
-W modelu dziesiątym pojawia się zależność liczby zachorowań od czasu i PKB. Kraj jest efektem losowym.
+W modelu dziesiątym pojawia się zależność liczby zachorowań od PKB na osobę:
 
-\begin{verbatim}
-covid_gdp <- drop_na(covid, gdp_per_capita)
-mod9 <- lme(total_cases_per_million~time+gdp_per_capita,
-random=~1|location,
-data= covid_gdp)
-\end{verbatim}
+$$y_{total\_cases}=\beta_0+X_{GDP}\beta_{GDP}+Z_{location}u_{location}+\varepsilon$$
 
 Wyniki są następujące:
-\begin{table}
+\begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -1022,12 +1104,15 @@ Wyniki są następujące:
 		\end{tabular}
 		\caption{Wyniki dla modelu 10}
 		\label{table:model10}
+		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
 
-Efekt losowy odpowiada za niecałą połowę zmienności resztowej modelu. Efekty stałe są istotne statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań.
+Efekt stały jest istotny statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań. 
+
 \chapter*{Podsumowanie i~wnioski}
 
+W tabeli \ref{tab:istotnosc} znajduje się podsumowanie istotności poszczególnych czynników, których wpływ na liczbę zachorowań był badany w tej pracy.
 
 
 \begin{longtable}{| p{.30\textwidth} | p{.60\textwidth} |}
@@ -1037,45 +1122,52 @@ Efekt losowy odpowiada za niecałą połowę zmienności resztowej modelu. Efekt
 	Liczba wykonywanych testów na COVID-19 & istotny, wraz ze wzrostem liczby testów rośnie liczba zachorowań \\ \hline
 	Oczekiwana długość życia & istotny, o ile ta wartość przekracza 80 lat, wówczas zachorowań jest więcej niż dla krajów o krótszej oczekiwanej długości życia \\ \hline 
 	Gęstość zaludnienia & nieistotny \\ \hline
-	Wskaźnik siły obostrzeń & istotny, jest wysoki w krajach o dużej liczbie zachorowań \\ \hline
+	Wskaźnik siły obostrzeń & istotny, im wyższy, tym mniej zachorowań \\ \hline
 	Wskaźnik rozwoju społecznego & istotny, w krajach o wysokim wskaźniku rozwoju jest więcej zachorowań \\ \hline
 	Śmiertelność z powodu chorób sercowych & istotny, im wyższy jest ten współczynnik, tym mniej zachorowań na COVID-19 \\ \hline
 	Powszechność występowania cukrzycy & istotny, im wyższy jest ten współczynnik, tym więcej zachorowań na COVID-19 \\ \hline
 	Część populacji żyjąca w skrajnym ubóstwie & istotny, im większa jest część mieszkańców żyjąca w biedzie, tym mniej zachorowań \\ \hline
 	PKB na osobę & istotny, im wyższe PKB, tym więcej zachorowań \\ \hline
 	\caption{Porównanie istotności i wpływu różnych czynników na liczbę zachorowań w przeciętnym kraju}
+	
 	\label{tab:istotnosc}
+	
 	\end{longtable}
+\begin{center}\zrodlo{Opracowanie własne}
+	\end{center}
+\newpage
 
 \begin{table}
 	\centering
 	\begin{tabular}{|c|c|}
 		\hline 
 		Nr modelu&   AIC \\ \hline
-		1 &  715298.0  \\ \hline
-		2 &  363631.1  \\ \hline
-		3 &   729555.2  \\ \hline
-		4 &   729672.9  \\ \hline
-		5 &   687061.3  \\ \hline
-		6 &   720399.0  \\ \hline
-		7 &   729657.5  \\ \hline
-		8 &   729646.5 \\ \hline
-		9 &   520055.4 \\ \hline
-		10&   720911.7 \\ \hline
+		1.1 &  715285\\ \hline
+		1.2&  655232 \\ \hline
+		2 &  363631  \\ \hline
+		3 &   729555  \\ \hline
+		4 &   729672  \\ \hline
+		5 &   687061  \\ \hline
+		6 &   720399  \\ \hline
+		7 &   729657  \\ \hline
+		8 &   729646 \\ \hline
+		9 &   520055 \\ \hline
+		10&   720911 \\ \hline
 	\end{tabular}
 \caption{Porównanie indeksów Akaike dla poszczególnych modeli}
 \label{tab:akaike}
+\zrodlo{Opracowanie własne}
 \end{table}
 
 Indeks Akaike jest miarą utraconej informacji. Im mniejszy jest indeks Akaike, tym lepiej model wyjaśnia badane zjawisko. Widzimy z tabeli \ref{tab:akaike}, że najmniejsze AIC występuje dla modelu nr 2. Jest to model, gdzie występuje zależność między liczbą zachorowań a liczbą wykonywanych testów. Ta zależność jest bardzo oczywista, ponieważ liczbę zachorowań zlicza się na podstawie tego, ile testów dało wynik pozytywny. Modelem z drugim najniższym AIC jest model nr 9, gdzie badamy istotność wskaźnika części populacji żyjącej w skrajnym ubóstwie.
 
 
 
-Wszystkie modele jednoznacznie pokazują, że efekt kraju jako czynnika zakłócającego jest bardzo istotny, w wielu przypadkach bardziej niż jakikolwiek inny czynnik stały (np. czas).
+Wszystkie modele jednoznacznie pokazują, że efekt kraju jako czynnika zakłócającego jest bardzo istotny, w wielu przypadkach wyjaśnia ponad połowę wariancji resztowej modelu, więc zmienność liczby zachorowań pomiędzy różnymi krajami jest około dwukrotnie większa niż zmienność liczby zachorowań w pojedynczym kraju.
 
 Na to, co jest nazywane w tej pracy ,,efektem kraju'', składa się tak naprawdę wiele innych czynników, m. in. gęstość zaludnienia, sytuacja ekonomiczna danego kraju, odsetek osób z chorobami towarzyszącymi, rozkład wieku, jak również przyjęta strategia walki z koronawirusem, na którą z kolei składają się m. in. liczba wykonywanych testów, przepisy w sprawie zamykania szkół, miejsc publicznych, ograniczenie kontaktów międzyludzkich, i wiele innych.
 
-W mojej pracy nie zajmowałam się badaniem, w jaki sposób te czynniki wpływają na wzrost lub spadek liczby zachorowań, chcę jedynie zasygnalizować, że mogą być istotne, skoro wykazany został wpływ efektu kraju na liczbę zachorowań.
+
 
 \begin{thebibliography}{99}
 
@@ -1087,6 +1179,12 @@ W mojej pracy nie zajmowałam się badaniem, w jaki sposób te czynniki wpływaj
 \bibitem{stringency} \url{https://www.bsg.ox.ac.uk/research/research-projects/coronavirus-government-response-tracker} (dostęp 31.10.2020)
 
 \bibitem{dollars} \url{https://ourworldindata.org/what-are-ppps} (dostęp 31.10.2020)
+
+\bibitem{prediction} Welham, Sue \& Cullis, Brian \& Gogel, Beverley \& Gilmour, A.R. \& Thompson, Robin. \emph{Prediction in linear mixed models.} Australian \& New Zealand Journal of Statistics. vol. 46.  (2004). p.  325 - 347. 10.1111/j.1467-842X.2004.00334.x. 
+
+\bibitem{experimental} Howard J. Seltman, \emph{Experimental Design and Analysis}, \url{http://www.stat.cmu.edu/~hseltman/309/Book/}
+
+\bibitem{brief} \url{https://peerj.com/articles/4794/} (dostęp: 11.11.2020)
 
 \end{thebibliography}
 
