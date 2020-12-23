@@ -1,0 +1,280 @@
+---
+title: "praca inżynierska - R"
+author: "Alicja Hołowiecka"
+date: "23 12 2020"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+```
+
+# Ładowanie potrzebnych bibliotek
+
+```{r biblioteki}
+library(tidyverse)
+library(lattice)
+library(lme4)
+library(lmerTest)
+library(texreg)
+library(gghighlight)
+library(kableExtra)
+library(lmtest)
+library(alr3)
+```
+
+# Wczytanie i oczyszczenie danych
+
+```{r dane}
+covid <- read.csv(url("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"),
+                  sep = ",", header = T)
+covid <- covid[as.Date(covid$date)<"2020-12-01",]
+covid <- covid[!covid$location %in% c("International", "World", "Kosovo", 
+                                      "South Sudan", "Syria", "Taiwan"),]
+covid <- covid[covid$population>1000000,]
+covid <- drop_na(covid, total_cases_per_million)
+covid <- covid[covid$total_cases_per_million!=0,]
+covid$time <- with(covid, ave(rep(1, nrow(covid)), 
+                              location, FUN = seq_along))
+```
+
+```{r kraje}
+kraje <- covid %>% 
+  distinct(location) %>% 
+  as.data.frame()
+```
+
+```{r miesiace}
+covid_miesiace <- covid[covid$time %in% c(30,90,180,270,360),]
+```
+
+# Przebieg epidemii w poszczególnych krajach
+
+```{r rysunki-lattice}
+xyplot(total_cases_per_million~time|location,
+       data = covid[covid$location %in% kraje[1:50,],])
+
+xyplot(total_cases_per_million~time|location,
+       data = covid[covid$location %in% kraje[51:100,],])
+
+xyplot(total_cases_per_million~time|location,
+       data = covid[covid$location %in% kraje[101:nrow(kraje) ,],])
+```
+
+Kraje posortowane wg średniej liczby zachorowań malejąco.
+
+```{r srednie-zachorowania, results='asis'}
+covid %>% 
+  group_by(location) %>% 
+  summarize(m=mean(total_cases_per_million)) %>% 
+  arrange(-m)%>% 
+  kable( "latex")
+
+```
+
+Ewentualnie średnie innych badanych zmiennych
+
+```{r srednie-zmiennych}
+distinct(covid, location, population_density, life_expectancy, human_development_index,
+         cardiovasc_death_rate) %>% 
+  kable( "latex") %>% 
+  kable_styling(full_width = TRUE)
+
+distinct(covid, location, diabetes_prevalence, extreme_poverty,
+         gdp_per_capita) %>% 
+  kable( "latex") %>% 
+  kable_styling(full_width = TRUE)
+```
+
+# Model 1 - zależność liczby zachorowań od czasu
+
+```{r zachorowania-a-czas}
+covid %>% 
+  ggplot(aes(time, total_cases_per_million, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+
+```
+
+
+```{r mod1-intercept}
+mod_lme <- lmer(total_cases_per_million~time+(1|location), covid)
+summary(mod_lme)
+texreg(mod_lme)
+fit <- predict(mod_lme)
+cbind(covid, fit) %>% 
+  ggplot(aes(time, fit, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+
+```
+
+```{r mod1-slope}
+mod_lme_slope <- lmer(total_cases_per_million~time+(time|location), covid)
+summary(mod_lme_slope)
+texreg(mod_lme_slope)
+fit_slope <- predict(mod_lme_slope)
+cbind(covid, fit_slope) %>% 
+  ggplot(aes(time, fit_slope, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+
+```
+
+```{r mod1-kwadratowy}
+mod_kw <- lmer(total_cases_per_million~time+I(time^2)+(time+I(time^2)|location), covid)
+summary(mod_kw)
+texreg(mod_kw)
+fit_kw <- predict(mod_kw)
+cbind(covid, fit_kw) %>% 
+  ggplot(aes(time, fit_kw, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+```
+
+# Model 2 - zależność licbzy zachorowań od liczby testów
+
+```{r mod2}
+covid_na <- drop_na(covid, total_tests_per_thousand)
+mod1 <- lmer(total_cases_per_million~total_tests_per_thousand+(1|location),
+           data = covid_na)
+summary(mod1)
+texreg(mod1)
+```
+
+
+# Model 3 - zależność liczby zachorowań od oczekiwanej długości życia
+
+```{r mod3-liniowy}
+summary(powerTransform(cbind(life_expectancy, total_cases_per_million)~1, 
+                       data = covid_miesiace))
+mod_lm2 <- lm(total_cases_per_million~life_expectancy, covid)
+inverseResponsePlot(mod_lm2)
+summary(mod_lm2)
+covid_miesiace %>% 
+  ggplot(aes(life_expectancy, total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm, formula=y~x)
+```
+
+
+# Model 4 - zależność liczby zachorowań od gęstości zaludnienia
+
+Przekształcić analogicznie do mod3
+
+```{r mod4-mieszany}
+mod3 <- lmer(total_cases_per_million~population_density+(1|location),
+            data = covid)
+summary(mod3)
+texreg(mod3)
+
+
+covid %>% 
+  ggplot(aes(time, total_cases_per_million, group=location, colour=population_density))+
+  geom_line()
+```
+
+# Model 5 - zależność liczby zachorowań od siły obostrzeń
+
+```{r mod5}
+covid_si <- drop_na(covid, stringency_index)
+mod4 <- lmer(total_cases_per_million~stringency_index+(1|location),
+            data = covid_si)
+summary(mod4)
+texreg(mod4)
+```
+
+# Model 6 - zależność liczby zachorowań od HDI
+
+Przekształcić analogicznie do mod3
+
+```{r mod6-mieszany}
+covid_hdi <- drop_na(covid, human_development_index)
+mod5 <- lmer(total_cases_per_million~human_development_index+(1|location),
+            covid_hdi)
+summary(mod5)
+texreg(mod5)
+```
+
+# Model 7 - zależność liczby zachorowań od umieralności na serce
+
+Przekształcić analogicznie do mod3
+
+```{r mod7-mieszany}
+mod6 <- lmer(total_cases_per_million~cardiovasc_death_rate+(1|location),
+            data= covid)
+summary(mod6)
+texreg(mod6)
+```
+
+# Model 8 - zależność liczby zachorowań od powszechności cukrzycy
+
+Przekształcić analogicznie do mod3
+
+```{r mod8-mieszany}
+mod7 <- lmer(total_cases_per_million~diabetes_prevalence+(1|location),
+            data= covid)
+summary(mod7)
+texreg(mod7)
+```
+
+# Model 9 - zależność liczby zachorowań od biedy
+
+Przekształcić analogicznie do mod3
+
+```{r mod9-mieszany}
+covid_ep <- drop_na(covid, extreme_poverty)
+mod8 <- lmer(total_cases_per_million~extreme_poverty+(1|location),
+            data= covid_ep)
+summary(mod8)
+texreg(mod8)
+```
+
+# Model 10 - zależność liczby zachorowań od PKB
+
+Przekształcić analogicznie do mod3
+
+```{r mod10-mieszany}
+covid_gdp <- drop_na(covid, gdp_per_capita)
+mod9 <- lmer(total_cases_per_million~gdp_per_capita+(1|location),
+            data= covid_gdp)
+summary(mod9)
+texreg(mod9)
+```
+
+# Model 11 - zależność liczby śmierci na COVID od czasu
+
+```{r mod11}
+covid_dead <- drop_na(covid, total_deaths_per_million)
+dead <- lmer(total_deaths_per_million~time+(1|location), covid_dead)
+summary(dead)
+covid_dead %>% 
+  ggplot(aes(time, total_deaths_per_million, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium', 'Peru'), label_key=location)
+fit <- predict(dead)
+cbind(covid_dead, fit) %>% 
+  ggplot(aes(time, fit, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+covid %>% 
+  group_by(location) %>% 
+  summarize(m=mean(total_deaths_per_million, na.rm=T)) %>% 
+  arrange(-m)
+
+```
+
