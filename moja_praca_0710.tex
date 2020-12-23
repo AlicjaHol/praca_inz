@@ -317,7 +317,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand\tytul{Zastosowanie modeli mieszanych w analizie rozwoju pandemii choroby COVID-19 na świecie}
 
-\newcommand\tytulangielski{The use of mixed-effects models in the analysis of the COVID-19 pandemic in the world}
+\newcommand\tytulangielski{The Use of Mixed-Effects Models in the Analysis of the COVID-19 Pandemic in the World}
 
 
 \begin{center}
@@ -593,7 +593,7 @@ $$u_{cow} \sim \mathcal{N}(0, \sigma^2_{cow}).$$
  Wówczas predykcja będzie sumą $\hat{\mu}$ oraz oceny efektu losowego dla odpowiedniego osobnika.
  
 \chapter{Badania własne}
-\section{Zbiór danych i jego wstępne przygotowanie}
+\section{Opis zbioru badawczego}
 
 Zbiór danych pochodzi z witryny internetowej Our World In Data \cite{owid}, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
 
@@ -604,11 +604,12 @@ Ze zbioru danych zostały usunięte wszystkie kraje o populacji poniżej miliona
 Do formułowania hipotez i budowania modeli będziemy się posługiwać następującymi zmiennymi:
 
 \begin{itemize}
-	\item liczba zachorowań - jest to liczba potwierdzonych przypadków koronawirusa w danym kraju od momentu rozpoczęcia epidemii. Zamiast wartośći liczby zachorowań, będziemy używać liczby zachorowań na milion mieszkańców (\texttt{total cases per million}),
-	\item liczba wykonanych testów - będziemy używać liczby wykonanych testów w przeliczeniu na tysiąc mieszkańców danego kraju (\texttt{total tests per thousand}),
-	\item wskaźnik siły obostrzeń (\texttt{sringency index}) - wskaźnik tego, jak silne obostrzenia wprowadził rząd danego kraju. Jest to kombinacja dziewięciu innych zmiennych, m.in. zamykanie szkół, polityka wykonywania testów, ograniczenie kontaktów międzyludzkich itp. Może przyjmować wartości od 0 do 100, im większa wartość, tym silniejsze obostrzenia w danym kraju \cite{stringency},
+	\item liczba zachorowań (\texttt{total cases per million}) - jest to liczba potwierdzonych przypadków koronawirusa w danym kraju od momentu rozpoczęcia epidemii. Zamiast wartośći liczby zachorowań, będziemy używać liczby zachorowań na milion mieszkańców ,
+	\item czas (\texttt{time}) - numer dnia od początku pandemii w danym kraju
+	\item liczba wykonanych testów (\texttt{total tests per thousand}) - będziemy używać liczby wykonanych testów w przeliczeniu na tysiąc mieszkańców danego kraju,
+	\item wskaźnik siły obostrzeń (\texttt{stringency index}) - wskaźnik tego, jak silne obostrzenia wprowadził rząd danego kraju. Jest to kombinacja dziewięciu zmiennych, m.in. zamykanie szkół, polityka wykonywania testów, ograniczenie kontaktów międzyludzkich itp. Może przyjmować wartości od 0 do 100, im większa wartość, tym silniejsze obostrzenia w danym kraju \cite{stringency},
 	\item gęstość zaludnienia (\texttt{population density}),
-	\item PKP danego kraju na osobę (\texttt{GDP per capita}) - Produkt Krajowy Brutto, przeliczony na hipotetyczną walutę dolara międzynarodowego \cite{dollars},
+	\item PKB danego kraju na osobę (\texttt{GDP per capita}) - Produkt Krajowy Brutto, przeliczony na hipotetyczną walutę dolara międzynarodowego \cite{dollars},
 	\item część społeczeństwa żyjąca w skrajnym ubóstwie (\texttt{extreme poverty})
 	\item śmiertelność z powodu chorób sercowych (\texttt{cardiovasc death rate}) - stan na rok 2017
 	\item powszechność występowania cukrzycy (\texttt{diabetes prevalence}) - odsetek populacji z cukrzycą, brane pod uwagę są osoby w wieku od 20 do 70 lat, stan na rok 2017
@@ -616,7 +617,7 @@ Do formułowania hipotez i budowania modeli będziemy się posługiwać następu
 	
 \end{itemize}
 
-
+Dane były zbierane do dnia 1 grudnia 2020 r.
 
  
 %\begin{figure}[htbp]
@@ -628,9 +629,9 @@ Do formułowania hipotez i budowania modeli będziemy się posługiwać następu
 %\end{figure}
 
 
+
 \section{Dyskusja wyników}
 
-We wszystkich opisanych poniżej modelach, kraj (\texttt{location}) jest efektem losowym.
 
 
 \newpage
@@ -666,18 +667,18 @@ a więc przedstawia zależność liczby zachorowań od czasu, a kraj jest efekte
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)               & $-1321.86^{***}$ \\
-			& $(294.61)$       \\
-			time                      & $31.27^{***}$    \\
-			& $(0.24)$         \\
+			(Intercept)               & $-1941.35^{***}$ \\
+			& $(337.72)$       \\
+			time                      & $37.31^{***}$    \\
+			& $(0.26)$         \\
 			\hline
-			AIC                       & $715285.90$      \\
-			BIC                       & $715320.03$      \\
-			Log Likelihood            & $-357638.95$     \\
-			Num. obs.                 & $37529$          \\
-			Num. groups: location     & $152$            \\
-			Var: location (Intercept) & $13018644.39$    \\
-			Var: Residual             & $10840327.89$    \\
+			AIC                       & $806648.05$      \\
+			BIC                       & $806682.57$      \\
+			Log Likelihood            & $-403320.03$     \\
+			Num. obs.                 & $41287$          \\
+			Num. groups: location     & $151$            \\
+			Var: location (Intercept) & $16967251.36$    \\
+			Var: Residual             & $17530563.89$    \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -713,6 +714,35 @@ Oprócz powyższego modelu, w którym tylko wyraz wolny różni się pomiędzy k
 
 $$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+Z_{0,location}u_{0,location}+$$$$+Z_{time,location}u_{time,location}+\varepsilon$$
 
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)                    & $-1784.78^{***}$ \\
+			& $(145.44)$       \\
+			time                           & $35.49^{***}$    \\
+			& $(2.93)$         \\
+			\hline
+			AIC                            & $759067.36$      \\
+			BIC                            & $759119.13$      \\
+			Log Likelihood                 & $-379527.68$     \\
+			Num. obs.                      & $41287$          \\
+			Num. groups: location          & $151$            \\
+			Var: location (Intercept)      & $3113329.04$     \\
+			Var: location time             & $1296.95$        \\
+			Cov: location (Intercept) time & $-53442.24$      \\
+			Var: Residual                  & $5450792.56$     \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 1}
+		\label{table:model1-1}
+		\zrodlo{Opracowanie własne}
+	\end{center}
+\end{table}
+
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod1_slope_predict.png}
@@ -722,6 +752,54 @@ $$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+Z_{0,location}u_{0,location}+$$$
 \end{figure}
 
 Na rysunku \ref{fig:mod1_slope_predict} można zaobserwować, jak różnią się tendencje rozwojowe pandemii w poszczególnych krajach.
+
+\newpage
+
+W analogiczny sposób można zbudować model, gdzie zależność od czasu będzie funkcją kwadratową, to jest
+
+$$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+$$$$+Z_{0,location}u_{0,location}+Z_{time,location}u_{time,location}+$$$$Z_{time^2,location}u_{time^2, location}+\varepsilon$$
+
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)                           & $383.14^{***}$ \\
+			& $(107.34)$     \\
+			time                                  & $-10.66$       \\
+			& $(161.66)$     \\
+			time$^2$                              & $0.16$         \\
+			& $(0.21)$       \\
+			\hline
+			AIC                                   & $721041.58$    \\
+			BIC                                   & $721127.86$    \\
+			Log Likelihood                        & $-360510.79$   \\
+			Num. obs.                             & $41287$        \\
+			Num. groups: location                 & $151$          \\
+			Var: location (Intercept)             & $1671050.31$   \\
+			Var: location time                    & $3946212.95$   \\
+			Var: location I(time$^2$)             & $6.52$         \\
+			Cov: location (Intercept) time        & $24812.00$     \\
+			Cov: location (Intercept) I(time$^2$) & $279.78$       \\
+			Cov: location time I(time$^2$)        & $5030.38$      \\
+			Var: Residual                         & $2045067.48$   \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 1 z czynnikiem kwadratowym}
+		\label{table:model1-2}
+		\zrodlo{Opracowanie własne}
+	\end{center}
+\end{table}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod1_kw_predict.png}
+	\caption{Wykres przedstawiający zależność między liczbą zachorowań a czasem oszacowaną za pomocą modelu, gdzie zarówno wyraz wolny, jak i współczynniki przy $time$ i $time^2$ zależą od kraju}
+	\label{fig:mod1_kw_predict}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 \newpage
 
@@ -868,7 +946,7 @@ Zatem gęstośc zaludnienia nie jest czynnikiem istotnie różnicującym liczbę
 Hipoteza 5: Kraje różniące się siłą obostrzeń mają istotne różnice w liczbie zachorowań.
 
 
-Piaty model ma następującą postać:
+Piąty model ma następującą postać:
 
 $$y_{total\_cases}=\beta_0+X_{stringency\_index}\beta_{stringency\_index}+Z_{location}u_{location}+\varepsilon$$
 

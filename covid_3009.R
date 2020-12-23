@@ -3,10 +3,9 @@ library(tidyverse)
 covid <- read.csv(url("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"),
                   sep = ",", header = T)
 head(covid)
+covid <- covid[as.Date(covid$date)<"2020-12-01",]
 
-kraje <- covid %>% 
-  distinct(location) %>% 
-  as.data.frame()
+
 
 
 
@@ -33,9 +32,19 @@ covid <- covid[covid$total_cases_per_million!=0,]
 
 covid$time <- with(covid, ave(rep(1, nrow(covid)), location, FUN = seq_along))
 
+kraje <- covid %>% 
+  distinct(location) %>% 
+  as.data.frame()
+
 library(lattice)
 xyplot(total_cases_per_million~time|location,
-       data = covid)
+       data = covid[covid$location %in% kraje[1:50,],])
+
+xyplot(total_cases_per_million~time|location,
+       data = covid[covid$location %in% kraje[51:100,],])
+
+xyplot(total_cases_per_million~time|location,
+       data = covid[covid$location %in% kraje[101:nrow(kraje) ,],])
 
 library(nlme) #lmer4
 # population density, liczba testow, PKB, extreme poverty, odsetek osob z problemami sercowymi, life expectancy (przecietny czas zycia)
@@ -47,10 +56,12 @@ library(gghighlight)
 library(kableExtra)
 
 
+
 covid %>% 
   group_by(location) %>% 
   summarize(m=mean(total_cases_per_million)) %>% 
-  arrange(-m)
+  arrange(-m)%>% 
+  kable( "latex")
 
 
 distinct(covid, location, population_density, life_expectancy, human_development_index,
@@ -69,6 +80,10 @@ lmeControl(maxIter=1000, msMaxIter = 1000, niterEM = 1000)
 #           data = covid, method="ML")
 mod_lme <- lmer(total_cases_per_million~time+(1|location), covid)
 mod_lme_slope <- lmer(total_cases_per_million~time+(time|location), covid)
+mod_kw <- lmer(total_cases_per_million~time+I(time^2)+(time+I(time^2)|location), covid)
+#mod_wiel<- lmer(total_cases_per_million~time+I(time^2)+I(time^3)+(time+I(time^2)+I(time^3)|location), covid)
+#summary(mod_wiel)
+summary(mod_kw)
 summary(mod_lme_slope)
 summary(mod_lme)
 anova(mod_lme)
@@ -114,6 +129,15 @@ cbind(covid, fit_slope) %>%
                               'Germany', 'Norway', 'Spain', 'United Kingdom',
                               'Qatar', 'Bahrain','Brazil'), label_key=location)
 
+fit_kw <- predict(mod_kw)
+cbind(covid, fit_kw) %>% 
+  ggplot(aes(time, fit_kw, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil'), label_key=location)
+
+
 #aggregate(is.na(covid$total_tests_per_thousand), list(covid$location), FUN=sum)
 
 
@@ -137,11 +161,21 @@ covid$age <- as.factor(covid$age)
 covid$age <- relevel(covid$age, 'below 55')
 
 
-
-
+covid_miesiace <- covid[covid$time %in% c(30,90,180,270,360),]
+head(covid_miesiace)
 
 library(RColorBrewer)
-
+library(lmtest)
+library(alr3)
+summary(powerTransform(cbind(life_expectancy, total_cases_per_million)~1, 
+                       data = covid_miesiace))
+mod_lm2 <- lm(total_cases_per_million~life_expectancy, covid)
+inverseResponsePlot(mod_lm2)
+summary(mod_lm2)
+covid_miesiace %>% 
+  ggplot(aes(life_expectancy, total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm, formula=y~x)
 mod2 <- lmer(total_cases_per_million~+age+(1|location),
             data=covid)
 summary(mod2)
@@ -246,4 +280,24 @@ akaike
 czas_kraj <- covid %>% select(location, time)%>% group_by(location) %>% top_n(1, time)
 min(czas_kraj$time)
 
-
+# smiertelnosc
+covid_dead <- drop_na(covid, total_deaths_per_million)
+dead <- lmer(total_deaths_per_million~time+(1|location), covid_dead)
+summary(dead)
+covid_dead %>% 
+  ggplot(aes(time, total_deaths_per_million, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium', 'Peru'), label_key=location)
+fit <- predict(dead)
+cbind(covid_dead, fit) %>% 
+  ggplot(aes(time, fit, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+covid %>% 
+  group_by(location) %>% 
+  summarize(m=mean(total_deaths_per_million, na.rm=T)) %>% 
+  arrange(-m)
