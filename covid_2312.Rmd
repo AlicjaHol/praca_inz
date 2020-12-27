@@ -23,6 +23,7 @@ library(gghighlight)
 library(kableExtra)
 library(lmtest)
 library(alr3)
+library(stargazer)
 ```
 
 # Wczytanie i oczyszczenie danych
@@ -146,10 +147,77 @@ cbind(covid, fit_kw) %>%
 
 ```{r mod2}
 covid_na <- drop_na(covid, total_tests_per_thousand)
+covid_na %>% 
+  group_by(location) %>% 
+  summarize(m=mean(total_tests_per_thousand)) %>% 
+  arrange(m)%>% 
+  kable( "latex")
 mod1 <- lmer(total_cases_per_million~total_tests_per_thousand+(1|location),
            data = covid_na)
 summary(mod1)
 texreg(mod1)
+covid_na %>% 
+  ggplot(aes(x=total_tests_per_thousand, y=total_cases_per_million,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil','Belgium','Peru',
+                              'United Arab Emirates','Denmark'),
+              label_key=location)
+
+
+fit_mod1 <- predict(mod1)
+cbind(covid_na,fit_mod1) %>% 
+  ggplot(aes(x=total_tests_per_thousand, y=fit_mod1,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil','Belgium','Peru',
+                              'United Arab Emirates','Denmark'),
+              label_key=location)
+```
+
+
+```{r mod2-slope}
+mod1 <- lmer(total_cases_per_million~total_tests_per_thousand+(total_tests_per_thousand|location),
+           data = covid_na)
+texreg(mod1)
+fit_mod1 <- predict(mod1)
+cbind(covid_na,fit_mod1) %>% 
+  ggplot(aes(x=total_tests_per_thousand, y=fit_mod1,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil','Belgium','Peru',
+                              'United Arab Emirates','Denmark'),
+              label_key=location)
+```
+
+
+```{r mod2-kw}
+mod1_kw <- lmer(total_cases_per_million~total_tests_per_thousand+I(total_tests_per_thousand^2)+(total_tests_per_thousand+I(total_tests_per_thousand^2)|location), covid_na)
+texreg(mod1_kw)
+fit_mod1_kw <- predict(mod1_kw)
+cbind(covid_na,fit_mod1_kw) %>% 
+  ggplot(aes(x=total_tests_per_thousand, y=fit_mod1_kw,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil','Belgium','Peru',
+                              'United Arab Emirates','Denmark'),
+              label_key=location)
 ```
 
 
@@ -165,6 +233,19 @@ covid_miesiace %>%
   ggplot(aes(life_expectancy, total_cases_per_million))+
   geom_point()+
   geom_smooth(method=lm, formula=y~x)
+
+mod_lm_potega <- lm(total_cases_per_million~I(life_expectancy^4), covid)
+summary(mod_lm_potega)
+covid_miesiace %>% 
+  ggplot(aes(life_expectancy, total_cases_per_million^4))+
+  geom_point()+
+  geom_smooth(method=lm, formula=y~x)
+
+covid_miesiace %>% 
+  ggplot(aes(life_expectancy, log(total_cases_per_million)))+
+  geom_point()+
+  geom_smooth(method=lm, formula=y~x)
+
 ```
 
 
@@ -184,6 +265,20 @@ covid %>%
   geom_line()
 ```
 
+```{r mo4-liniowy}
+mod4_lm <- lm(total_cases_per_million~population_density,covid_miesiace)
+summary(mod4_lm)
+
+covid_miesiace %>% 
+  ggplot(aes(population_density, total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm, formula=y~x)
+
+summary(powerTransform(cbind(population_density, total_cases_per_million)~1, 
+                       data = covid_miesiace))
+```
+
+
 # Model 5 - zależność liczby zachorowań od siły obostrzeń
 
 ```{r mod5}
@@ -192,6 +287,29 @@ mod4 <- lmer(total_cases_per_million~stringency_index+(1|location),
             data = covid_si)
 summary(mod4)
 texreg(mod4)
+
+covid_si %>% 
+  ggplot(aes(x=stringency_index, y=total_cases_per_million,
+             col=location))+
+  geom_point()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil'),
+              label_key=location)
+fit_mod4 <- predict(mod4)
+cbind(covid_si,fit_mod4) %>% 
+  ggplot(aes(x=stringency_index, y=fit_mod4,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil','Belgium','Peru',
+                              'United Arab Emirates','Denmark'),
+              label_key=location)
 ```
 
 # Model 6 - zależność liczby zachorowań od HDI
@@ -206,6 +324,31 @@ summary(mod5)
 texreg(mod5)
 ```
 
+```{r mod6-liniowy}
+mod5_lm <- lm(total_cases_per_million~human_development_index, covid_hdi)
+summary(mod5_lm)
+
+covid_hdi %>% 
+  ggplot(aes(human_development_index,total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm)
+
+summary(powerTransform(cbind(human_development_index, total_cases_per_million)~1, 
+                       data = covid_miesiace))
+inverseResponsePlot(mod5_lm)
+mod5_lm2 <- lm(total_cases_per_million~I(human_development_index^2), covid_hdi)
+summary(mod5_lm2)
+covid_hdi %>% 
+  ggplot(aes(human_development_index^2,total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm,se=F)
+covid_hdi %>% 
+  ggplot(aes(human_development_index,log(total_cases_per_million)))+
+  geom_point()+
+  geom_smooth(method=lm,se=F)
+```
+
+
 # Model 7 - zależność liczby zachorowań od umieralności na serce
 
 Przekształcić analogicznie do mod3
@@ -217,6 +360,26 @@ summary(mod6)
 texreg(mod6)
 ```
 
+```{r mod7-liniowy}
+mod6_lm <- lm(total_cases_per_million~cardiovasc_death_rate, covid_miesiace)
+summary(mod6_lm)
+covid_miesiace %>% 
+  ggplot(aes(cardiovasc_death_rate, total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm)
+
+summary(powerTransform(cbind(cardiovasc_death_rate, total_cases_per_million)~1, 
+                       data = covid_miesiace))
+inverseResponsePlot(mod6_lm)
+mod6_lm2 <- lm(total_cases_per_million~I(cardiovasc_death_rate^(1/3)), covid_miesiace)
+summary(mod6_lm2)
+covid_miesiace %>% 
+  ggplot(aes(cardiovasc_death_rate^(1/3), total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm)
+```
+
+
 # Model 8 - zależność liczby zachorowań od powszechności cukrzycy
 
 Przekształcić analogicznie do mod3
@@ -227,6 +390,26 @@ mod7 <- lmer(total_cases_per_million~diabetes_prevalence+(1|location),
 summary(mod7)
 texreg(mod7)
 ```
+
+```{r}
+mod7_lm <- lm(total_cases_per_million~diabetes_prevalence, covid_miesiace)
+summary(mod7_lm)
+covid_miesiace %>% 
+  ggplot(aes(diabetes_prevalence, total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm, se=F)
+
+summary(powerTransform(cbind(diabetes_prevalence, total_cases_per_million)~1, 
+                       data = covid_miesiace))
+inverseResponsePlot(mod7_lm)
+mod7_lm2 <- lm(total_cases_per_million~I(diabetes_prevalence^(1/3)), covid_miesiace)
+summary(mod7_lm2)
+covid_miesiace %>% 
+  ggplot(aes(diabetes_prevalence^(1/3), total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm)
+```
+
 
 # Model 9 - zależność liczby zachorowań od biedy
 
@@ -240,6 +423,29 @@ summary(mod8)
 texreg(mod8)
 ```
 
+```{r mod9-liniowy}
+mod8_lm <- lm(total_cases_per_million~extreme_poverty, covid_miesiace)
+summary(mod8_lm)
+
+covid_miesiace %>% 
+  ggplot(aes(extreme_poverty, total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm, se=F)
+
+summary(powerTransform(cbind(extreme_poverty, total_cases_per_million)~1, 
+                       data = covid_miesiace))
+inverseResponsePlot(mod8_lm)
+
+
+mod8_lm2 <- lm(I(total_cases_per_million^0.2)~extreme_poverty, covid_miesiace)
+summary(mod8_lm2)
+covid_miesiace %>% 
+  ggplot(aes(extreme_poverty, total_cases_per_million^0.2))+
+  geom_point()+
+  geom_smooth(method=lm, se=F)
+```
+
+
 # Model 10 - zależność liczby zachorowań od PKB
 
 Przekształcić analogicznie do mod3
@@ -250,6 +456,27 @@ mod9 <- lmer(total_cases_per_million~gdp_per_capita+(1|location),
             data= covid_gdp)
 summary(mod9)
 texreg(mod9)
+```
+
+```{r}
+mod9_lm <- lm(total_cases_per_million ~gdp_per_capita, covid_miesiace)
+summary(mod9_lm)
+covid_miesiace %>% 
+  ggplot(aes(gdp_per_capita, total_cases_per_million))+
+  geom_point()+
+  geom_smooth(method=lm, se=F)
+
+summary(powerTransform(cbind(gdp_per_capita, total_cases_per_million)~1, 
+                       data = covid_miesiace))
+
+inverseResponsePlot(mod9_lm)
+
+mod9_lm2 <- lm(I(total_cases_per_million^(1/3)) ~gdp_per_capita, covid_miesiace)
+summary(mod9_lm2)
+covid_miesiace %>% 
+  ggplot(aes(gdp_per_capita, total_cases_per_million^(1/3)))+
+  geom_point()+
+  geom_smooth(method=lm, se=F)
 ```
 
 # Model 11 - zależność liczby śmierci na COVID od czasu

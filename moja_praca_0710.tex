@@ -807,6 +807,15 @@ $$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+$$$$+Z_
 
 Hipoteza 2: Liczba wykonywanych testów na COVID-19 ma związek z liczbą zachorowań.
 
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/total_tests_countries.png}
+	\caption{Wykres przedstawiający zależność między liczbą zachorowań a liczbą wykonywanych testów w poszczególnych krajach}
+	\label{fig:tests}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
 Drugi model to:
 
 $$y_{total\_ cases}=\beta_0 + X_{total\_tests}\beta_{total\_ tests}+Z_{location}u_{location}+\varepsilon$$
@@ -820,18 +829,18 @@ Dla tego modelu otrzymujemy następujące wyniki:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)                 & $1319.61^{***}$ \\
-			& $(399.12)$      \\
-			total\_tests\_per\_thousand & $31.95^{***}$   \\
+			(Intercept)                 & $1741.29^{***}$ \\
+			& $(464.58)$      \\
+			total\_tests\_per\_thousand & $34.85^{***}$   \\
 			& $(0.28)$        \\
 			\hline
-			AIC                         & $363631.09$     \\
-			BIC                         & $363662.51$     \\
-			Log Likelihood              & $-181811.54$    \\
-			Num. obs.                   & $19045$         \\
-			Num. groups: location       & $95$            \\
-			Var: location (Intercept)   & $14965179.24$   \\
-			Var: Residual               & $11168063.61$   \\
+			AIC                         & $430650.60$     \\
+			BIC                         & $430682.57$     \\
+			Log Likelihood              & $-215321.30$    \\
+			Num. obs.                   & $21907$         \\
+			Num. groups: location       & $97$            \\
+			Var: location (Intercept)   & $20700205.44$   \\
+			Var: Residual               & $19715429.56$   \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -844,6 +853,14 @@ Dla tego modelu otrzymujemy następujące wyniki:
 Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmienności resztowej modelu. Po drugie, widać, że efekt stały liczby wykonywanych testów jest istotny statystycznie, i ma wpływ stymulujący na liczbę zachorowań.
 
 \newpage
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod2_predict.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\label{fig:mod2}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 \subsection{Model 3}
 
