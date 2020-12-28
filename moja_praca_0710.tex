@@ -632,7 +632,9 @@ Dane były zbierane do dnia 1 grudnia 2020 r.
 
 \section{Dyskusja wyników}
 
+We wszystkich modelach mieszanych kraj jest czynnikiem losowym.
 
+Modele liniowe są budowane na podstawie zbioru danych, gdzie znajdują się po maksymalnie cztery obserwacje dla każdego kraju: po 3, po 6, po 9 i po 12 miesiącach trwania epidemii.
 
 \newpage
 
@@ -743,6 +745,8 @@ $$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+Z_{0,location}u_{0,location}+$$$
 	\end{center}
 \end{table}
 
+\newpage
+
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod1_slope_predict.png}
@@ -793,6 +797,8 @@ $$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+$$$$+Z_
 	\end{center}
 \end{table}
 
+Po dodaniu do modelu drugiej potęgi zmiennej $time$, wpływ czasu przestaje być istotny.
+
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod1_kw_predict.png}
@@ -807,6 +813,7 @@ $$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+$$$$+Z_
 
 Hipoteza 2: Liczba wykonywanych testów na COVID-19 ma związek z liczbą zachorowań.
 
+\newpage
 
 \begin{figure}[htbp]
 	\centering
@@ -823,24 +830,25 @@ $$y_{total\_ cases}=\beta_0 + X_{total\_tests}\beta_{total\_ tests}+Z_{location}
 Badamy tutaj, czy liczba wykonywanych testów (w przeliczeniu na 1000 mieszkańców) ma wpływ na liczbę zachorowań.
 
 Dla tego modelu otrzymujemy następujące wyniki:
+\newpage
 \begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)                 & $1741.29^{***}$ \\
-			& $(464.58)$      \\
+			(Intercept)                 & $1741.18^{***}$ \\
+			& $(464.57)$      \\
 			total\_tests\_per\_thousand & $34.85^{***}$   \\
 			& $(0.28)$        \\
 			\hline
-			AIC                         & $430650.60$     \\
-			BIC                         & $430682.57$     \\
-			Log Likelihood              & $-215321.30$    \\
+			AIC                         & $430649.03$     \\
+			BIC                         & $430681.01$     \\
+			Log Likelihood              & $-215320.52$    \\
 			Num. obs.                   & $21907$         \\
 			Num. groups: location       & $97$            \\
-			Var: location (Intercept)   & $20700205.44$   \\
-			Var: Residual               & $19715429.56$   \\
+			Var: location (Intercept)   & $20699413.62$   \\
+			Var: Residual               & $19714018.35$   \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -857,19 +865,67 @@ Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmien
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod2_predict.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\caption{Wykres przedstawiający dopasowanie modelu random intercept}
 	\label{fig:mod2}
 	\zrodlo{Opracowanie własne}
 \end{figure}
+
+
+
+Można także dopasować model, w którym współczynnik nachylenia prostej zależy od kraju:
+
+$$y_{total\_ cases}=\beta_0 + X_{total\_tests}\beta_{total\_ tests}+$$
+$$+Z_{0,location}u_{0,location}+Z_{total\_tests, location}u_{total\_tests, location}+\varepsilon$$
+\newpage
+\begin{table}[!htbp]
+\begin{center}
+	\begin{tabular}{l c}
+		\hline
+		& Model 1 \\
+		\hline
+		(Intercept)                                           & $-324.65$      \\
+		& $(175.92)$     \\
+		total\_tests\_per\_thousand                           & $109.17^{***}$ \\
+		& $(13.83)$      \\
+		\hline
+		AIC                                                   & $391507.90$    \\
+		BIC                                                   & $391555.87$    \\
+		Log Likelihood                                        & $-195747.95$   \\
+		Num. obs.                                             & $21907$        \\
+		Num. groups: location                                 & $97$           \\
+		Var: location (Intercept)                             & $2910697.88$   \\
+		Var: location total\_tests\_per\_thousand             & $18059.27$     \\
+		Cov: location (Intercept) total\_tests\_per\_thousand & $-6245.44$     \\
+		Var: Residual                                         & $3206479.62$   \\
+		\hline
+		\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+	\end{tabular}
+	\caption{Wyniki dla modelu 2 z losowym współczynnikiem nachylenia}
+	\label{table:mod2-1}
+\end{center}
+\end{table}
+
+\newpage
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod2_predict.png}
+	\caption{Wykres przedstawiający dopasowanie modelu random intercept and slope}
+	\label{fig:mod2-slope}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+\newpage
+
 
 \subsection{Model 3}
 
 
 Hipoteza 3: kraje o różnej oczekiwanej długości życia różnią się liczbą zachorowań.
 
-Trzeci model wygląda następująco:
+Trzeci model jest modelem liniowym:
 
-$$y_{total\_cases}=\beta_0+X_{age}\beta_{age}+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{life\_expectancy}\beta_{life\_expectancy}+\varepsilon$$
 
 Prezentuje on zależność liczby zachorowań od oczekiwanej długości życia w danym kraju.
 
@@ -881,28 +937,14 @@ Dla modelu trzeciego otrzymujemy następujące wyniki:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)               & $640.36$       \\
-			& $(1343.96)$    \\
-			age60-64                  & $-41.47$       \\
-			& $(1502.59)$    \\
-			age65-69                  & $-248.44$      \\
-			& $(1551.85)$    \\
-			age70-74                  & $1509.97$      \\
-			& $(1476.43)$    \\
-			age75-79                  & $3319.36^{*}$  \\
-			& $(1436.70)$    \\
-			age80 and above           & $4104.39^{**}$ \\
-			& $(1480.87)$    \\
-			agebelow 55               & $-371.40$      \\
-			& $(1993.64)$    \\
+			(Intercept)      & $-14780.85^{***}$ \\
+			& $(294.55)$        \\
+			life\_expectancy & $248.30^{***}$    \\
+			& $(4.03)$          \\
 			\hline
-			AIC                       & $729555.23$    \\
-			BIC                       & $729632.03$    \\
-			Log Likelihood            & $-364768.62$   \\
-			Num. obs.                 & $37529$        \\
-			Num. groups: location     & $152$          \\
-			Var: location (Intercept) & $10768986.56$  \\
-			Var: Residual             & $15929745.12$  \\
+			R$^2$            & $0.08$            \\
+			Adj. R$^2$       & $0.08$            \\
+			Num. obs.        & $41287$           \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -911,8 +953,58 @@ Dla modelu trzeciego otrzymujemy następujące wyniki:
 		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod3-lin.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego bez przekształcenia zmiennych}
+	\label{fig:mod3-lin}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
-Ponownie efekt losowy odpowiada za mniej niż połowę wariancji resztowej. Dla grupy wiekowej 75-79 różnica w średniej liczbie zachorowań jest na granicy istotności statystycznej. Dopiero dla krajów o oczekiwanej długości życia powyżej 80 lat pojawia się istotna różnica - liczba zachorowań w tych krajach jest największa. W pozostałych grupach wiekowych nie można mówić o istotnych różnicach. 
+Z analizy modelu liniowego wynika, że oczekiwana długość życia ma istotny wpływ na liczbę zachorowań. Im większa jest oczekiwana długość życia, tym więcej będzie potwierdzonych przypadków koronawirusa. Z wykresu oraz na podstawie niskiej wartości $R^2$ (około 8\%) wynika, że model jest słabo dopasowany do danych. Można zastosować transformację zmiennych, aby poprawić dopasowanie.
+
+Z transformacji Boxa-Coxa otrzymujemy następujące potęgi dla zmiennych: $3.72$ dla life\_expectancy oraz $0.09$ dla total\_cases\_per\_million. W przybliżeniu przyjmiemy czwartą potęgę dla pierwszej cechy, a dla drugiej 0 czyli logarytm.
+
+$$log(y_{total\_cases})=\beta_0+\beta_{life\_expectancy}X_{life\_expectancy}^4+\varepsilon$$
+\newpage
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+		\hline
+		& Model 1 \\
+		\hline
+		(Intercept)          & $3.22^{***}$ \\
+		& $(0.04)$     \\
+		life\_expectancy$^4$ & $0.00^{***}$ \\
+		& $(0.00)$     \\
+		\hline
+		R$^2$                & $0.10$       \\
+		Adj. R$^2$           & $0.10$       \\
+		Num. obs.            & $41287$      \\
+		\hline
+		\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+	\end{tabular}
+		\caption{Wyniki dla modelu 3 po przekształceniu zmiennych}
+		\label{table:mod3-potega}
+	\end{center}
+\end{table}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod3-potega.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\label{fig:mod3-potega}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+
+
+
+	
+
+
+Po przekształceniu, $R^2$ wzrosło nieznacznie, do 10\%. Wniosek pozostaje ten sam - im wyższa oczekiwana długość życia, tym więcej osób chorych na COVID-19.
 
 \newpage
 
@@ -922,7 +1014,7 @@ Hipoteza 4: Kraje o różnej gęstości zaludnienia różnią się liczbą zacho
 
 W czwartym modelu badamy zależnośc liczby zachorowań od gęstości zaludnienia:
 
-$$y_{total\_cases}=\beta_0+X_{population\_density}\beta_{population\_density}+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{population\_density}\beta_{population\_density}+\varepsilon$$
 
 
 Wyniki są następujące:
@@ -933,42 +1025,52 @@ Wyniki są następujące:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)               & $2402.87^{***}$ \\
-			& $(306.53)$      \\
-			population\_density       & $0.78$          \\
-			& $(0.44)$        \\
+			(Intercept)         & $3606.05^{***}$ \\
+			& $(356.36)$      \\
+			population\_density & $0.64$          \\
+			& $(0.49)$        \\
 			\hline
-			AIC                       & $729672.88$     \\
-			BIC                       & $729707.01$     \\
-			Log Likelihood            & $-364832.44$    \\
-			Num. obs.                 & $37529$         \\
-			Num. groups: location     & $152$           \\
-			Var: location (Intercept) & $13106475.48$   \\
-			Var: Residual             & $15929750.91$   \\
+			R$^2$               & $0.00$          \\
+			Adj. R$^2$          & $0.00$          \\
+			Num. obs.           & $537$           \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
 		\caption{Wyniki dla modelu 4}
-		\label{table:model4}
-		\zrodlo{Opracowanie własne}
+		\label{table:mod4}
 	\end{center}
 \end{table}
 
-Zatem gęstośc zaludnienia nie jest czynnikiem istotnie różnicującym liczbę zachorowań w krajach.
+Gęstośc zaludnienia nie jest czynnikiem istotnym statystycznie, a $R^2$ wynosi 0. Zatem liczba zachorowań na COVID-19 nie zależy od gęstości zaludnienia.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod4-lin.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego }
+	\label{fig:mod4-lin}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 \newpage
 
 \subsection{Model 5}
 
 Hipoteza 5: Kraje różniące się siłą obostrzeń mają istotne różnice w liczbie zachorowań.
-
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/stringency_pol.png}
+	\caption{Wykres przedstawiający zależność liczby zachorowań od współczynnika siły obostrzeń, kolorem zaznaczone dane dla Polski}
+	\label{fig:stringency-pol}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 Piąty model ma następującą postać:
 
 $$y_{total\_cases}=\beta_0+X_{stringency\_index}\beta_{stringency\_index}+Z_{location}u_{location}+\varepsilon$$
 
 W tym modelu sprawdzamy zależność liczby zachorowań od siły obostrzeń.
-
+\newpage
 Otrzymujemy następujące wyniki:
 
 \begin{table}[!htbp]
@@ -977,18 +1079,18 @@ Otrzymujemy następujące wyniki:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)               & $2932.54^{***}$ \\
-			& $(301.93)$      \\
-			stringency\_index         & $-9.12^{***}$   \\
-			& $(1.16)$        \\
+			(Intercept)               & $3319.47^{***}$ \\
+			& $(356.25)$      \\
+			stringency\_index         & $-3.27^{*}$     \\
+			& $(1.43)$        \\
 			\hline
-			AIC                       & $687061.29$     \\
-			BIC                       & $687095.20$     \\
-			Log Likelihood            & $-343526.65$    \\
-			Num. obs.                 & $35524$         \\
-			Num. groups: location     & $148$           \\
-			Var: location (Intercept) & $12678743.39$   \\
-			Var: Residual             & $14372604.68$   \\
+			AIC                       & $801139.90$     \\
+			BIC                       & $801174.31$     \\
+			Log Likelihood            & $-400565.95$    \\
+			Num. obs.                 & $40219$         \\
+			Num. groups: location     & $147$           \\
+			Var: location (Intercept) & $17448313.08$   \\
+			Var: Residual             & $25718203.07$   \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -997,7 +1099,54 @@ Otrzymujemy następujące wyniki:
 		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
-Tak jak w poprzednim modelu, czynnik losowy odpowiada za niecałą część zmienności resztowej. Wskaźnik siły obostrzeń także jest istotny statystycznie i ma wpływ ograniczający, co oznacza, że im silniejsze obostrzenia, tym mniejsza liczba zachorowań w danym kraju.
+Wskaźnik siły obostrzeń jest istotny statystycznie i ma wpływ ograniczający, co oznacza, że im silniejsze obostrzenia, tym mniejsza liczba zachorowań w danym kraju.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod5_predict.png}
+	\caption{Wykres przedstawiający dopasowanie modelu random intercept}
+	\label{fig:mod5_predict}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)                                 & $4607.01^{***}$ \\
+			& $(711.39)$      \\
+			stringency\_index                           & $-15.60$        \\
+			& $(8.46)$        \\
+			\hline
+			AIC                                         & $797733.02$     \\
+			BIC                                         & $797784.63$     \\
+			Log Likelihood                              & $-398860.51$    \\
+			Num. obs.                                   & $40219$         \\
+			Num. groups: location                       & $147$           \\
+			Var: location (Intercept)                   & $71934195.57$   \\
+			Var: location stringency\_index             & $9970.86$       \\
+			Cov: location (Intercept) stringency\_index & $-699926.27$    \\
+			Var: Residual                               & $23308070.03$   \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 5 z losowym współczynnikiem nachylenia}
+		\label{table:mod5-slope}
+	\end{center}
+\end{table}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod5_predict_slope.png}
+	\caption{Wykres przedstawiający dopasowanie modelu random intercept and slope}
+	\label{fig:mod5_predict_slope}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+Z wykresu \ref{fig:mod5_predict_slope} widać, że w niektórych krajach przy wzroście siły obostrzeń, liczba zachorowań maleje, a w innych rośnie. Dla przeciętnego kraju wpływ jest ograniczający (co wynika z tabeli \ref{table:mod5-slope}).
 
 \newpage
 
@@ -1007,7 +1156,7 @@ Hipoteza 6: Kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) r�
 
 Szósty model przedstawia zależność liczby zachorowań od wskaźnika rozwoju społecznego:
 
-$$y_{total\_cases}=\beta_0+X_{HDI}\beta_{HDI}+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{HDI}\beta_{HDI}+\varepsilon$$
 
 Z tego modelu mamy następujący wynik:
 
@@ -1017,28 +1166,63 @@ Z tego modelu mamy następujący wynik:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)               & $-4489.15^{***}$ \\
-			& $(1237.25)$      \\
-			human\_development\_index & $9957.74^{***}$  \\
-			& $(1711.04)$      \\
+			(Intercept)               & $-5916.47^{***}$ \\
+			& $(145.15)$       \\
+			human\_development\_index & $12894.77^{***}$ \\
+			& $(198.99)$       \\
 			\hline
-			AIC                       & $720398.99$      \\
-			BIC                       & $720433.07$      \\
-			Log Likelihood            & $-360195.50$     \\
-			Num. obs.                 & $37070$          \\
-			Num. groups: location     & $150$            \\
-			Var: location (Intercept) & $10865235.65$    \\
-			Var: Residual             & $15798887.42$    \\
+			R$^2$                     & $0.09$           \\
+			Adj. R$^2$                & $0.09$           \\
+			Num. obs.                 & $41027$          \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
 		\caption{Wyniki dla modelu 6}
-		\label{table:model6}
-		\zrodlo{Opracowanie własne}
+		\label{table:mod6}
 	\end{center}
 \end{table}
 
- Efekt stały jest istotny i ma wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
+HDI jest istotny i ma wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod6-lin.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\label{fig:mod6-lin}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+\newpage
+Z przekształcenia Boxa-Coxa otrzymujemy potęgę 2 dla zmiennej HDI oraz 0 dla total\_cases.
+
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)                   & $3.11^{***}$ \\
+			& $(0.04)$     \\
+			human\_development\_index$^2$ & $4.98^{***}$ \\
+			& $(0.07)$     \\
+			\hline
+			R$^2$                         & $0.12$       \\
+			Adj. R$^2$                    & $0.12$       \\
+			Num. obs.                     & $41027$      \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 6 po przekształceniu zmiennych}
+		\label{table:mod6-log}
+	\end{center}
+\end{table}
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod6-log.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\label{fig:mod6-log}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 \newpage
 
@@ -1048,7 +1232,7 @@ Hipoteza 7: Kraje o różnej wysokości odsetka śmierci z powodu chorób sercow
 
 Model siódmy wygląda następująco:
 
-$$y_{total\_cases}=\beta_0+X_{cardiovasc\_death\_rate}\beta_{cardiovasc\_death\_rate}+$$$$+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{cardiovasc\_death\_rate}\beta_{cardiovasc\_death\_rate}+\varepsilon$$
 
 i zawiera zależność od odsetka śmierci spowodowanych chorobami sercowymi w danym kraju. 
 
@@ -1060,18 +1244,14 @@ Otrzymujemy następujące podsumowanie:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)               & $4982.81^{***}$ \\
-			& $(672.06)$      \\
-			cardiovasc\_death\_rate   & $-9.25^{***}$   \\
-			& $(2.32)$        \\
+			(Intercept)             & $6602.10^{***}$ \\
+			& $(792.12)$      \\
+			cardiovasc\_death\_rate & $-11.06^{***}$  \\
+			& $(2.76)$        \\
 			\hline
-			AIC                       & $729657.48$     \\
-			BIC                       & $729691.61$     \\
-			Log Likelihood            & $-364824.74$    \\
-			Num. obs.                 & $37529$         \\
-			Num. groups: location     & $152$           \\
-			Var: location (Intercept) & $12094158.57$   \\
-			Var: Residual             & $15929749.88$   \\
+			R$^2$                   & $0.03$          \\
+			Adj. R$^2$              & $0.03$          \\
+			Num. obs.               & $537$           \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -1080,8 +1260,48 @@ Otrzymujemy następujące podsumowanie:
 		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod7-lin.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\label{fig:mod7-lin}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
-Czynnik losowy zachowuje się podobnie jak we wszystkich poprzednich modelach. Efekt stały jest istotny statystycznie. Co ciekawe, odsetek śmierci spowodowanych chorobami serca wpływa ograniczająco na liczbę zachorowań. Może to być związane z tym, że osoby chore na serce bardziej uważają, aby się nie zarazić, tym samym zmniejszają liczbę zachorowań w danym kraju.
+ Efekt śmiertelności na choroby serca jest istotny statystycznie. Co ciekawe, odsetek śmierci spowodowanych chorobami serca wpływa ograniczająco na liczbę zachorowań. Może to być związane z tym, że osoby chore na serce bardziej uważają, aby się nie zarazić, tym samym zmniejszają liczbę zachorowań w danym kraju.
+
+Przekształcenie Boxa-Coxa: pierwiastek 3 stopnia z cardiovasc, log z total cases.
+
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)                   & $8.81^{***}$  \\
+			& $(0.82)$      \\
+			cardiovasc\_death\_rate\^~(1/3) & $-0.52^{***}$ \\
+			& $(0.13)$      \\
+			\hline
+			R$^2$                         & $0.03$        \\
+			Adj. R$^2$                    & $0.03$        \\
+			Num. obs.                     & $537$         \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 7 po przekształceniu zmienych}
+		\label{table:mod7-log}
+	\end{center}
+\end{table}
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod7-log.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego po przekształceniu zmiennych}
+	\label{fig:mod7-log}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 \newpage
 
@@ -1089,39 +1309,75 @@ Czynnik losowy zachowuje się podobnie jak we wszystkich poprzednich modelach. E
 
 Hipoteza 8: Kraje o różnej wysokości odsetka osób chorych na cukrzycę różnią się liczbą zachorowań.
 
-$$y_{total\_cases}=\beta_0+X_{diabetes\_prevalence}\beta_{diabetes\_prevalence}+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{diabetes\_prevalence}\beta_{diabetes\_prevalence}+\varepsilon$$
 
 Model ten jest analogiczny do poprzedniego, z tym że zamiast chorób sercowych mamy tu odsetek chorych na cukrzycę.
 
 Otrzymujemy nastepujący wynik:
 \begin{table}[!htbp]
 	\begin{center}
-		\begin{tabular}{l c}
-			\hline
-			& Model 1 \\
-			\hline
-			(Intercept)               & $93.18$        \\
-			& $(612.83)$     \\
-			diabetes\_prevalence      & $337.40^{***}$ \\
-			& $(74.81)$      \\
-			\hline
-			AIC                       & $729646.52$    \\
-			BIC                       & $729680.65$    \\
-			Log Likelihood            & $-364819.26$   \\
-			Num. obs.                 & $37529$        \\
-			Num. groups: location     & $152$          \\
-			Var: location (Intercept) & $11775109.20$  \\
-			Var: Residual             & $15929749.48$  \\
-			\hline
-			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
-		\end{tabular}
+\begin{tabular}{l c}
+	\hline
+	& Model 1 \\
+	\hline
+	(Intercept)          & $991.31$       \\
+	& $(754.70)$     \\
+	diabetes\_prevalence & $372.06^{***}$ \\
+	& $(91.52)$      \\
+	\hline
+	R$^2$                & $0.03$         \\
+	Adj. R$^2$           & $0.03$         \\
+	Num. obs.            & $537$          \\
+	\hline
+	\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+\end{tabular}
 		\caption{Wyniki dla modelu 8}
 		\label{table:model8}
 		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod8-lin.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\label{fig:mod8-lin}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
-Czynnik losowy ma taką samą istotność jak poprzednio. Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
+Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
+
+
+
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)                & $2.49^{**}$  \\
+			& $(0.79)$     \\
+			diabetes\_prevalence\^~(1/3) & $1.65^{***}$ \\
+			& $(0.41)$     \\
+			\hline
+			R$^2$                      & $0.03$       \\
+			Adj. R$^2$                 & $0.03$       \\
+			Num. obs.                  & $537$        \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 8 po przekształceniu zmiennych}
+		\label{table:mod8-log}
+	\end{center}
+\end{table}
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod8-log.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\label{fig:mod8-log}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 \newpage
 
@@ -1131,7 +1387,7 @@ Hipoteza 9: Kraje o różnej wysokości odsetka osób żyjących w skrajnej bied
 
 W tym modelu sprawdzamy zależność liczby zachorowań od odsetka osób żyjących w skrajnym ubóstwie:
 
-$$y_{total\_cases}=\beta_0+X_{extreme\_poverty}\beta_{extreme\_poverty}+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{extreme\_poverty}\beta_{extreme\_poverty}+\varepsilon$$
 
 Model ten ma następujące podsumowanie:
 
@@ -1141,18 +1397,14 @@ Model ten ma następujące podsumowanie:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)               & $3074.37^{***}$ \\
-			& $(306.39)$      \\
-			extreme\_poverty          & $-55.02^{***}$  \\
-			& $(11.98)$       \\
+			(Intercept)      & $4433.28^{***}$ \\
+			& $(406.29)$      \\
+			extreme\_poverty & $-83.75^{***}$  \\
+			& $(17.02)$       \\
 			\hline
-			AIC                       & $520055.39$     \\
-			BIC                       & $520088.22$     \\
-			Log Likelihood            & $-260023.70$    \\
-			Num. obs.                 & $27083$         \\
-			Num. groups: location     & $110$           \\
-			Var: location (Intercept) & $6944468.09$    \\
-			Var: Residual             & $12546263.85$   \\
+			R$^2$            & $0.06$          \\
+			Adj. R$^2$       & $0.06$          \\
+			Num. obs.        & $389$           \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -1162,7 +1414,47 @@ Model ten ma następujące podsumowanie:
 	\end{center}
 \end{table}
 
- Czynnik stały jest istotny statystycznie. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów.
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod9-lin.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\label{fig:mod9-lin}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+ Czynnik extreme poverty jest istotny statystycznie. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów.
+
+
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)           & $6.00^{***}$  \\
+			& $(0.16)$      \\
+			log(extreme\_poverty) & $-0.46^{***}$ \\
+			& $(0.07)$      \\
+			\hline
+			R$^2$                 & $0.09$        \\
+			Adj. R$^2$            & $0.09$        \\
+			Num. obs.             & $389$         \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 9 z przekształceniem logarytmicznym obu zmiennych}
+		\label{table:mod9-log}
+	\end{center}
+\end{table}
+\newpage
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod9-log.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\label{fig:mod9-log}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 \newpage
 
@@ -1173,7 +1465,7 @@ Hipoteza 10: Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
 
 W modelu dziesiątym pojawia się zależność liczby zachorowań od PKB na osobę:
 
-$$y_{total\_cases}=\beta_0+X_{GDP}\beta_{GDP}+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{GDP}\beta_{GDP}+\varepsilon$$
 
 Wyniki są następujące:
 \begin{table}[!htbp]
@@ -1182,18 +1474,14 @@ Wyniki są następujące:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)               & $546.41$      \\
-			& $(338.86)$    \\
-			gdp\_per\_capita          & $0.11^{***}$  \\
-			& $(0.01)$      \\
+			(Intercept)      & $1174.04^{*}$ \\
+			& $(462.01)$    \\
+			gdp\_per\_capita & $0.13^{***}$  \\
+			& $(0.02)$      \\
 			\hline
-			AIC                       & $720911.67$   \\
-			BIC                       & $720945.75$   \\
-			Log Likelihood            & $-360451.83$  \\
-			Num. obs.                 & $37057$       \\
-			Num. groups: location     & $150$         \\
-			Var: location (Intercept) & $8906070.23$  \\
-			Var: Residual             & $16132368.91$ \\
+			R$^2$            & $0.11$        \\
+			Adj. R$^2$       & $0.11$        \\
+			Num. obs.        & $531$         \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -1203,7 +1491,45 @@ Wyniki są następujące:
 	\end{center}
 \end{table}
 
-Efekt stały jest istotny statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań. 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod10-lin.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\label{fig:mod10-lin}
+	\zrodlo{Opracowanie własne}
+\end{figure}
+
+Efekt PKB na osobę jest istotny statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań. 
+
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)          & $0.42$       \\
+			& $(0.55)$     \\
+			gdp\_per\_capita\^~0.2 & $0.79^{***}$ \\
+			& $(0.08)$     \\
+			\hline
+			R$^2$                & $0.15$       \\
+			Adj. R$^2$           & $0.15$       \\
+			Num. obs.            & $531$        \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu 10 z przekształceniem zmiennych}
+		\label{table:mod10-log}
+	\end{center}
+\end{table}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod10-log.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\label{fig:mod10-log}
+	\zrodlo{Opracowanie własne}
+\end{figure}
 
 \chapter*{Podsumowanie i~wnioski}
 

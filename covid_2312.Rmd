@@ -225,26 +225,25 @@ cbind(covid_na,fit_mod1_kw) %>%
 
 ```{r mod3-liniowy}
 summary(powerTransform(cbind(life_expectancy, total_cases_per_million)~1, 
-                       data = covid_miesiace))
+                       data = covid_miesiace)) 
 mod_lm2 <- lm(total_cases_per_million~life_expectancy, covid)
 inverseResponsePlot(mod_lm2)
 summary(mod_lm2)
+texreg(mod_lm2)
 covid_miesiace %>% 
   ggplot(aes(life_expectancy, total_cases_per_million))+
   geom_point()+
   geom_smooth(method=lm, formula=y~x)
 
-mod_lm_potega <- lm(total_cases_per_million~I(life_expectancy^4), covid)
+mod_lm_potega <- lm(log(total_cases_per_million)~I(life_expectancy^4), covid)
 summary(mod_lm_potega)
+texreg(mod_lm_potega)
 covid_miesiace %>% 
-  ggplot(aes(life_expectancy, total_cases_per_million^4))+
+  ggplot(aes(life_expectancy^4, log(total_cases_per_million)))+
   geom_point()+
-  geom_smooth(method=lm, formula=y~x)
+  geom_smooth(method=lm, formula=y~x, se=F)
 
-covid_miesiace %>% 
-  ggplot(aes(life_expectancy, log(total_cases_per_million)))+
-  geom_point()+
-  geom_smooth(method=lm, formula=y~x)
+
 
 ```
 
@@ -268,11 +267,12 @@ covid %>%
 ```{r mo4-liniowy}
 mod4_lm <- lm(total_cases_per_million~population_density,covid_miesiace)
 summary(mod4_lm)
+texreg(mod4_lm)
 
 covid_miesiace %>% 
   ggplot(aes(population_density, total_cases_per_million))+
   geom_point()+
-  geom_smooth(method=lm, formula=y~x)
+  geom_smooth(method=lm, formula=y~x,se=F)
 
 summary(powerTransform(cbind(population_density, total_cases_per_million)~1, 
                        data = covid_miesiace))
@@ -292,11 +292,7 @@ covid_si %>%
   ggplot(aes(x=stringency_index, y=total_cases_per_million,
              col=location))+
   geom_point()+
-  gghighlight(location %in% c('Poland', 'China', 'United States',
-                              'Italy',
-                              'Germany', 'Norway', 'Spain', 
-                              'United Kingdom','Qatar',
-                              'Bahrain','Brazil'),
+  gghighlight(location %in% c('Poland'),
               label_key=location)
 fit_mod4 <- predict(mod4)
 cbind(covid_si,fit_mod4) %>% 
@@ -307,8 +303,24 @@ cbind(covid_si,fit_mod4) %>%
                               'Italy',
                               'Germany', 'Norway', 'Spain', 
                               'United Kingdom','Qatar',
-                              'Bahrain','Brazil','Belgium','Peru',
-                              'United Arab Emirates','Denmark'),
+                              'Bahrain','Brazil'),
+              label_key=location)
+
+mod4_slope <- lmer(total_cases_per_million~stringency_index+(stringency_index|location),
+            data = covid_si)
+summary(mod4_slope)
+texreg(mod4_slope)
+
+fit_mod4_slope <- predict(mod4_slope)
+cbind(covid_si,fit_mod4_slope) %>% 
+  ggplot(aes(x=stringency_index, y=fit_mod4_slope,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil'),
               label_key=location)
 ```
 
@@ -327,25 +339,24 @@ texreg(mod5)
 ```{r mod6-liniowy}
 mod5_lm <- lm(total_cases_per_million~human_development_index, covid_hdi)
 summary(mod5_lm)
+texreg(mod5_lm)
 
 covid_hdi %>% 
   ggplot(aes(human_development_index,total_cases_per_million))+
   geom_point()+
-  geom_smooth(method=lm)
+  geom_smooth(method=lm, se=F)
 
 summary(powerTransform(cbind(human_development_index, total_cases_per_million)~1, 
                        data = covid_miesiace))
 inverseResponsePlot(mod5_lm)
-mod5_lm2 <- lm(total_cases_per_million~I(human_development_index^2), covid_hdi)
+mod5_lm2 <- lm(log(total_cases_per_million)~I(human_development_index^2), covid_hdi)
 summary(mod5_lm2)
+texreg(mod5_lm2)
 covid_hdi %>% 
-  ggplot(aes(human_development_index^2,total_cases_per_million))+
+  ggplot(aes(human_development_index^2,log(total_cases_per_million)))+
   geom_point()+
   geom_smooth(method=lm,se=F)
-covid_hdi %>% 
-  ggplot(aes(human_development_index,log(total_cases_per_million)))+
-  geom_point()+
-  geom_smooth(method=lm,se=F)
+
 ```
 
 
@@ -363,20 +374,22 @@ texreg(mod6)
 ```{r mod7-liniowy}
 mod6_lm <- lm(total_cases_per_million~cardiovasc_death_rate, covid_miesiace)
 summary(mod6_lm)
+texreg(mod6_lm)
 covid_miesiace %>% 
   ggplot(aes(cardiovasc_death_rate, total_cases_per_million))+
   geom_point()+
-  geom_smooth(method=lm)
+  geom_smooth(method=lm,se=F)
 
 summary(powerTransform(cbind(cardiovasc_death_rate, total_cases_per_million)~1, 
                        data = covid_miesiace))
 inverseResponsePlot(mod6_lm)
-mod6_lm2 <- lm(total_cases_per_million~I(cardiovasc_death_rate^(1/3)), covid_miesiace)
+mod6_lm2 <- lm(log(total_cases_per_million)~I(cardiovasc_death_rate^(1/3)), covid_miesiace)
 summary(mod6_lm2)
+texreg(mod6_lm2)
 covid_miesiace %>% 
-  ggplot(aes(cardiovasc_death_rate^(1/3), total_cases_per_million))+
+  ggplot(aes(cardiovasc_death_rate^(1/3), log(total_cases_per_million)))+
   geom_point()+
-  geom_smooth(method=lm)
+  geom_smooth(method=lm,se=F)
 ```
 
 
@@ -394,6 +407,7 @@ texreg(mod7)
 ```{r}
 mod7_lm <- lm(total_cases_per_million~diabetes_prevalence, covid_miesiace)
 summary(mod7_lm)
+texreg(mod7_lm)
 covid_miesiace %>% 
   ggplot(aes(diabetes_prevalence, total_cases_per_million))+
   geom_point()+
@@ -402,12 +416,13 @@ covid_miesiace %>%
 summary(powerTransform(cbind(diabetes_prevalence, total_cases_per_million)~1, 
                        data = covid_miesiace))
 inverseResponsePlot(mod7_lm)
-mod7_lm2 <- lm(total_cases_per_million~I(diabetes_prevalence^(1/3)), covid_miesiace)
+mod7_lm2 <- lm(log(total_cases_per_million)~I(diabetes_prevalence^(1/3)), covid_miesiace)
 summary(mod7_lm2)
+texreg(mod7_lm2)
 covid_miesiace %>% 
-  ggplot(aes(diabetes_prevalence^(1/3), total_cases_per_million))+
+  ggplot(aes(diabetes_prevalence^(1/3), log(total_cases_per_million)))+
   geom_point()+
-  geom_smooth(method=lm)
+  geom_smooth(method=lm, se=F)
 ```
 
 
@@ -426,6 +441,7 @@ texreg(mod8)
 ```{r mod9-liniowy}
 mod8_lm <- lm(total_cases_per_million~extreme_poverty, covid_miesiace)
 summary(mod8_lm)
+texreg(mod8_lm)
 
 covid_miesiace %>% 
   ggplot(aes(extreme_poverty, total_cases_per_million))+
@@ -437,10 +453,11 @@ summary(powerTransform(cbind(extreme_poverty, total_cases_per_million)~1,
 inverseResponsePlot(mod8_lm)
 
 
-mod8_lm2 <- lm(I(total_cases_per_million^0.2)~extreme_poverty, covid_miesiace)
+mod8_lm2 <- lm(log(total_cases_per_million)~log(extreme_poverty), covid_miesiace)
 summary(mod8_lm2)
+texreg(mod8_lm2)
 covid_miesiace %>% 
-  ggplot(aes(extreme_poverty, total_cases_per_million^0.2))+
+  ggplot(aes(log(extreme_poverty), log(total_cases_per_million)))+
   geom_point()+
   geom_smooth(method=lm, se=F)
 ```
@@ -458,9 +475,10 @@ summary(mod9)
 texreg(mod9)
 ```
 
-```{r}
+```{r mod10-liniowy}
 mod9_lm <- lm(total_cases_per_million ~gdp_per_capita, covid_miesiace)
 summary(mod9_lm)
+texreg(mod9_lm)
 covid_miesiace %>% 
   ggplot(aes(gdp_per_capita, total_cases_per_million))+
   geom_point()+
@@ -471,10 +489,11 @@ summary(powerTransform(cbind(gdp_per_capita, total_cases_per_million)~1,
 
 inverseResponsePlot(mod9_lm)
 
-mod9_lm2 <- lm(I(total_cases_per_million^(1/3)) ~gdp_per_capita, covid_miesiace)
+mod9_lm2 <- lm(log(total_cases_per_million) ~I(gdp_per_capita^0.2), covid_miesiace)
 summary(mod9_lm2)
+texreg(mod9_lm2)
 covid_miesiace %>% 
-  ggplot(aes(gdp_per_capita, total_cases_per_million^(1/3)))+
+  ggplot(aes(gdp_per_capita^0.2, log(total_cases_per_million)))+
   geom_point()+
   geom_smooth(method=lm, se=F)
 ```
