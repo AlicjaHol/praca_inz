@@ -524,3 +524,35 @@ covid %>%
 
 ```
 
+# Predykcja
+
+```{r zbior-testowy}
+covid_test <- read.csv(url("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"),
+                  sep = ",", header = T)
+
+covid_test <- covid_test[!covid_test$location %in% c("International", "World", "Kosovo", 
+                                      "South Sudan", "Syria", "Taiwan"),]
+covid_test <- covid_test[covid_test$population>1000000,]
+covid_test <- drop_na(covid_test, total_cases_per_million)
+covid_test <- covid_test[covid_test$total_cases_per_million!=0,]
+covid_test$time <- with(covid_test, ave(rep(1, nrow(covid_test)), 
+                              location, FUN = seq_along))
+covid_test <- covid_test[as.Date(covid_test$date)>="2020-12-01",]
+covid_test <- covid_test[as.Date(covid_test$date)<"2020-12-07",]
+
+predykcja <- predict(mod_kw, covid_test) %>% as.data.frame()
+colnames(predykcja) <- "predicted_total_cases_per_million"
+head(predykcja)
+porownanie <- cbind(as.character(covid_test$location), covid_test$total_cases_per_million,
+      predykcja$predicted_total_cases_per_million) %>% as.data.frame()
+
+head(porownanie)
+colnames(porownanie) <- c("location", "total_cases_per_million","predicted_total_cases_per_million")
+
+porownanie$total_cases_per_million <- as.numeric(as.character(porownanie$total_cases_per_million))
+porownanie$predicted_total_cases_per_million <- as.numeric(as.character(porownanie$predicted_total_cases_per_million))
+porownanie$difference <- porownanie$total_cases_per_million-porownanie$predicted_total_cases_per_million
+porownanie$diff_percent <- porownanie$difference/porownanie$total_cases_per_million
+head(porownanie)
+```
+

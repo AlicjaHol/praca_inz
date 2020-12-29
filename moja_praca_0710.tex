@@ -504,6 +504,90 @@ Do oceny wartości parametrów modelu mieszanego można stosować metody ML (Naj
 
 Różnica między metodą REML i ML polega na tym, że w metodzie REML najpierw usuwamy wpływ efektów stałych, które w modelach mieszanych są czynnikami zakłócającymi.
 
+Estymacja parametrów modelu mieszanego jest trudnym zagadnieniem. Można wyróżnić dwa podejścia, jedno z nich wykorzystuje własności macierzy $ZDZ^T$, a drugie polega na rozwijaniu metod numerycznych używanych do znalezienia maksimum funkcji wiarogodności. Przykładową metodą jest np. użycie algorytmu Newtona-Rapshona - iteracyjnej metody optymalizacji. To podejście jest dobre dla zbioru danych o praktycznie dowolnym rozmiarze, ale ze względu na złożoność pamięciową rzędu $O((p+q)^2)$, źle sprawdza się dla modelu z dużą liczbą parametrów do oszacowania. Pod tym względem bardziej efektywne jest rozwiązanie przy wykorzystaniu własności macierzy rzadkich. To podejście zostanie przedstawione poniżej.
+
+Macierz rzadka jest to macierz, w której większość elementów ma wartość zero. Algorytmy dla macierzy rzadkich są zwykle szybsze niż analogiczne algorytmy dla macierzy gęstych. Zamiast przechowywać wszystkie wartości takiej macierzy, wystarczy zapisać w pamięci wartości i indeksy elementów, które są różne od zera. Macierze rzadkie w praktyce maja często tak wielki rozmiar, że niemożliwe by było opracowanie na nich zwykłymi algorytmami.
+
+W modelu mieszanym macierz $Z$ jest macierzą rzadką. Często również macierz X jest taką macierzą.
+
+Z definicji modelu mieszanego $u \sim \mathcal{N}(0,~\sigma^2D)$, gdzie $\sigma^2$ to wariancja wektora $\varepsilon$. Niech $$D=\Lambda \Lambda^T,$$ gdzie $\Lambda$ to macierz trójkątna dolna (ponieważ $D$ jest macierzą kowariancji, to zawsze można znaleźć taki rozkład). Macierz $D$ (a przez to także macierz $\Lambda$) jest parametryzowana wektorem $\theta$. Do tego obierzmy wektor $w$ taki, że $$u=\Lambda w.$$ Taki wektor $w$ ma rozkład $\mathcal{N}(0,~I_{q \times q})$.
+
+Rozkład warunkowy $y|u$ jest rozkładem $\mathcal{N}(X\beta+Zu,~\sigma^2I)$. Ale ponieważ nie obserwujemy $u$, a jedynie $y$, to aby wnioskować o $u$, będziemy rozważać gęstość $u|y$. Z reguły Bayesa mamy $$f_{u|y}=\frac{f_{y|u}f_u}{f_y}.$$ Zaczniemy od wyznaczenia gęstości łącznej $f_{y,u}=f_{y|u}f_u$.
+
+$$f_{y,u}(\beta, \theta, \sigma^2)=f_{y|u}(\beta, \theta, \sigma^2)f_u(\beta, \theta, \sigma^2)=$$
+$$=\frac{\exp(-(y-X\beta -Z \Lambda u)^T(y-X\beta-Z\Lambda u)/(2\sigma^2))}{(2\pi \sigma^2)^{n/2}}\cdot \frac{\exp(-u^Tu/(2\sigma^2))}{(2\sigma^2)^{q/2}}=$$
+$$=\frac{\exp(-(||y-X\beta-Z\Lambda u||^2+||u||^2)/(2\sigma^2))}{(2\pi \sigma^2)^{(n+q)/2}},$$ gdzie $||a||^2$ to suma kwadratów współrzędnych wektora $a$.
+
+Minimalizacja tej gęstości po $u$ lub $\beta$ jest równoważna minimalizacji sumy kwadratów reszt z karą za współczynniki $u$:
+$$r^2(\theta, \beta, w)=||y-X\beta-Z\Lambda w||^2+||w||^2.$$ Funkcję $r^2(\theta, \beta, w)$ nazywamy sumą kwadratów reszt z karą oznaczamy $PRSS$ (\texttt{Penalized Residual Sum of Squares}). Przez $r_{\theta}$ określimy $\min\limits_{w,\beta} r^2(\theta, \beta,w)$. Wartości minimalizujące $PRSS$ po $w$ i $\beta$ można znaleźć, rozwiązując układ równań liniowych.
+
+\begin{equation} \label{eq:ukladPRSS}
+\begin{bmatrix}
+X^TX & X^TZ\Lambda \\
+\Lambda^TZ^TX & \Lambda^TZ^TZ\Lambda +I
+\end{bmatrix}
+\begin{bmatrix}
+\beta \\
+w
+\end{bmatrix}=
+\begin{bmatrix}
+X^Ty\\
+\Lambda^TZ^Ty
+\end{bmatrix}
+\end{equation}
+
+To zadanie da się rozwiązać efektywnie nawet dla bardzo dużych $q$, używając rzadkiej dekompozycji Choleskiego. Po lewej stronie równania przynajmniej macierz $\Lambda^TZ^TZ\Lambda+I$ jest macierzą rzadką. Można ją przedstawić jako
+
+$$\begin{bmatrix}
+A & 0 \\
+B & L
+\end{bmatrix}
+\begin{bmatrix}
+A^T & B^T\\
+0 & L
+\end{bmatrix}
+$$
+gdzie $A$ i $B$ to nieduże macierze (o ile $p$ jest nieduże), a $L$ to rzadki pierwiastek Choleskiego macierzy $\Lambda^TZ^TZ\Lambda+I_{q\times q}$, czyli jest to rzadka macierz trójkątna dolna spełniająca warunek $$LL^T=\Lambda^TZ^TZ\Lambda +I_{q \times q}.$$ Użycie dekompozycji Choleskiego macierzy rzadkich, która sama jest rzadka, jest kluczowym momentem pozwalającym na operowanie na dużych macierzach. W tym celu kolumny macierzy $Z$ odpowiednio się permutuje. Dzięki temu można operować na macierzach, które w postaci pełnej nie mieściłyby się w pamięci.
+
+Po wyznaczeniu dekompozycji Choleskiego łatwo rozwiązać układ równań \ref{eq:ukladPRSS}. Co więcej
+
+\begin{equation} \label{eq:2log}
+-2\log l(\theta,\beta,\sigma|y)=\log(2\pi \sigma^2)+\log(|L|^2) +\frac{r^2_{\theta}}{\sigma^2}, 
+\end{equation}
+gdzie $|L|$ to wyznacznik macierzy $L$ (która jest trójkątna, więc łatwo go policzyć). Minimalizując powyższe wyrażenie po $\sigma^2$, otrzymujemy warunkowy estymator wariancji (dla zadanego $\theta$):
+$$\hat{\sigma}_{\theta}^2=\frac{r^2_{\theta}}{n}$$
+Podstawiając tą ocenę wariancji do równości \ref{eq:2log}, otrzymujemy funkcję wariancji sprofilowaną do parametru $\theta$
+
+$$-2 \log l(\theta|y)=\log(|L|^2)+n+n\log\left(\frac{2\pi r^2_{\theta}}{n}\right)$$
+
+Wartość tej funkcji możemy wyznaczyć efektywnie, nawet dla dużych $p+q$, a sama funkcja wiarogodności zależy jedynie od parametru $\theta$, którego wymiar $g$ jest zazwyczaj nieduży (jest to liczba komponentów wariancyjnych). Maksymalizację tak opisanej funkcji wiarogodności po przestrzeni parametrów o niewielkim wymiarze wykonuje się stamdardowymi algorytmami numerycznymi.
+
+Wyznaczywszy metodą ML (lub REML) ocenę parametru $\hat{\theta}$, możemy obliczyć oceny pozostałych parametrów modelu. 
+
+W powyższej metodzie macierz $V=\sigma^2(I+ZDZ^T)$ mogła mieć prawie dowolną postać. W wielu praktycznych sytuacjach macierz $D$, a tym samym macierz $V$, ma bardzo protą strukturę.
+
+Rozważmy model niezależnych $g$ komponentów losowych, każdy komponent złożony z niezależnych $q_i$ efektów takich, że $\sum\limits_i q_i=q$. Dodatkowo oznaczmy wariancję kolejnych $q_i$ przez $\sigma^2_i=\sigma^2\theta_i$. W takim modelu macierz $D$ jest macierzą diagonalną
+
+$$D=\begin{bmatrix}
+\theta_1I_{q_1} & 0 & \cdots & 0 \\
+0 & \theta_2I_{q_2} & \cdots & 0 \\
+\cdots & \cdots & \ddots & \cdots \\
+0 & 0 & \cdots & \theta_gI_{q_g}
+\end{bmatrix}$$
+Dla takiej macierzy $D$ macierz wariancji $y$ można wyrazić jako
+
+$$Var(y)=V=\sigma^2(I+ZDZ^T)=I\sigma^2+\sum_{i=1}^{g}\sigma_i^2Z_iZ_i^T$$
+gdzie $Z_i$ to macierz złożona z kolumn macierzy $Z$ odpowiadających tym efektom losowym, które mają wariancję $\sigma^2_i$. Każda $Z_i$ to jeden komponent wariancyjny.
+
+\begin{uwaga}
+	Może się zdarzyć, że w wyniku estymacji otrzymamy ujemne oceny pewnych parametrów $\sigma_i^2$. Oczywiście nie można takich wartości interpretować jako oceny wariancji. Problem z ujemnymi wartościami $\hat{\sigma}^2_i$ można rozwiązać na kilka sposobów, np.
+	\begin{itemize}
+		\item wartość ujemną zastąpić przez 0. Jest to metoda najprostsza, ale generuje obciążenie;
+		\item zastosować optymalizację z ograniczeniami. Na przestrzeni parametrów zadajemy liniowe ograniczenia i szukamy maksimum funkcji wiarogodności na zbiorze ograniczonym do nieujemnych parametrów;
+		\item zamiast $\sigma_i^2$ można używać innych parametrów, które da się przekształcić w nieujemne oceny $\sigma^2_i$. Przykładowo dla nowej parametryzacji $\gamma_i=\log(\sigma^2_i)$ możemy optymalizować funkcję wiarogodności ze względu na parametry $\gamma_i$ po całej prostej, a następnie otrzymane oceny $\hat{\gamma}_i$ możemy przekształcić na dodatnie oceny $\hat{\sigma}_i^2=\exp(\hat{\gamma}_i)$. Wadą tego podejścia jest niemożliwość uzyskania oceny z brzegu przedziału, tzn. nie otrzymamy nigdy oceny $\hat{\sigma}^2_i=0$.
+	\end{itemize}
+\end{uwaga}
+
 \subsection{Badanie istotności parametrów i wybór najlepszego modelu}
 
 W modelach mieszanych konieczne jest zbadanie istotności dla efektów stałych oraz dla efektów losowych.
