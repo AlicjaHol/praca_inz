@@ -409,7 +409,10 @@ Biorąc to pod uwagę, tym ważniejszy wydaje się temat poruszany w tej pracy. 
 
 
 
-
+\begin{center}
+	\fbox{
+		\parbox{\textwidth}{Przeredagować wstęp jak już cała praca będzie napisana, dopisać o metodach analizy.}  }
+\end{center}
 
 
 
@@ -420,25 +423,16 @@ Biorąc to pod uwagę, tym ważniejszy wydaje się temat poruszany w tej pracy. 
 \chapter{Teoretyczne podstawy badań własnych}
 W tej części pracy przedstawimy metody matematyczne, które zostaną użyte w części praktycznej tej pracy. Zgodnie z tematem, będą to głównie modele mieszane.
 \section{Modele liniowe}
-Na początek przypomnimy podstawowe wiadomości o modelach liniowych.
-
-Model regresji prostej ma postać 
-$$y=x \beta_1+\beta_0 + \varepsilon$$
-
-gdzie oszacowania parametrów $\beta_1$, $\beta_0$ obliczamy następująco:
-
+Na początek przypomnimy podstawowe wiadomości o modelach liniowych. Model regresji prostej ma postać $$y=x \beta_1+\beta_0 + \varepsilon,$$ gdzie oszacowania parametrów $\beta_1$, $\beta_0$ obliczamy następująco:
 $$\hat{\beta_1}=\frac{Cov(x,y)}{Var(x)},$$
-$$\hat{\beta_0}=\overline{y}-\overline{x}\hat{\beta_1}.$$
+$$\hat{\beta_0}=\overline{y}-\overline{x}\hat{\beta_1}.$$ Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zmienna $y$ zmieni się o $\beta_1$. Zmienną $y$ nazywamy zmienną zależną, a $x$ - niezależną.
 
-Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zmienna $y$ zmieni się o $\beta_1$.
+Jeżeli w modelu występuje więcej niż jedna zmienna niezależna, to mówimy o regresji wielorakiej (lub wielokrotnej). Wówczas model ma postać: $$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k + \varepsilon,$$ lub w zapisie macierzowym $$\yy=\mathbf{X}\beta+\varepsilon$$
 
-Zmienną $y$ nazywamy zmienną zależną, a $x$ - niezależną.
-
-Jeżeli w modelu występuje więcej niż jedna zmienna niezależna, to mówimy o regresji wielorakiej (lub wielokrotnej). Wówczas model ma postać:
-
-$$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k + \varepsilon,$$
-lub w zapisie macierzowym
-$$\yy=\mathbf{X}\beta+\varepsilon$$
+\begin{center}
+	\fbox{
+		\parbox{\textwidth}{Dopisać o założeniach, czyli jakie mają być epsilony.}  }
+\end{center}
 \subsection{Metody estymacji parametrów modelu liniowego}
 \begin{enumerate}
 	\item Metoda najmniejszych kwadratów, OLS (ang. \emph{Ordinary Least Squares}) - w metodzie tej minimalizujemy błąd kwadratowy, czyli sumę kwadratów reszt, którą oznaczamy RSS (ang. \emph{Residual Sum of Squares}).
@@ -447,7 +441,7 @@ $$\yy=\mathbf{X}\beta+\varepsilon$$
 	
 	Twierdzenie Gaussa-Markowa: taki estymator jest BLUE (Best Linear Unbiased Estimator), przy odpowiednich założeniach.
 	
-	\item Metoda największej wiarogodności, ML (ang.\texttt{Maximum Likelihood}) polega na maksymalizacji wartości funkcji prawdopodobieństwa ze względu na $\beta$ (w praktyce maksymalizujemy zwykle logarytm z tej funkcji)
+	\item Metoda największej wiarogodności, ML (ang.\textit{Maximum Likelihood}) polega na maksymalizacji wartości funkcji prawdopodobieństwa ze względu na $\beta$ (w praktyce maksymalizujemy zwykle logarytm z tej funkcji)
 	
 	$$\hat{\sigma}^{2}_{ML}=RSS/n$$
 	
@@ -455,54 +449,47 @@ $$\yy=\mathbf{X}\beta+\varepsilon$$
 	
 	Estymatory uzyskane tą metodą są asymptotycznie nieobciążone.
 	
-	\item Resztowa metoda największej wiarogodności, REML (ang. \texttt{Residual/Restricted Maximum Likelihood Method}) - z estymacji parametru $\sigma^2$ usuwamy wpływ parametrów zakłócających $\beta$.
+	\item Resztowa metoda największej wiarogodności, REML (ang. \textit{Residual/Restricted Maximum Likelihood Method}) - z estymacji parametru $\sigma^2$ usuwamy wpływ parametrów zakłócających $\beta$.
 	
 	$$\hat{\sigma}^2_{REML}=RSS/(n-p)$$
 	
 	Estymatory uzyskane tą metodą są nieobciążone \cite{biecek}.
 \end{enumerate}
-
+\begin{center}
+	\fbox{
+		\parbox{\textwidth}{Opisać dokładniej REML, zastanowić się czy opisywać tu czy przy mieszanych}  }
+\end{center}
 \subsection{Badanie istotności parametrów}
 
-Aby zbadać istotność współczynników modelu liniowego, weryfikujemy hipotezę postaci
+Aby zbadać istotność współczynników modelu liniowego, weryfikujemy hipotezę postaci $H_0: \beta_i = 0$ przeciw hipotezie alternatywnej $H_1: \beta_i \neq 0.																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													$ Do zweryfikowania tej hipotezy wykorzystujemy test Walda. Statystyka testowa ma postać $$T=\hat{\beta_i}/se(\hat{\beta_i})$$ i jest nazywana statystyką t. Przy założeniu prawdziwości $H_0$ statystyka ta ma rozkład t-Studenta o $n-k-1$ stopniach swobody ($n$ - liczba obserwacji, $k$ - liczba parametrów w modelu, nie licząc wyrazu wolnego).
 
-$$H_0: \beta_i = 0$$
+Badanie efektów brzegowych poszczególnych zmiennych należy poprzedzić testem F (testem globalnym), który weryfikuje hipotezę $$H_0: \beta_1=\beta_2=\ldots=\beta_k=0$$
+ przeciwko hipotezie alternatywnej $$H_1: \exists{j} \beta_j \neq 0 $$
 
-przeciw hipotezie alternatywnej $$H_1: \beta_i \neq 0.																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													$$
-
-Do zweryfikowania tej hipotezy wykorzystujemy test Walda.
-Statystyka testowa ma postać $$T=\hat{\beta_i}/se(\hat{\beta_i})$$
-i jest nazywana statystyką t (ang. \texttt{t-value}).
-
-Przy założeniu prawdziwości $H_0$ statystyka ta ma rozkład t-Studenta o $n-k-1$ stopniach swobody ($n$ - liczba obserwacji, $k$ - liczba parametrów w modelu).
-
-Można także użyć testu F (testu globalnego), aby zweryfikować hipotezę
-
-$$H_0: \beta_1=\beta_2=\ldots=\beta_k=0$$
-
-przeciwko hipotezie alternatywnej
-$$H_1: \exists{j} \beta_j \neq 0 $$
+\fbox{\parbox{\textwidth}{Dodać podrozdział na temat transformacji zmiennych, w szczególności transformacji Boxa-Coxa.}}
 
 \section{Modele mieszane} 
-W powyżej opisanych modelach liniowych z efektami stałymi zakładamy niezależność kolejnych pomiarów, dlatego nie są to odpowiednie modele, kiedy mamy np. kilka pomiarów dla pojedynczego elementu. W takim przypadku możemy użyć modeli liniowych z efektami mieszanymi (stałymi i losowymi), które krótko nazywamy modelami mieszanymi.
+W powyżej opisanych modelach liniowych z efektami stałymi zakładamy niezależność kolejnych pomiarów, dlatego nie są to odpowiednie modele w przypadku, kiedy mamy np. kilka pomiarów dla pojedynczego elementu. W takiej sytuacji możemy użyć modeli liniowych z efektami mieszanymi (stałymi i losowymi), które krótko nazywamy modelami mieszanymi.
 
-Modeli mieszanych używamy w przypadu powtarzanych pomiarów bądź w przypadku hierarchicznej lub zagnieżdżonej struktury. Takie dane charakteryzują się korelacją między obserwacjami z tej samej grupy, co nie pozwala na użycie modelu liniowego z efektami stałymi. Dlatego do modelu wprowadza się czynnik losowy. 
+Modeli mieszanych używamy w przypadku powtarzanych pomiarów bądź hierarchicznej, czyli zagnieżdżonej struktury. Takie dane charakteryzują się korelacją między obserwacjami z tej samej grupy, co nie pozwala na użycie modelu liniowego z efektami stałymi, ponieważ założenie o braku seryjnej korelacji błędu modelu nie jest spełnione. Dlatego do modelu wprowadza się czynnik losowy.  Czynnik stały jest pewnym parametrem, którego wartość estymujemy na podstawie próbki, natomiast czynnik losowy jest zmienną losową, dla której próbujemy oszacować parametry jej rozkładu \cite{faraway}.
+\fbox{\parbox{\textwidth}{komentarz do powyższego: nie do końca na tym polega różnica...
+Chodzi o to, że efekty stałe, to takie w których interesuje nas wielkość efektu (średnia), natomiast w efektach losowych bierzemy jedynie pod uwagę fakt, iż wprowadzona zmienna wnosi do modelu pewną zmienność (dokładniej pozwala od całkowitej zmienności, tą zmienność odjąć) i szacuje się tylko wariancję (lub odchylenie std.) a nie jakieś parametry rozkładu.
+Ponadto efektów losowych można się spodziewać wtedy gdy nie kontrolujemy wszystkich poziomów zmiennej niezależnej.}}	
+Przykładową sytuacją, gdzie możemy użyć modelu mieszanego, jest badanie działania leku na grupie pacjentów, gdzie dokonujemy kilku pomiarów na danym pacjencie. W tym przypadku nie interesuje nas efekt konkretnego pacjenta, ale raczej wpływ leku na przeciętną osobę. Dodatkowo, traktujemy pacjentów jako losowo wybranych. Podejście modelu mieszanego będzie polegało na potraktowaniu wpływu pacjenta jako czynnik zakłócający. 
 
-Czynnik stały jest pewnym parametrem, którego wartość estymujemy na podstawie próbki, natomiast czynnik losowy jest zmienną losową, dla której próbujemy oszacować parametry jej rozkładu \cite{faraway}.
-	
-Przykładową sytuacją, gdzie możemy użyć modelu mieszanego, jest badanie działania leku na grupie pacjentów, gdzie dokonujemy kilku pomiarów na danym pacjencie. W tym przypadku nie interesuje nas konkretny pacjent, ale raczej wpływ leku na przeciętnego pacjenta. Dodatkowo, traktujemy pacjentów jako losowo wybranych. Podejście modelu mieszanego będzie polegało na potraktowaniu wpływu pacjenta jako czynnik zakłócający. 
+\fbox{\parbox{\textwidth}{Poprawić styl w ostatnim zdaniu.}}
 
 Rozważamy model postaci
 $$y=X\beta +Z u + \varepsilon$$
 gdzie $X$ - macierz zmiennych będących efektami stałymi, $Z$ - macierz zmiennych będących efektami losowymi, $\beta$ to wektor nieznanych efektów stałych, $\varepsilon \sim \mathcal{N}(0, \sigma^2 I_{n\times n})$ to zakłócenie losowe, a $u \sim \mathcal{N} (0, \sigma^2D)$ to wektor zmiennych losowych odpowiadających efektom losowym \cite{biecek}.
 
-Znając $D$, możemy estymować parametry $\beta$ uogólnioną metodą najmniejszych kwadratóW. Do estymowania nieznanego $D$ możemy użyć np. metodą największej wiarogodności.
+Znając $D$, możemy estymować parametry $\beta$ uogólnioną metodą najmniejszych kwadratów. Do estymowania nieznanego $D$ możemy użyć np. metodą największej wiarogodności.
 
 \subsection{Metody estymacji}
 
 Do oceny wartości parametrów modelu mieszanego można stosować metody ML (Największej Wiarogodności) oraz REML (Resztowej Największej Wiarogodności), wspomniane w tej pracy przy okazji modeli liniowych. W przypadku modeli mieszanych obydwoma metodami możemy uzyskać estymatory obciążone, ale to obciążenie jest zazwyczaj mniejsze w przypadku estymatorów uzyskanych metodą REML.
 
-Różnica między metodą REML i ML polega na tym, że w metodzie REML najpierw usuwamy wpływ efektów stałych, które w modelach mieszanych są czynnikami zakłócającymi.
+Różnica między metodą REML i ML polega na tym, że w metodzie REML najpierw usuwamy wpływ efektów stałych, które w modelach mieszanych są traktowane jako czynniki zakłócające.
 
 Estymacja parametrów modelu mieszanego jest trudnym zagadnieniem. Można wyróżnić dwa podejścia, jedno z nich wykorzystuje własności macierzy $ZDZ^T$, a drugie polega na rozwijaniu metod numerycznych używanych do znalezienia maksimum funkcji wiarogodności. Przykładową metodą jest np. użycie algorytmu Newtona-Rapshona - iteracyjnej metody optymalizacji. To podejście jest dobre dla zbioru danych o praktycznie dowolnym rozmiarze, ale ze względu na złożoność pamięciową rzędu $O((p+q)^2)$, źle sprawdza się dla modelu z dużą liczbą parametrów do oszacowania. Pod tym względem bardziej efektywne jest rozwiązanie przy wykorzystaniu własności macierzy rzadkich. To podejście zostanie przedstawione poniżej.
 
@@ -519,7 +506,7 @@ $$=\frac{\exp(-(y-X\beta -Z \Lambda u)^T(y-X\beta-Z\Lambda u)/(2\sigma^2))}{(2\p
 $$=\frac{\exp(-(||y-X\beta-Z\Lambda u||^2+||u||^2)/(2\sigma^2))}{(2\pi \sigma^2)^{(n+q)/2}},$$ gdzie $||a||^2$ to suma kwadratów współrzędnych wektora $a$.
 
 Minimalizacja tej gęstości po $u$ lub $\beta$ jest równoważna minimalizacji sumy kwadratów reszt z karą za współczynniki $u$:
-$$r^2(\theta, \beta, w)=||y-X\beta-Z\Lambda w||^2+||w||^2.$$ Funkcję $r^2(\theta, \beta, w)$ nazywamy sumą kwadratów reszt z karą oznaczamy $PRSS$ (\texttt{Penalized Residual Sum of Squares}). Przez $r_{\theta}$ określimy $\min\limits_{w,\beta} r^2(\theta, \beta,w)$. Wartości minimalizujące $PRSS$ po $w$ i $\beta$ można znaleźć, rozwiązując układ równań liniowych.
+$$r^2(\theta, \beta, w)=||y-X\beta-Z\Lambda w||^2+||w||^2.$$ Funkcję $r^2(\theta, \beta, w)$ nazywamy sumą kwadratów reszt z karą oznaczamy $PRSS$ (\textit{Penalized Residual Sum of Squares}). Przez $r_{\theta}$ określimy $\min\limits_{w,\beta} r^2(\theta, \beta,w)$. Wartości minimalizujące $PRSS$ po $w$ i $\beta$ można znaleźć, rozwiązując układ równań liniowych.
 
 \begin{equation} \label{eq:ukladPRSS}
 \begin{bmatrix}
@@ -590,53 +577,37 @@ gdzie $Z_i$ to macierz złożona z kolumn macierzy $Z$ odpowiadających tym efek
 
 \subsection{Badanie istotności parametrów i wybór najlepszego modelu}
 
-W modelach mieszanych konieczne jest zbadanie istotności dla efektów stałych oraz dla efektów losowych.
-
-Dla efektów stałych testujemy hipotezę
-
-$$H_0: \beta_i=0$$
-
-przeciwko hipotezie alternatywnej $$H_1: \beta_i \neq 0,$$
-
-a dla komponentów wariancyjnych weryfikujemy hipotezę
-
-$$H_0: \sigma^2_j=0$$
-
-przy jednostronnej hipotezie alternatywnej 
-$$H_1: \sigma^2_j>0.$$
+W modelach mieszanych konieczne jest zbadanie istotności dla efektów stałych oraz losowych. Dla efektów stałych testujemy hipotezę $H_0: \beta_i=0$ przeciwko hipotezie alternatywnej $H_1: \beta_i \neq 0,$ a dla komponentów wariancyjnych weryfikujemy hipotezę $H_0: \sigma^2_j=0$ przy jednostronnej hipotezie alternatywnej  $H_1: \sigma^2_j>0.$ 
 
 
 
 Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie zawsze dają się zastosować w przypadku modeli mieszanych. Wymienimy teraz kilka metod doboru najlepszego modelu i opiszemy, które z nich są najskuteczniejsze \cite{faraway}.
 
 \begin{enumerate}
-	\item Iloraz wiarygodności(ang. \texttt{likelihood ratio}) - tworzymy dwa modele, model 0, który nie zawiera elementów, których istotność chcemy zbadać, i model 1, który zawiera te elementy. Pozostałe zmienne muszą być takie same w obu modelach.
+	\item Iloraz wiarygodności(ang. \textit{likelihood ratio}) - tworzymy dwa zagnieżdżone modele, model 0, który nie zawiera elementów, których istotność chcemy zbadać, i model 1, który zawiera te elementy. Pozostałe zmienne muszą być takie same w obu modelach.
 	
 	Statystyka testowa wygląda następująco:
 	$$2(l(\hat{\beta_1}, \hat{\sigma_1}, \hat{D_1}|y)-l(\hat{\beta_0}, \hat{\sigma_0}, \hat{D_0}|y)),$$
-	gdzie l - logarytm z funkcji prawdopodobieństwa.
+	gdzie $l$ - logarytm z funkcji prawdopodobieństwa. Tego testu nie można używać do modeli wyznaczonych metodą REML.
 	
-	Tego testu nie można używać do modeli wyznaczonych metodą \texttt{REML}.
+	\item Test F dla efektów stałych - metoda taka sama jak ta używana przy modelach z efektami stałymi. W przypadku modeli mieszanych może sprawiać problemy, ponieważ statystyka testowa niekoniecznie musi mieć rozkład F. Należy wówczas wprowadzać poprawkę na liczbę stopni swobody. Na ogół ta metoda daje dobre rezultaty dla mniej skomplikowanych modeli, gdy układ jest zbalansowany (wszystkie grupy są równoliczne). Dla modeli bardziej skomplikowanych lub kiedy brak równoliczności, wartości $p$ oraz statystyki $t$ mogą być błędne.
 	
-	\item Test F dla efektów stałych - metoda taka sama jak ta używana przy modelach z efektami stałymi. W przypadku modeli mieszanych może sprawiać problemy, ponieważ statystyka testowa niekoniecznie musi mieć rozkład F. Należy także wprowadzać poprawkę na liczbę stopni swobody.
+	\item Test permutacyjny - można użyć metod \textit{bootstrapowych}, aby znaleźć dokładniejsze wartości $p$-value. Należy wygenerować dane z modelu 0 (na podstawie oszacowanych parametrów) i obliczyć statystykę \textit{likelihood ratio}. Tą procedurę powtarzamy wielokrotnie i oceniamy istotność.
 	
-	Na ogół ta metoda daje dobre rezultaty dla mniej skomplikowanych modeli, gdy układ jest zbalansowany (wszystkie grupy są równoliczne). Dla modeli bardziej skomplikowanych, lub kiedy brak równoliczności, wartości p oraz statystyki t mogą być błędne.
+	\fbox{\parbox{\textwidth}{komentarz do tego podpukntu: Napisz dokładniej o co chodzi, bo to ważne. Dokładniej to robimy to tak...
+permutujemy wielokrotnie kolumnę/y zawierajace interesujące nas efekty, po czym wyliczamy dla nich log funkcji wiarogodności a następnie sprawdzamy ile z nich przekroczyło log f. wiarogodności dla modelu z niepermutowanymi kolumnami.}}
+
+	\item Kryteria informacyjne - służą do wyboru najlepszego spośród modeli. Najpopularniejszym jest Kryterium Informacyjne Akaikego (ang. \textit{Akaike Information \\Criterion, AIC}). Jest ono zdefiniowane następującym wzorem:
 	
-	\item Test permutacyjny - można użyć metod \textit{bootstrapowych}, aby znaleźć dokładniejsze wartości p-value. Należy wygenerować dane z modelu 0 (na podstawie oszacowanych parametrów) i obliczyć statystykę \textit{likelihood ratio}. Tą procedurę powtarzamy wielokrotnie i oceniamy istotność.
+	$$-2(\textit{max log likelihood})+ 2p,$$
 	
-	\item Kryteria informacyjne - służą do wyboru najlepszego spośród modeli. Najpopularniejszym jest Kryterium Informacyjne Akaikego (ang. \texttt{Akaike Information \\Criterion, AIC}). Jest ono zdefiniowane następującym wzorem:
-	
-	$$-2(\texttt{max log likelihood})+ 2p,$$
-	
-	gdzie $p$ to liczba parametrów modelu.
-	
-	Można stosować to kryterium do modeli, które różnią się jedynie efektami stałymi, gdzie liczba efektów losowych jest identyczna dla wszystkich modeli, które porównujemy. Gdyby modele różniły się liczbą efektów losowych, należałoby rozważyć, w jaki sposób zliczyć liczbę parametrów $p$.
-	
-	Kryterium Akaikego jest miarą utraconej informacji, więc po obliczeniu go dla roważanych modeli, należy wybrać ten, gdzie otrzymana wartość jest najmniejsza.
+	gdzie $p$ to liczba parametrów modelu. Można stosować to kryterium do modeli, które różnią się jedynie efektami stałymi, gdzie liczba efektów losowych jest identyczna dla wszystkich modeli, które porównujemy. Gdyby modele różniły się liczbą efektów losowych, należałoby rozważyć, w jaki sposób zliczyć liczbę parametrów $p$. Kryterium Akaikego jest miarą utraconej informacji, więc po obliczeniu go dla rozważanych modeli, należy wybrać ten, gdzie otrzymana wartość jest najmniejsza.
 
 \end{enumerate}
 
 Przy obliczeniach dotyczących stosunkowo małych zbiorów danych, można użyć każdej z tych metod, ale w przypadku dużej liczby obserwacji, niektóre obliczenia mogą zająć zbyt wiele czasu. Najmniej skomplikowany obliczeniowo jest test Walda, gdzie dokonujemy tylko jednej estymacji współczynników. Przy użyciu testu ilorazu wiarygodności, należy dokonać dwóch estymacji - dla modelu z i bez testowanego efektu. Stosując testy permutacyjne, musimy dokonać obliczeń setki lub tysiące razy. Dlatego w przypadku najbardziej skomplikowanych problemów zwykle stosuje się test Walda, mimo jego gorszych właściwości statystycznych \cite{biecek}.
+
+\fbox{\parbox{\textwidth}{komentarz do ostatniego zdania: jeszcze taka uwaga że nie wszystkie metody nadają się do każdego efektu (nie ma testu Walda dla efektu losowego).}}
 
 \subsection{Interpretacja parametrów modelu mieszanego}
 W modelu mieszanym efekty stałe należy interpretować tak jak w przypadku regresji, analizy wariancji lub analizy kowariancji, w zależności od rodzaju zmiennej niezależnej. Trzeba jednak pamiętać, że oszacowane wartości współczynników reprezentują wartość średnią dla całej populacji, a dla poszczególnych obiektów badania będą się różnić o wartość oceny efektu osobniczego.
@@ -644,7 +615,7 @@ W modelu mieszanym efekty stałe należy interpretować tak jak w przypadku regr
 Dla efektu losowego możemy oszacować jego wariancję. Informuje nas ona o tym, jak bardzo mogą się różnić współczynniki efektów stałych dla poszczególnych obiektów badania
 \cite{experimental}.
 
-Można wyróżnić dwa rodzaje efektów losowych: losowy wyraz wolny (rysunek \ref{fig:random_types}, wykres A) oraz losowy wyraz wolny i współczynnik nachylenia (rysunek \ref{fig:random_types}, wykres B). W pierwszym przypadku, prosta regresji dla poszczególnych obiektów badań może być przesunięta w górę lub w dół w stosunku do średniej, a w drugim przypadku może także być nachylona do osi OX pod mniejszym lub większym kątem.
+Można wyróżnić dwa rodzaje efektów losowych: losowy wyraz wolny (rysunek \ref{fig:random_types}, wykres A) oraz losowy wyraz wolny i współczynnik nachylenia (rysunek \ref{fig:random_types}, wykres B). W pierwszym przypadku, prosta regresji dla poszczególnych obiektów badań może być przesunięta w górę lub w dół w stosunku do średniej globalnej, a w drugim przypadku może dodatkowo być nachylona do osi OX pod mniejszym lub większym kątem.
 
 \begin{figure}[htbp]
 	\centering
@@ -672,16 +643,16 @@ $$u_{cow} \sim \mathcal{N}(0, \sigma^2_{cow}).$$
  Znając macierz $D$ i parametry $\beta$, predykcje efektów losowych $\widetilde{u}$ można wyznaczyć ze wzoru
  
  $$\widetilde{u}=DZ^TV^{-1}(y-X\beta),$$
- gdzie $V$ to macierz $\sigma^2(I+ZDZ^T)$ \cite{biecek}.
+ gdzie $V$ to macierz $\sigma^2(I+ZDZ^T)$ \cite{biecek}. Wówczas predykcja będzie sumą $\hat{\mu}$ oraz oceny efektu losowego dla odpowiedniego osobnika.
  
- Wówczas predykcja będzie sumą $\hat{\mu}$ oraz oceny efektu losowego dla odpowiedniego osobnika.
+ \fbox{\parbox{\textwidth}{komentarz: brakuje mi na zakończenie jakiegoś porównania efektów stałych i losowych.}}
  
 \chapter{Badania własne}
 \section{Opis zbioru badawczego}
 
 Zbiór danych pochodzi z witryny internetowej Our World In Data \cite{owid}, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
 
-W zbiorze znajdowało się wiele braków danych. Dla każdego kraju zostały usunięte dane sprzed rozpoczęcia się epidemii na jego terytorium (\texttt{total cases=0}), dni są numerowane kolejnymi liczbami całkowitymi.
+W zbiorze znajdowało się wiele braków danych. Dla każdego kraju zostały usunięte dane sprzed rozpoczęcia się epidemii na jego terytorium, dni są numerowane kolejnymi liczbami całkowitymi.
 
 Ze zbioru danych zostały usunięte wszystkie kraje o populacji poniżej miliona mieszkańców, ponieważ w większości były to nieduże wysepki, dla których dane były wybrakowane. Oprócz tego, kilka innych krajów zostało usuniętych, ponieważ mimo większej populacji, dane były niepełne.
 
@@ -720,9 +691,11 @@ We wszystkich modelach mieszanych kraj jest czynnikiem losowym.
 
 Modele liniowe są budowane na podstawie zbioru danych, gdzie znajdują się po maksymalnie cztery obserwacje dla każdego kraju: po 3, po 6, po 9 i po 12 miesiącach trwania epidemii.
 
+\fbox{\parbox{\textwidth}{Opisać krótko funkcje używane w R do budowy modeli.}}
+
 \newpage
 
-\subsection{Model 1}
+\subsection{Model 1: zależność między liczbą zachorowań a czasem}
 
 Hipoteza 1: Czas ma istotny wpływ na liczbę zachorowań.
 
@@ -741,6 +714,8 @@ Pierwszy model ma postać
 $$y_{total\_cases}=\beta_0 + X_{time}\beta_{time}+Z_{location}u_{location}+\varepsilon$$
 
 a więc przedstawia zależność liczby zachorowań od czasu, a kraj jest efektem losowym.
+
+\fbox{\parbox{\textwidth}{ujednolicić nazwę zmiennej total cases/total cases per million}}
 
 \newpage
 
@@ -893,7 +868,7 @@ Po dodaniu do modelu drugiej potęgi zmiennej $time$, wpływ czasu przestaje by�
 
 \newpage
 
-\subsection{Model 2}
+\subsection{Model 2: zależność między liczbą zachorowań a liczbą wykonywanych testów na COVID-19}
 
 Hipoteza 2: Liczba wykonywanych testów na COVID-19 ma związek z liczbą zachorowań.
 
@@ -1002,7 +977,7 @@ $$+Z_{0,location}u_{0,location}+Z_{total\_tests, location}u_{total\_tests, locat
 \newpage
 
 
-\subsection{Model 3}
+\subsection{Model 3: zależność między liczbą zachorowań a oczekiwaną długością życia}
 
 
 Hipoteza 3: kraje o różnej oczekiwanej długości życia różnią się liczbą zachorowań.
@@ -1092,11 +1067,11 @@ Po przekształceniu, $R^2$ wzrosło nieznacznie, do 10\%. Wniosek pozostaje ten 
 
 \newpage
 
-\subsection{Model 4}
+\subsection{Model 4: zależność między liczbą zachorowań a gęstością zaludnienia}
 
 Hipoteza 4: Kraje o różnej gęstości zaludnienia różnią się liczbą zachorowań.
 
-W czwartym modelu badamy zależnośc liczby zachorowań od gęstości zaludnienia:
+W czwartym modelu badamy zależność liczby zachorowań od gęstości zaludnienia:
 
 $$y_{total\_cases}=\beta_0+X_{population\_density}\beta_{population\_density}+\varepsilon$$
 
@@ -1137,7 +1112,7 @@ Gęstośc zaludnienia nie jest czynnikiem istotnym statystycznie, a $R^2$ wynosi
 
 \newpage
 
-\subsection{Model 5}
+\subsection{Model 5: zależność między liczbą zachorowań a siłą obostrzeń}
 
 Hipoteza 5: Kraje różniące się siłą obostrzeń mają istotne różnice w liczbie zachorowań.
 \newpage
@@ -1234,7 +1209,7 @@ Z wykresu \ref{fig:mod5_predict_slope} widać, że w niektórych krajach przy wz
 
 \newpage
 
-\subsection{Model 6}
+\subsection{Model 6: zależność między liczbą zachorowań a wskaźnikiem rozwoju społecznego}
 
 Hipoteza 6: Kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań.
 
@@ -1310,15 +1285,15 @@ Z przekształcenia Boxa-Coxa otrzymujemy potęgę 2 dla zmiennej HDI oraz 0 dla 
 
 \newpage
 
-\subsection{Model 7}
+\subsection{Model 7: zależność między liczbą zachorowań a odsetkiem osób umierających na choroby serca}
 
-Hipoteza 7: Kraje o różnej wysokości odsetka śmierci z powodu chorób sercowych różnią się liczbą zachorowań.
+Hipoteza 7: Kraje o różnej wysokości odsetka śmierci z powodu chorób serca różnią się liczbą zachorowań.
 
 Model siódmy wygląda następująco:
 
 $$y_{total\_cases}=\beta_0+X_{cardiovasc\_death\_rate}\beta_{cardiovasc\_death\_rate}+\varepsilon$$
 
-i zawiera zależność od odsetka śmierci spowodowanych chorobami sercowymi w danym kraju. 
+i zawiera zależność od odsetka śmierci spowodowanych chorobami serca w danym kraju. 
 
 Otrzymujemy następujące podsumowanie:
 
@@ -1389,7 +1364,7 @@ Przekształcenie Boxa-Coxa: pierwiastek 3 stopnia z cardiovasc, log z total case
 
 \newpage
 
-\subsection{Model 8}
+\subsection{Model 8: zależność między liczbą zachorowań a powszechnością cukrzycy}
 
 Hipoteza 8: Kraje o różnej wysokości odsetka osób chorych na cukrzycę różnią się liczbą zachorowań.
 
@@ -1397,7 +1372,8 @@ $$y_{total\_cases}=\beta_0+X_{diabetes\_prevalence}\beta_{diabetes\_prevalence}+
 
 Model ten jest analogiczny do poprzedniego, z tym że zamiast chorób sercowych mamy tu odsetek chorych na cukrzycę.
 
-Otrzymujemy nastepujący wynik:
+Otrzymujemy następujący wynik:
+
 \begin{table}[!htbp]
 	\begin{center}
 \begin{tabular}{l c}
@@ -1420,7 +1396,9 @@ Otrzymujemy nastepujący wynik:
 		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
+
 \newpage
+
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod8-lin.png}
@@ -1454,7 +1432,9 @@ Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to
 		\label{table:mod8-log}
 	\end{center}
 \end{table}
+
 \newpage
+
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod8-log.png}
@@ -1465,7 +1445,7 @@ Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to
 
 \newpage
 
-\subsection{Model 9}
+\subsection{Model 9: zależność między liczbą zachorowań a odsetkiem osób żyjących w skrajnej biedzie}
 
 Hipoteza 9: Kraje o różnej wysokości odsetka osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
 
@@ -1542,7 +1522,7 @@ Model ten ma następujące podsumowanie:
 
 \newpage
 
-\subsection{Model 10}
+\subsection{Model 10: zależność między liczbą zachorowań a wysokością PKB na osobę}
 
 Hipoteza 10: Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
 
@@ -1615,7 +1595,9 @@ Efekt PKB na osobę jest istotny statystycznie. Im wyższe PKB danego kraju, tym
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
-\chapter*{Podsumowanie i~wnioski}
+\chapter*{Podsumowanie i wnioski}
+
+\fbox{\parbox{\textwidth}{Podsumowanie wymaga solidnych poprawek, ale zostawić to na koniec.}}
 
 W tabeli \ref{tab:istotnosc} znajduje się podsumowanie istotności poszczególnych czynników, których wpływ na liczbę zachorowań był badany w tej pracy.
 
@@ -1673,8 +1655,10 @@ Wszystkie modele jednoznacznie pokazują, że efekt kraju jako czynnika zakłóc
 Na to, co jest nazywane w tej pracy ,,efektem kraju'', składa się tak naprawdę wiele innych czynników, m. in. gęstość zaludnienia, sytuacja ekonomiczna danego kraju, odsetek osób z chorobami towarzyszącymi, rozkład wieku, jak również przyjęta strategia walki z koronawirusem, na którą z kolei składają się m. in. liczba wykonywanych testów, przepisy w sprawie zamykania szkół, miejsc publicznych, ograniczenie kontaktów międzyludzkich, i wiele innych.
 
 
-
+\fbox{\parbox{\textwidth}{Ułożyć alfabetycznie bibliografię, dowiedzieć się jak z linkami do stron}}
 \begin{thebibliography}{99}
+
+
 
 \bibitem{biecek} Przemysław Biecek, \emph{Analiza danych z programem R. Modele liniowe z efektami stałymi, losowymi i mieszanymi}, Wydawnictwo Naukowe PWN, Wydanie II, Warszawa 2013
 \bibitem{faraway} Julian J. Faraway, \emph{Extending the Linear Model with R. Generalized Linear, Mixed Effects and Nonparametric Regression Models. Second Edition}, CRC Press Taylor \& Francis  Group, 2016
