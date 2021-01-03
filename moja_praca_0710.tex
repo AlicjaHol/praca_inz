@@ -466,7 +466,9 @@ Aby zbadać istotność współczynników modelu liniowego, weryfikujemy hipotez
 Badanie efektów brzegowych poszczególnych zmiennych należy poprzedzić testem F (testem globalnym), który weryfikuje hipotezę $$H_0: \beta_1=\beta_2=\ldots=\beta_k=0$$
  przeciwko hipotezie alternatywnej $$H_1: \exists{j} \beta_j \neq 0 $$
 
-\fbox{\parbox{\textwidth}{Dodać podrozdział na temat transformacji zmiennych, w szczególności transformacji Boxa-Coxa.}}
+\subsection{Transformacja zmiennych}
+
+\fbox{\parbox{\textwidth}{Opisać przekształcenie Boxa-Coxa}}
 
 \section{Modele mieszane} 
 W powyżej opisanych modelach liniowych z efektami stałymi zakładamy niezależność kolejnych pomiarów, dlatego nie są to odpowiednie modele w przypadku, kiedy mamy np. kilka pomiarów dla pojedynczego elementu. W takiej sytuacji możemy użyć modeli liniowych z efektami mieszanymi (stałymi i losowymi), które krótko nazywamy modelami mieszanymi.
@@ -687,11 +689,9 @@ Dane były zbierane do dnia 1 grudnia 2020 r.
 
 \section{Dyskusja wyników}
 
-We wszystkich modelach mieszanych kraj jest czynnikiem losowym.
+We wszystkich modelach mieszanych kraj jest czynnikiem losowym. Modele mieszane są budowane na podstawie całego zbioru danych. Modele liniowe są budowane na podstawie zbioru danych, gdzie znajdują się po maksymalnie cztery obserwacje dla każdego kraju: po 3, po 6, po 9 i po 12 miesiącach trwania epidemii.
 
-Modele liniowe są budowane na podstawie zbioru danych, gdzie znajdują się po maksymalnie cztery obserwacje dla każdego kraju: po 3, po 6, po 9 i po 12 miesiącach trwania epidemii.
-
-\fbox{\parbox{\textwidth}{Opisać krótko funkcje używane w R do budowy modeli.}}
+Modele są dopasowywane przy użyciu środowiska R. Do dopasowania modeli mieszanych zostały wykorzystane pakiety \texttt{lme4} oraz \texttt{lmerTest}. Funkcja \texttt{lmer} z pakietu \texttt{lme4} wykorzystuje opisaną w części teoretycznej metodę oszacowania parametrów modelu mieszanego - algorytm używający macierzy rzadkich oraz dekompozycji Choleskiego \cite{lme4}. Pakiet \texttt{lmerTest} umożliwia obliczenie wartości $p$ dla parametrów modelu mieszanego \cite{lmerTest}. W przypadku modeli liniowych użyto funkcji \texttt{lm} z pakietu bazowego R. Funkcja ta wykorzystuje metodę najmniejszych kwadratów estymacji parametrów modelu liniowego \cite{lm}. W modelach, gdzie dokonano transformacji zmiennych, została użyta funkcja \texttt{powerTransform} z pakietu \texttt{car}. Funkcja ta wykorzystuje transformację Boxa-Coxa \cite{powerTransform}.
 
 \newpage
 
@@ -767,7 +767,7 @@ Zarówno wyraz wolny, jak i współczynnik przy zmiennej \texttt{time}, są isto
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
-Na rysunku \ref{fig:mod1_predict} widzimy linie dopasowane do liczby zachorowań w porzczególnych krajach. Każda prosta ma taki sam współczynnik kierunkowy, jedynie punkt przecięcia z osią OY (\texttt{Intercept}) różni się pomiędzy poszczególnymi krajami. Z tego wykresu możemy odczytać, jak różnią się średnie poziomy liczby zachorowań między krajami.
+Na rysunku \ref{fig:mod1_predict} widzimy linie dopasowane do liczby zachorowań w poszczególnych krajach. Każda prosta ma taki sam współczynnik kierunkowy, jedynie punkt przecięcia z osią OY (\texttt{Intercept}) różni się pomiędzy poszczególnymi krajami. Z tego wykresu możemy odczytać, jak różnią się średnie poziomy liczby zachorowań między krajami.
 
 \newpage
 
@@ -856,7 +856,7 @@ $$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+$$$$+Z_
 	\end{center}
 \end{table}
 
-Po dodaniu do modelu drugiej potęgi zmiennej $time$, wpływ czasu przestaje być istotny.
+Wizualnie model z drugą potęgą zmiennej $time$ wydaje się być lepiej dopasowany do danych (rys. \ref{fig:mod1_kw_predict}), jednakże w tym modelu ani pierwsza, ani druga potęga zmiennej niezależnej nie są istotne statystycznie. 
 
 \begin{figure}[htbp]
 	\centering
@@ -865,6 +865,8 @@ Po dodaniu do modelu drugiej potęgi zmiennej $time$, wpływ czasu przestaje by�
 	\label{fig:mod1_kw_predict}
 	\zrodlo{Opracowanie własne}
 \end{figure}
+
+
 
 \newpage
 
@@ -1026,6 +1028,7 @@ Z analizy modelu liniowego wynika, że oczekiwana długość życia ma istotny w
 Z transformacji Boxa-Coxa otrzymujemy następujące potęgi dla zmiennych: $3.72$ dla life\_expectancy oraz $0.09$ dla total\_cases\_per\_million. W przybliżeniu przyjmiemy czwartą potęgę dla pierwszej cechy, a dla drugiej 0 czyli logarytm.
 
 $$log(y_{total\_cases})=\beta_0+\beta_{life\_expectancy}X_{life\_expectancy}^4+\varepsilon$$
+
 \newpage
 \begin{table}[!htbp]
 	\begin{center}
@@ -1158,6 +1161,7 @@ Otrzymujemy następujące wyniki:
 		\zrodlo{Opracowanie własne}
 	\end{center}
 \end{table}
+
 Wskaźnik siły obostrzeń jest istotny statystycznie i ma wpływ ograniczający, co oznacza, że im silniejsze obostrzenia, tym mniejsza liczba zachorowań w danym kraju.
 
 \begin{figure}[htbp]
@@ -1251,7 +1255,10 @@ HDI jest istotny i ma wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozw
 	\zrodlo{Opracowanie własne}
 \end{figure}
 \newpage
-Z przekształcenia Boxa-Coxa otrzymujemy potęgę 2 dla zmiennej HDI oraz 0 dla total\_cases.
+
+Z przekształcenia Boxa-Coxa otrzymujemy potęgę $2$ dla zmiennej $HDI$ oraz logarytm dla $total\_cases\_per\_million$.
+
+$$\log(y_{total\_cases})=\beta_0+\beta_{HDI}X^2_{HDI}+\varepsilon$$
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1330,7 +1337,9 @@ Otrzymujemy następujące podsumowanie:
 
  Efekt śmiertelności na choroby serca jest istotny statystycznie. Co ciekawe, odsetek śmierci spowodowanych chorobami serca wpływa ograniczająco na liczbę zachorowań. Może to być związane z tym, że osoby chore na serce bardziej uważają, aby się nie zarazić, tym samym zmniejszają liczbę zachorowań w danym kraju.
 
-Przekształcenie Boxa-Coxa: pierwiastek 3 stopnia z cardiovasc, log z total cases.
+Na podstawie transformacji Boxa-Coxa otrzymujemy pierwiastek trzeciego stopnia ze zmiennej $cardiovasc\_death\_rate$ oraz logarytm z $total\_cases\_per\_million$.
+
+$$\log(y_{total\_cases})=\beta_0+\beta_{cardiovasc\_death\_rate}\sqrt[3]{ X_{cardiovasc\_death\_rate}}+\varepsilon$$
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1409,6 +1418,9 @@ Otrzymujemy następujący wynik:
 
 Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
 
+Na podstawie transformacji Boxa-Coxa otrzymujemy pierwiastek trzeciego stopnia ze zmiennej $diabetes\_prevalence$ oraz logarytm z $total\_cases\_per\_million$.
+
+$$\log(y_{total\_cases})=\beta_0+\beta_{diabetes\_prevalence}\sqrt[3]{X_{diabetes\_prevalence}}+\varepsilon$$
 
 
 \begin{table}[!htbp]
@@ -1487,8 +1499,11 @@ Model ten ma następujące podsumowanie:
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
- Czynnik extreme poverty jest istotny statystycznie. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów.
+ Czynnik $extreme\_poverty$ jest istotny statystycznie. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów.
 
+Z transformacji Boxa-Coxa otrzymujemy przekształcenie logarytmiczne dla obu zmiennych w modelu.
+
+$$\log(y_{total\_cases})=\beta_0+\beta_{extreme\_poverty}\log(X_{extreme\_poverty})+\varepsilon$$
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1564,6 +1579,10 @@ Wyniki są następujące:
 \end{figure}
 
 Efekt PKB na osobę jest istotny statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań. 
+
+Na podstawie przekształcenia Boxa-Coxa otrzymujemy pierwiastek piątego stopnia z $gdp\_per\_capita$ oraz logarytm z $total\_cases\_per\_million$.
+
+$$\log(y_{total\_cases})=\beta_0+\beta_{GDP}\sqrt[5]{X_{GDP}}+\varepsilon$$
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1674,6 +1693,14 @@ Na to, co jest nazywane w tej pracy ,,efektem kraju'', składa się tak naprawd�
 \bibitem{experimental} Howard J. Seltman, \emph{Experimental Design and Analysis}, \url{http://www.stat.cmu.edu/~hseltman/309/Book/}
 
 \bibitem{brief} \url{https://peerj.com/articles/4794/} (dostęp: 11.11.2020)
+
+\bibitem{lme4} \url{https://cran.r-project.org/web/packages/lme4/index.html} (dostęp: 03.01.2021)
+
+\bibitem{lmerTest} \url{https://cran.r-project.org/web/packages/lmerTest/index.html} (dostęp: 03.01.2021)
+
+\bibitem{lm} \url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lm} (dostęp: 03.01.2021)
+
+\bibitem{powerTransform} \url{https://www.rdocumentation.org/packages/car/versions/3.0-10/topics/powerTransform} (dostęp: 03.01.2021)
 
 \end{thebibliography}
 
