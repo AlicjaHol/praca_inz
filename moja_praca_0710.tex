@@ -481,13 +481,115 @@ Przykładową sytuacją, gdzie możemy użyć modelu mieszanego, jest badanie dz
 
 \fbox{\parbox{\textwidth}{Poprawić styl w ostatnim zdaniu.}}
 
+
+
+
+
+Aby lepiej ukazać modele mieszane, przeanalizujemy prosty przykład modelu mieszanego z jednym komponentem wariancyjnym. Skorzystamy ze zbioru danych \texttt{pulp}, gdzie dane pochodzą z eksperymentu mającego na celu sprawdzenie jasności papieru (kolumna \texttt{bright}) w zależności od operatora zmiany (kolumna \texttt{operator}). W zbiorze danych mamy po pięć pomiarów dla każdego z czterech operatorów. Dane są przedstawione w tabeli \ref{tab:pulp}.
+
+
+
+\begin{table}[!htbp]
+	\centering
+	
+	
+	\begin{tabular}{|c|c|}
+		\hline
+		bright & operator\\
+		\hline
+		59.8 & a\\
+		\hline
+		60.0 & a\\
+		\hline
+		60.8 & a\\
+		\hline
+		60.8 & a\\
+		\hline
+		59.8 & a\\
+		\hline
+		59.8 & b\\
+		\hline
+		60.2 & b\\
+		\hline
+		60.4 & b\\
+		\hline
+		59.9 & b\\
+		\hline
+		60.0 & b\\
+		\hline
+		60.7 & c\\
+		\hline
+		60.7 & c\\
+		\hline
+		60.5 & c\\
+		\hline
+		60.9 & c\\
+		\hline
+		60.3 & c\\
+		\hline
+		61.0 & d\\
+		\hline
+		60.8 & d\\
+		\hline
+		60.6 & d\\
+		\hline
+		60.5 & d\\
+		\hline
+		60.5 & d\\
+		\hline
+	\end{tabular}
+	\caption{Zbiór danych \texttt{pulp}}
+	\label{tab:pulp}
+	\zrodlo{\cite{pulp}}
+\end{table}
+
+
+Dla powyższych danych możemy zapisać model jednokierunkowej analizy wariancji, tzn.
+\begin{equation}
+y_{ij}=\mu+\alpha_i+\varepsilon_{ij}  \text{, gdzie }i\in\lbrace{1,2,3,4\rbrace} \text{, } j\in \lbrace{1,2,3,4,5\rbrace}
+\end{equation} $\alpha$ i $\varepsilon$ mają średnie równe 0, a wariancje wynoszą odpowiednio $\sigma_{\alpha}^2$ i $\sigma_{\varepsilon}^2$
+
+Korelacja między obserwacjami, które mają taką samą wartość zmiennej grupującej, wynosi $$\rho = \frac{\sigma^2_{\alpha}}{\sigma_{\alpha}^2+\sigma_{\varepsilon}^2} $$Wielkość tą nazywamy współczynnikiem korelacji wewnątrzgrupowej (ang. \textit{Interclass Correlation Coefficient, ICC}). W granicznych przypadkach możemy spotkać się z sytuacją, że różnice pomiędzy grupami są nieistotne, wówczas $\sigma^2_{\alpha} \approxeq 0$, więc także $\rho \approxeq 0$. Inną możliwością jest, że wariancja między grupami jest znacznie większa niż wariancja wewnątrzgrupowa, wtedy wartości $\rho$ będą bliskie 1.
+
+Jeżeli zmienna grupująca ma $a$ poziomów, a w każdej grupie jest równa liczba obserwacji $n$, to dekompozycji wariancji możemy dokonać w następujący sposób:
+$$
+\sum_{i=1}^{a} \sum_{j=1}^{n}(y_{ij}-\bar{y}_{..})^2=\sum_{j=1}^{n}(y_{ij}-\bar{y}_{i.})^2+\sum_{j=1}^{n}(y_{i.}-\bar{y}_{..})^2
+$$
+czyli $SST=SSB+SSW$, gdzie $SST$ oznacza całkowitą sumę kwadratów odchyleń od średniej populacyjnej, $SSW$ to suma kwadratów odchyleń od średnich grupowych, $SSB$ to suma kwadratów odchyleń średnich grupowych od średniej populacyjnej. Dzieląc przez odpowiednie liczby stopni swobody, otrzymamy średnie kwadraty odchyleń $MSW$ i $MSB$. Mamy, że
+$$E(SSW)=a(n-1)\sigma_{\varepsilon}^2 \text{ oraz } E(SSB)=(a-1)(n\sigma_{\alpha}^2+\sigma_{\varepsilon}^2),$$
+skąd otrzymujemy estymatory
+$$\hat{\sigma}_{\varepsilon}^2=\frac{SSW}{a(n-1)}=MSW \text{ oraz } \hat{\sigma}_{\alpha}^2=\frac{\frac{SSB}{a-1}-\hat{\sigma}_{\varepsilon}^2}{n}=\frac{MSB-MSW}{n}$$
+Takie estymatory nazywamy estymatorami ANOVA. Ich zaletą jest forma pozwalająca na użycie ich w ręcznych obliczeniach, niestety poza tym mają wiele wad:
+\begin{enumerate}
+	\item Estymatory mogą przyjmować ujemne wartości (jeśli $MSB<MSW$, to $\hat{\sigma}_{\alpha}^2<0$).
+	\item W przypadku układu niezrównoważonego (kiedy liczby obserwacji w poszczególnych grupach nie są takie same) nie dają poprawnych wyników.
+	\item Wymagają skomplikowanych przekształceń algebraicznych dla bardziej złożonych modeli.
+\end{enumerate}  
+
+Dla modelu na danych ze zbioru \texttt{pulp} mamy następujące wyniki:
+$$\mu= 60.4\text{ - średnia populacyjna zmiennej \texttt{bright}}$$
+$$\mu_a=60.24 \text{ - średnia w grupie operatora a}$$
+$$\mu_b=60.06 \text{ - średnia w grupie operatora b}$$
+$$\mu_c=60.62 \text{ - średnia w grupie operatora c}$$
+$$\mu_d=60.68 \text{ - średnia w grupie operatora d}$$
+Całkowita suma kwadratów wynosi $SST=3.04$, sumy kwadratów wewnątrz- i międzygrupowe wynoszą odpowiednio $SSW=1.7$ oraz $SSB=1.34$. Stąd łatwo policzyć średnie kwadratów:
+$$MSW=\frac{SSW}{a(n-1)}=\frac{1.7}{4\cdot 4}=0.10625$$
+$$MSB=\frac{SSB}{a-1}=\frac{1.34}{3}=0.44667$$
+Następnie możemy obliczyć wartości estymatorów wariancji wewnątrz- i międzygrupowej:
+$$\hat{\sigma}_{\varepsilon}^2=MSW=0.10625$$
+$$\hat{\sigma}_{\alpha}^2=\frac{MSB-MSW}{n}=\frac{0.44667-0.10625}{5}=0.06808333$$
+Obliczymy także współczynnik $ICC$:
+$$\rho = \frac{\sigma^2_{\alpha}}{\sigma_{\alpha}^2+\sigma_{\varepsilon}^2}=\frac{0.0680833}{0.0680833+0.10625}=0.3905354$$
+
+Jak zostało wspomniane, ta metoda estymacji ma wiele wad i została pokazana ze względu na łatwość obliczeń ręcznych. W następnej części pracy przedstawione zostaną metody pozbawione wyżej wymienionych wad.
+
+\subsection{Metody estymacji}
+
 Rozważamy model postaci
 $$y=X\beta +Z u + \varepsilon$$
 gdzie $X$ - macierz zmiennych będących efektami stałymi, $Z$ - macierz zmiennych będących efektami losowymi, $\beta$ to wektor nieznanych efektów stałych, $\varepsilon \sim \mathcal{N}(0, \sigma^2 I_{n\times n})$ to zakłócenie losowe, a $u \sim \mathcal{N} (0, \sigma^2D)$ to wektor zmiennych losowych odpowiadających efektom losowym \cite{biecek}.
 
 Znając $D$, możemy estymować parametry $\beta$ uogólnioną metodą najmniejszych kwadratów. Do estymowania nieznanego $D$ możemy użyć np. metodą największej wiarogodności.
-
-\subsection{Metody estymacji}
 
 Do oceny wartości parametrów modelu mieszanego można stosować metody ML (Największej Wiarogodności) oraz REML (Resztowej Największej Wiarogodności), wspomniane w tej pracy przy okazji modeli liniowych. W przypadku modeli mieszanych obydwoma metodami możemy uzyskać estymatory obciążone, ale to obciążenie jest zazwyczaj mniejsze w przypadku estymatorów uzyskanych metodą REML.
 
@@ -577,6 +679,62 @@ gdzie $Z_i$ to macierz złożona z kolumn macierzy $Z$ odpowiadających tym efek
 	\end{itemize}
 \end{uwaga}
 
+Dla przedstawionego na początku rozdziału modelu dla danych \texttt{pulp}, model mieszany wygląda następująco:
+$$y_{bright}=\mu+ Z_{operator}u_{operator}+\varepsilon$$
+Macierz $Z$ ma postać
+$$Z=\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix}$$
+
+Przypomnijmy, że ręcznie otrzymaliśmy następujące estymatory: średnią populacyjną $\hat{\mu}=60.4$, wariancję wewnątrzgrupową $\hat{\sigma}_{\varepsilon}^2=0.10625$ oraz międzygrupową $\hat{\sigma}_{\alpha}^2=0.0680833$. Oznacza to, że $u \sim \mathcal{N}(0, 0.0680833)$ oraz $\varepsilon \sim \mathcal{N}(0, 0.10625)$.
+
+Wyniki uzyskane metodą $REML$ za pomocą pakietu R są następujące:
+\newpage
+\begin{table}[!htbp]
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)               & $60.40^{***}$ \\
+			& $(0.15)$      \\
+			\hline
+			AIC                       & $24.63$       \\
+			BIC                       & $27.61$       \\
+			Log Likelihood            & $-9.31$       \\
+			Num. obs.                 & $20$          \\
+			Num. groups: operator     & $4$           \\
+			Var: operator (Intercept) & $0.06808$        \\
+			Var: Residual             & $0.10625$        \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu mieszanego dla danych \texttt{pulp}}
+		\label{tab:pulp_model}
+	\end{center}
+\end{table}
+
+Widzimy, że wartości estymatorów wariancji są identyczne z uzyskanymi za pomocą ANOVA. Tak jest w przypadku układów zrównoważonych - w innych przypadkach wyniki mogłyby się różnić. Z tabeli podsumowującej (tabela \ref{tab:pulp_model})  możemy także odczytać wartości kryteriów dopasowania modelu, takie jak $p$-value, AIC, BIC i Log Likelihood. Te kryteria są opisane w następnym podrozdziale.
+
 \subsection{Badanie istotności parametrów i wybór najlepszego modelu}
 
 W modelach mieszanych konieczne jest zbadanie istotności dla efektów stałych oraz losowych. Dla efektów stałych testujemy hipotezę $H_0: \beta_i=0$ przeciwko hipotezie alternatywnej $H_1: \beta_i \neq 0,$ a dla komponentów wariancyjnych weryfikujemy hipotezę $H_0: \sigma^2_j=0$ przy jednostronnej hipotezie alternatywnej  $H_1: \sigma^2_j>0.$ 
@@ -590,7 +748,7 @@ Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie 
 	
 	Statystyka testowa wygląda następująco:
 	$$2(l(\hat{\beta_1}, \hat{\sigma_1}, \hat{D_1}|y)-l(\hat{\beta_0}, \hat{\sigma_0}, \hat{D_0}|y)),$$
-	gdzie $l$ - logarytm z funkcji prawdopodobieństwa. Tego testu nie można używać do modeli wyznaczonych metodą REML.
+	gdzie $l$ - logarytm z funkcji prawdopodobieństwa (ang. \textit{Log Likelihood}). Tego testu nie można używać do modeli wyznaczonych metodą REML.
 	
 	\item Test F dla efektów stałych - metoda taka sama jak ta używana przy modelach z efektami stałymi. W przypadku modeli mieszanych może sprawiać problemy, ponieważ statystyka testowa niekoniecznie musi mieć rozkład F. Należy wówczas wprowadzać poprawkę na liczbę stopni swobody. Na ogół ta metoda daje dobre rezultaty dla mniej skomplikowanych modeli, gdy układ jest zbalansowany (wszystkie grupy są równoliczne). Dla modeli bardziej skomplikowanych lub kiedy brak równoliczności, wartości $p$ oraz statystyki $t$ mogą być błędne.
 	
@@ -631,21 +789,47 @@ Można wyróżnić dwa rodzaje efektów losowych: losowy wyraz wolny (rysunek \r
 Proces predykcji jest trudniejszy w przypadku modelu mieszanego niż dla zwykłego modelu liniowego. Musimy zdecydować, czy uwzględnić, czy wykluczyć efekt losowy z predykcji. Efekty losowe mogą mieć różny wkład w predykcję. Mogą być całkowicie pominięte, mogą być uśrednione lub mogą być na pewnym ustalonym poziomie. Uśrednienie efektów losowych powoduje predykcję zależną od wartości efektów losowych, które zostały zaobserwowane do tej pory. Pominięcie efektów losowych powoduje predykcję na poziomie średniej populacyjnej
  \cite{prediction}.
  
- Aby lepiej przybliżyć zagadnienie predykcji z modelu mieszanego, posłużymy się przykładem badania mleczości krów. Dla 10 krów (oznaczonych literami od A do J) zmierzono ilość mleka wyprodukowaną przez każdą z nich w ciągu dnia. Pomiary powtórzono pięciokrotnie \cite{biecek}.
+ Aby lepiej przybliżyć zagadnienie predykcji z modelu mieszanego, wrócimy do przykładu badania jasności papieru w zależności od operatora zmiany. Przypomnijmy, że model ma postać
+  $$y_{bright}=\mu+Z_{operator}u_{operator}+\varepsilon,$$
  
- Model ma postać 
- $$y_{milk.amount}=\mu+Z_{cow}u_{cow}+\varepsilon,$$
-
-$$u_{cow} \sim \mathcal{N}(0, \sigma^2_{cow}).$$
+  Jeżeli chcielibyśmy dokonać predykcji dla nieznanego lub do tej pory niezbadanego przez nas operatora, to wynikiem byłaby ocena średniej dla całej populacji, czyli $\hat{\mu}$.
  
- Jeżeli chcielibyśmy dokonać predykcji dla nieznanej lub do tej pory niezbadanej przez nas krowy, to wynikiem byłaby ocena średniej dla całej populacji, czyli $\hat{\mu}$.
- 
- Aby dokonać predykcji dla konkretnej krowy spośród tych przebadanych, potrzebne nam są oceny efektów osobniczych krów.
+  Aby dokonać predykcji dla konkretnego operatora spośród zaobserwowanych, potrzebne nam są oceny efektów osobniczych operatora.
  
  Znając macierz $D$ i parametry $\beta$, predykcje efektów losowych $\widetilde{u}$ można wyznaczyć ze wzoru
  
  $$\widetilde{u}=DZ^TV^{-1}(y-X\beta),$$
- gdzie $V$ to macierz $\sigma^2(I+ZDZ^T)$ \cite{biecek}. Wówczas predykcja będzie sumą $\hat{\mu}$ oraz oceny efektu losowego dla odpowiedniego osobnika.
+ gdzie $V$ to macierz $\sigma^2(I+ZDZ^T)$ \cite{biecek}. Wówczas predykcja będzie sumą $\hat{\mu}$ oraz oceny efektu losowego dla odpowiedniego operatora.
+ 
+Otrzymujemy następujące wyniki
+
+\begin{table}[htbp]
+	\centering
+
+\begin{tabular}{l|l|l|r|r}
+	\hline
+	grpvar & term & grp & condval & condsd\\
+	\hline
+	operator & (Intercept) & a & -0.1219403 & 0.1272603\\
+	\hline
+	operator & (Intercept) & b & -0.2591231 & 0.1272603\\
+	\hline
+	operator & (Intercept) & c & 0.1676679 & 0.1272603\\
+	\hline
+	operator & (Intercept) & d & 0.2133955 & 0.1272603\\
+	\hline
+\end{tabular}
+ \caption{Ocena efektów losowych dla operatorów}
+ \label{tab:ranef_pulp}
+ \zrodlo{Opracowanie własne}
+\end{table}
+ 
+ Efekty losowe znajdują się w kolumnie \texttt{condval}. Predykcja jasności papieru dla konkretnego operatora jest sumą średniej globalnej oraz oceny efektu losowego, więc np. dla operatora a dostajemy predykcję $60.4-0.12194=60.27806$. Dla nieznanego operatora moglibyśmy jako predykcję podać średnią populacyjną czyli $60.4$.
+
+ 
+ 
+ 
+ 
  
  \fbox{\parbox{\textwidth}{komentarz: brakuje mi na zakończenie jakiegoś porównania efektów stałych i losowych.}}
  
@@ -1702,6 +1886,8 @@ Na to, co jest nazywane w tej pracy ,,efektem kraju'', składa się tak naprawd�
 
 \bibitem{powerTransform} \url{https://www.rdocumentation.org/packages/car/versions/3.0-10/topics/powerTransform} (dostęp: 03.01.2021)
 
+
+\bibitem{pulp} \url{https://www.rdocumentation.org/packages/faraway/versions/1.0.7/topics/pulp} (dostęp: 04.01.2021)
 \end{thebibliography}
 
 

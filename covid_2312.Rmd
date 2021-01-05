@@ -22,7 +22,7 @@ library(texreg)
 library(gghighlight)
 library(kableExtra)
 library(lmtest)
-library(alr3)
+library(car)
 library(stargazer)
 ```
 
@@ -276,6 +276,8 @@ covid_miesiace %>%
 
 summary(powerTransform(cbind(population_density, total_cases_per_million)~1, 
                        data = covid_miesiace))
+mod4_lm2 <- lm(log(total_cases_per_million)~ log(population_density), covid_miesiace)
+summary(mod4_lm2)
 ```
 
 
