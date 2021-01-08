@@ -131,7 +131,8 @@ cbind(covid, fit_slope) %>%
 ```
 
 ```{r mod1-kwadratowy}
-mod_kw <- lmer(total_cases_per_million~time+I(time^2)+(time+I(time^2)|location), covid)
+mod_kw <- lmer(total_cases_per_million~poly(time,3)+(poly(time,3)|location), covid)
+#sprobowac model 3 st
 summary(mod_kw)
 texreg(mod_kw)
 fit_kw <- predict(mod_kw)
@@ -140,7 +141,8 @@ cbind(covid, fit_kw) %>%
   geom_line()+
   gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
                               'Germany', 'Norway', 'Spain', 'United Kingdom',
-                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)+
+  ylab("total_cases_per_million_predicted")
 ```
 
 # Model 2 - zależność licbzy zachorowań od liczby testów
@@ -205,6 +207,7 @@ cbind(covid_na,fit_mod1) %>%
 
 ```{r mod2-kw}
 mod1_kw <- lmer(total_cases_per_million~total_tests_per_thousand+I(total_tests_per_thousand^2)+(total_tests_per_thousand+I(total_tests_per_thousand^2)|location), covid_na)
+
 texreg(mod1_kw)
 fit_mod1_kw <- predict(mod1_kw)
 cbind(covid_na,fit_mod1_kw) %>% 
@@ -488,7 +491,7 @@ covid_miesiace %>%
 
 summary(powerTransform(cbind(gdp_per_capita, total_cases_per_million)~1, 
                        data = covid_miesiace))
-
+# najpierw transformacja GDP, potem total cases, albo boxem coxem albo inverse plotem
 inverseResponsePlot(mod9_lm)
 
 mod9_lm2 <- lm(log(total_cases_per_million) ~I(gdp_per_capita^0.2), covid_miesiace)
@@ -556,5 +559,13 @@ porownanie$predicted_total_cases_per_million <- as.numeric(as.character(porownan
 porownanie$difference <- porownanie$total_cases_per_million-porownanie$predicted_total_cases_per_million
 porownanie$diff_percent <- porownanie$difference/porownanie$total_cases_per_million
 head(porownanie)
+```
+
+
+# Test
+
+```{r}
+mod_test <- lm(log(total_cases_per_million)~gdp_per_capita+time+human_development_index+stringency_index, covid_miesiace)
+summary(mod_test)
 ```
 

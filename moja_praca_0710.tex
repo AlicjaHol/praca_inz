@@ -425,22 +425,20 @@ W tej części pracy przedstawimy metody matematyczne, które zostaną użyte w 
 \section{Modele liniowe}
 Na początek przypomnimy podstawowe wiadomości o modelach liniowych. Model regresji prostej ma postać $$y=x \beta_1+\beta_0 + \varepsilon,$$ gdzie oszacowania parametrów $\beta_1$, $\beta_0$ obliczamy następująco:
 $$\hat{\beta_1}=\frac{Cov(x,y)}{Var(x)},$$
-$$\hat{\beta_0}=\overline{y}-\overline{x}\hat{\beta_1}.$$ Model interpretujemy w ten sposób, że jeżeli zmienna $x$ wzrośnie o 1, to zmienna $y$ zmieni się o $\beta_1$. Zmienną $y$ nazywamy zmienną zależną, a $x$ - niezależną.
+$$\hat{\beta_0}=\overline{y}-\overline{x}\hat{\beta_1}.$$ Zmienną $y$ nazywamy zmienną zależną, a $x$ - niezależną.
 
 Jeżeli w modelu występuje więcej niż jedna zmienna niezależna, to mówimy o regresji wielorakiej (lub wielokrotnej). Wówczas model ma postać: $$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k + \varepsilon,$$ lub w zapisie macierzowym $$\yy=\mathbf{X}\beta+\varepsilon$$
+gdzie $\varepsilon$ to niezależne (tzn. $Cov(\varepsilon_i, \varepsilon_j)=0 \text{ dla }i\neq j$) zakłócenie losowe o rozkładzie normalnym ze średnią 0 i wariancją $\sigma^2$.
 
-\begin{center}
-	\fbox{
-		\parbox{\textwidth}{Dopisać o założeniach, czyli jakie mają być epsilony.}  }
-\end{center}
 \subsection{Metody estymacji parametrów modelu liniowego}
+Aby oszacować wartości parametrów modelu liniowego, wykorzystujemy poniższe metody estymacji:
 \begin{enumerate}
 	\item Metoda najmniejszych kwadratów, OLS (ang. \emph{Ordinary Least Squares}) - w metodzie tej minimalizujemy błąd kwadratowy, czyli sumę kwadratów reszt, którą oznaczamy RSS (ang. \emph{Residual Sum of Squares}).
 	
 	$$RSS= \sum_{i=1}^{n}(y_i-\hat{y_i})^2$$
 	
-	Twierdzenie Gaussa-Markowa: taki estymator jest BLUE (Best Linear Unbiased Estimator), przy odpowiednich założeniach.
-	
+	Twierdzenie Gaussa-Markowa mówi, że taki estymator jest najlepszym (w sensie najmniejszej wariancji) liniowym nieobciążonym estymatorem (ang. \textit{BLUE, Best Linear Unbiased Estimator}) przy założeniach, że $E(\varepsilon_i)=0$ i $Var(\varepsilon_i)=\sigma^2$ dla każdego $i$ oraz $Cov(\varepsilon_i, \varepsilon_j)=0$ dla $i \neq j$.
+
 	\item Metoda największej wiarogodności, ML (ang.\textit{Maximum Likelihood}) polega na maksymalizacji wartości funkcji prawdopodobieństwa ze względu na $\beta$ (w praktyce maksymalizujemy zwykle logarytm z tej funkcji)
 	
 	$$\hat{\sigma}^{2}_{ML}=RSS/n$$
@@ -466,20 +464,42 @@ Aby zbadać istotność współczynników modelu liniowego, weryfikujemy hipotez
 Badanie efektów brzegowych poszczególnych zmiennych należy poprzedzić testem F (testem globalnym), który weryfikuje hipotezę $$H_0: \beta_1=\beta_2=\ldots=\beta_k=0$$
  przeciwko hipotezie alternatywnej $$H_1: \exists{j} \beta_j \neq 0 $$
 
+\subsection{Interpretacja parametrów modelu}
+
+w modelu postaci $y=\beta_0 +\beta_1 x$ dodatnia wartość $\beta_1$ oznacza, że wzrostowi $x$ towarzyszy wzrost $y$, a ujemna wartość $\beta_1$, że wraz ze wzrostem $x$, maleje $y$ \cite{rozrzut}. 
+
+Jeżeli model jest dobrze dopasowany do danych, to możemy go interpretować w ten sposób, że wzrost zmiennej $x$ o 1, powoduje zmianę zmiennej $y$ o $\beta_1$. 
+
+Podobnie w przypadku modelu regresji wielorakiej
+$$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k$$
+wzrost zmiennej $x_i$ o jedną jednostkę, przy niezmienionych poziomach pozostałych zmiennych, powoduje zmianę wartości $y$ o $\beta_i$.
+
+Miarami jakości dopasowania modelu do danych są m. in. współczynnik determinacji $R^2$ oraz skorygowany współczynnik determinacji. Współczynnik determinacji informuje o tym, jaka część zmienności (wariancji) zmiennej zależnej w próbie jest wyjaśniona zmiennością modelu. Przyjmuje wartości z przedziału $[0,1]$. Jeżeli w modelu występuje wyraz wolny, a do estymacji wykorzystano metodę najmniejszych kwadratów, to współczynnik determinacji można interpretować jako procent wariancji zmiennej zależnej, która jest wyjaśniana przez model (więc dopasowanie jest tym lepsze, im wartość $R^2$ jest bliższa jedności \cite{r2}. Współczynnik determinacji jest wyrażony wzorem:
+$$R^2=\frac{\sum\limits_{i=1}^{n}(\hat{y_i}-\bar{y})^2}{\sum\limits_{i=1}^{n}(y_i-\bar{y})^2},$$ gdzie $y_i$ - $i$-ta obserwacja zmiennej zależnej, $\hat{y_i}$ - oszacowanie $i$-tej wartości zmiennej zależnej na podstawie modelu, $\bar{y}$ - średnia arytmetyczna zaobserwowanych empirycznie wartości zmiennej zależnej.
+
+W przypadku modeli zawierających więcej niż jedną zmienną, zdarza się, że dodanie do modelu nowej zmiennej podniesie współczynnik $R^2$, mimo że faktycznie nie będzie poprawiała dopasowania modelu. Dlatego można także korzystać z miary nazywanej skorygowanym współczynnikiem determinacji, który określony jest wzorem:
+$$\tilde{R}^2=1-\frac{n-1}{n-k-1}(1-R^2),$$
+gdzie $R^2$ - współczynnik determinacji, $n$ - liczba obserwacji, $k$ - liczba zmiennych w modelu (nie licząc wyrazu wolnego) \cite{skorygowany}. Interpretacja $\tilde{R}^2$ jest taka sama, jak $R^2$, ale jeśli te dwie wartości znacznie się od siebie różnią, to warto interpretować raczej skorygowany współczynnik determinacji niż zwykłe $R^2$.
+
 \subsection{Transformacja zmiennych}
 
-\fbox{\parbox{\textwidth}{Opisać przekształcenie Boxa-Coxa}}
+Jeżeli obserwacje charakteryzują się wariancją, która rośnie lub maleje wraz ze wzrostem zmiennej niezależnej, to przydatna może być transformacja zmiennych. Często używana jest na przykład transformacja logarytmiczna, która jest łatwa w interpretacji (zmiany wartości zlogarytmowanej odpowiadają zmianom procentowym w oryginalnej skali). Przekształcenie takie warto stosować, kiedy zaobserwowane wartości zmiennej charakteryzują się silną asymetrią prawostronną. Jednakże, nie można go stosować, jeśli pojawiają się wartości niedodatnie. Jeżeli oryginalne obserwacje oznaczymy jako $x_1, x_2,\ldots, x_n$, to przekształcone obserwacje $w_1, w_2,\ldots,w_n$ będą takie, że $w_i=log(x_i)$ dla $i \in \lbrace{1,2,\ldots,n\rbrace}$ \cite{forecasting}.
+
+Innym rodzajem transformacji są transformacje potęgowe, np. pierwiastki kwadratowe lub sześcienne. Te przekształcenia nie zawsze są tak proste w interpretacji jak logarytmiczne. Zapisujemy je jako $w_i=x_i^p$, gdzie $i \in \lbrace{1,2,\ldots,n\rbrace}$, a $p$ to potęga, jaką przekształcamy obserwacje \cite{forecasting}.
+
+Transformacja Boxa-Coxa jest rodziną transformacji zawierającą zarówno przekształcenia logarytmiczne, jak i potęgowe. Przekształcenie Boxa-Coxa ma postać:
+$$g^{(\lambda)}(X)=\begin{cases}
+\log(X), & \text{ gdy } \lambda=0 \\
+\frac{X^{\lambda}-1}{\lambda},&\text{ gdy } \lambda \neq 0
+\end{cases}. \cite{boxcox}$$
 
 \section{Modele mieszane} 
 W powyżej opisanych modelach liniowych z efektami stałymi zakładamy niezależność kolejnych pomiarów, dlatego nie są to odpowiednie modele w przypadku, kiedy mamy np. kilka pomiarów dla pojedynczego elementu. W takiej sytuacji możemy użyć modeli liniowych z efektami mieszanymi (stałymi i losowymi), które krótko nazywamy modelami mieszanymi.
 
-Modeli mieszanych używamy w przypadku powtarzanych pomiarów bądź hierarchicznej, czyli zagnieżdżonej struktury. Takie dane charakteryzują się korelacją między obserwacjami z tej samej grupy, co nie pozwala na użycie modelu liniowego z efektami stałymi, ponieważ założenie o braku seryjnej korelacji błędu modelu nie jest spełnione. Dlatego do modelu wprowadza się czynnik losowy.  Czynnik stały jest pewnym parametrem, którego wartość estymujemy na podstawie próbki, natomiast czynnik losowy jest zmienną losową, dla której próbujemy oszacować parametry jej rozkładu \cite{faraway}.
-\fbox{\parbox{\textwidth}{komentarz do powyższego: nie do końca na tym polega różnica...
-Chodzi o to, że efekty stałe, to takie w których interesuje nas wielkość efektu (średnia), natomiast w efektach losowych bierzemy jedynie pod uwagę fakt, iż wprowadzona zmienna wnosi do modelu pewną zmienność (dokładniej pozwala od całkowitej zmienności, tą zmienność odjąć) i szacuje się tylko wariancję (lub odchylenie std.) a nie jakieś parametry rozkładu.
-Ponadto efektów losowych można się spodziewać wtedy gdy nie kontrolujemy wszystkich poziomów zmiennej niezależnej.}}	
-Przykładową sytuacją, gdzie możemy użyć modelu mieszanego, jest badanie działania leku na grupie pacjentów, gdzie dokonujemy kilku pomiarów na danym pacjencie. W tym przypadku nie interesuje nas efekt konkretnego pacjenta, ale raczej wpływ leku na przeciętną osobę. Dodatkowo, traktujemy pacjentów jako losowo wybranych. Podejście modelu mieszanego będzie polegało na potraktowaniu wpływu pacjenta jako czynnik zakłócający. 
+Modeli mieszanych używamy w przypadku powtarzanych pomiarów bądź hierarchicznej, czyli zagnieżdżonej struktury. Takie dane charakteryzują się korelacją między obserwacjami z tej samej grupy, co nie pozwala na użycie modelu liniowego z efektami stałymi, ponieważ założenie o braku seryjnej korelacji błędu modelu nie jest spełnione. Dlatego do modelu wprowadza się czynnik losowy.  Czynnik stały jest pewnym parametrem, którego wartość estymujemy na podstawie próbki, natomiast czynnik losowy jest zmienną losową, dla której próbujemy oszacować parametry jej rozkładu \cite{faraway}. W przypadku efektu stałego interesuje nas jego wielkość (średnia), natomiast przy efektach losowych bierzemy pod uwagę jedynie fakt, że wprowadzona zmienna wnosi do modelu pewną zmienność (a dokładniej, pozwala odjąć rą zmienność od całkowitej zmienności) i szacujemy wariancję lub odchylenie standardowe, a nie parametry rozkładu. Ponadto efektów losowych można się spodziewać wtedy, gdy nie kontrolujemy wszystkich poziomów zmiennej niezależnej. Przykładową sytuacją, gdzie możemy użyć modelu mieszanego, jest badanie działania leku na grupie pacjentów, gdzie dokonujemy kilku pomiarów na danym pacjencie. W tym przypadku nie interesuje nas efekt konkretnego pacjenta, ale raczej wpływ leku na przeciętną osobę. Dodatkowo, traktujemy pacjentów jako losowo wybranych. W modelu mieszanym, wpływ konkretnego pacjenta będzie traktowany jako czynnik zakłócający.
 
-\fbox{\parbox{\textwidth}{Poprawić styl w ostatnim zdaniu.}}
+
+
 
 
 
@@ -559,7 +579,7 @@ czyli $SST=SSB+SSW$, gdzie $SST$ oznacza całkowitą sumę kwadratów odchyleń 
 $$E(SSW)=a(n-1)\sigma_{\varepsilon}^2 \text{ oraz } E(SSB)=(a-1)(n\sigma_{\alpha}^2+\sigma_{\varepsilon}^2),$$
 skąd otrzymujemy estymatory
 $$\hat{\sigma}_{\varepsilon}^2=\frac{SSW}{a(n-1)}=MSW \text{ oraz } \hat{\sigma}_{\alpha}^2=\frac{\frac{SSB}{a-1}-\hat{\sigma}_{\varepsilon}^2}{n}=\frac{MSB-MSW}{n}$$
-Takie estymatory nazywamy estymatorami ANOVA. Ich zaletą jest forma pozwalająca na użycie ich w ręcznych obliczeniach, niestety poza tym mają wiele wad:
+Takie estymatory nazywamy estymatorami ANOVA \cite{faraway}. Ich zaletą jest forma pozwalająca na użycie ich w ręcznych obliczeniach, niestety poza tym mają wiele wad:
 \begin{enumerate}
 	\item Estymatory mogą przyjmować ujemne wartości (jeśli $MSB<MSW$, to $\hat{\sigma}_{\alpha}^2<0$).
 	\item W przypadku układu niezrównoważonego (kiedy liczby obserwacji w poszczególnych grupach nie są takie same) nie dają poprawnych wyników.
@@ -675,7 +695,7 @@ gdzie $Z_i$ to macierz złożona z kolumn macierzy $Z$ odpowiadających tym efek
 	\begin{itemize}
 		\item wartość ujemną zastąpić przez 0. Jest to metoda najprostsza, ale generuje obciążenie;
 		\item zastosować optymalizację z ograniczeniami. Na przestrzeni parametrów zadajemy liniowe ograniczenia i szukamy maksimum funkcji wiarogodności na zbiorze ograniczonym do nieujemnych parametrów;
-		\item zamiast $\sigma_i^2$ można używać innych parametrów, które da się przekształcić w nieujemne oceny $\sigma^2_i$. Przykładowo dla nowej parametryzacji $\gamma_i=\log(\sigma^2_i)$ możemy optymalizować funkcję wiarogodności ze względu na parametry $\gamma_i$ po całej prostej, a następnie otrzymane oceny $\hat{\gamma}_i$ możemy przekształcić na dodatnie oceny $\hat{\sigma}_i^2=\exp(\hat{\gamma}_i)$. Wadą tego podejścia jest niemożliwość uzyskania oceny z brzegu przedziału, tzn. nie otrzymamy nigdy oceny $\hat{\sigma}^2_i=0$.
+		\item zamiast $\sigma_i^2$ można używać innych parametrów, które da się przekształcić w nieujemne oceny $\sigma^2_i$. Przykładowo dla nowej parametryzacji $\gamma_i=\log(\sigma^2_i)$ możemy optymalizować funkcję wiarogodności ze względu na parametry $\gamma_i$ po całej prostej, a następnie otrzymane oceny $\hat{\gamma}_i$ możemy przekształcić na dodatnie oceny $\hat{\sigma}_i^2=\exp(\hat{\gamma}_i)$. Wadą tego podejścia jest niemożliwość uzyskania oceny z brzegu przedziału, tzn. nie otrzymamy nigdy oceny $\hat{\sigma}^2_i=0$ \cite{biecek}.
 	\end{itemize}
 \end{uwaga}
 
@@ -744,7 +764,7 @@ W modelach mieszanych konieczne jest zbadanie istotności dla efektów stałych 
 Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie zawsze dają się zastosować w przypadku modeli mieszanych. Wymienimy teraz kilka metod doboru najlepszego modelu i opiszemy, które z nich są najskuteczniejsze \cite{faraway}.
 
 \begin{enumerate}
-	\item Iloraz wiarygodności(ang. \textit{likelihood ratio}) - tworzymy dwa zagnieżdżone modele, model 0, który nie zawiera elementów, których istotność chcemy zbadać, i model 1, który zawiera te elementy. Pozostałe zmienne muszą być takie same w obu modelach.
+	\item Iloraz wiarygodności(ang. \textit{likelihood ratio}) - tworzymy dwa zagnieżdżone modele: model 0 - niezawierający elementów, których istotność chcemy zbadać, i model 1, który zawiera te elementy. Pozostałe zmienne muszą być takie same w obu modelach.
 	
 	Statystyka testowa wygląda następująco:
 	$$2(l(\hat{\beta_1}, \hat{\sigma_1}, \hat{D_1}|y)-l(\hat{\beta_0}, \hat{\sigma_0}, \hat{D_0}|y)),$$
@@ -752,10 +772,9 @@ Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie 
 	
 	\item Test F dla efektów stałych - metoda taka sama jak ta używana przy modelach z efektami stałymi. W przypadku modeli mieszanych może sprawiać problemy, ponieważ statystyka testowa niekoniecznie musi mieć rozkład F. Należy wówczas wprowadzać poprawkę na liczbę stopni swobody. Na ogół ta metoda daje dobre rezultaty dla mniej skomplikowanych modeli, gdy układ jest zbalansowany (wszystkie grupy są równoliczne). Dla modeli bardziej skomplikowanych lub kiedy brak równoliczności, wartości $p$ oraz statystyki $t$ mogą być błędne.
 	
-	\item Test permutacyjny - można użyć metod \textit{bootstrapowych}, aby znaleźć dokładniejsze wartości $p$-value. Należy wygenerować dane z modelu 0 (na podstawie oszacowanych parametrów) i obliczyć statystykę \textit{likelihood ratio}. Tą procedurę powtarzamy wielokrotnie i oceniamy istotność.
+	\item Test permutacyjny -można go stosować do dokładniejszego wyznaczenia wartości $p$ dla efektu stałego. Funkcja wiarogodności może być użyta jako statystyka testowa. Rozkład statystyki testowej otrzymujemy wykonując permutacje na tej kolumnie macierzy $X$, która odpowiada interesującemu nas efektowi \cite{biecek}. Dla każdej permutacji wyliczamy logarytm funkcji wiarogodności i sprawdzamy, ile z nich przekroczyło logarytm funkcji wiarogodności dla modelu z niepermutowanymi kolumnami. Testy permutacyjne mają wiele zalet, między innymi, nie muszą być spełnione założenia dotyczące rozkładu normalnego danych w próbce. Przy dostatecznie dużej liczbie permutacji, zwykle dają dokładne wartości $p$, niezależnie od wielkości próby \cite{bootstrap}.
 	
-	\fbox{\parbox{\textwidth}{komentarz do tego podpukntu: Napisz dokładniej o co chodzi, bo to ważne. Dokładniej to robimy to tak...
-permutujemy wielokrotnie kolumnę/y zawierajace interesujące nas efekty, po czym wyliczamy dla nich log funkcji wiarogodności a następnie sprawdzamy ile z nich przekroczyło log f. wiarogodności dla modelu z niepermutowanymi kolumnami.}}
+
 
 	\item Kryteria informacyjne - służą do wyboru najlepszego spośród modeli. Najpopularniejszym jest Kryterium Informacyjne Akaikego (ang. \textit{Akaike Information \\Criterion, AIC}). Jest ono zdefiniowane następującym wzorem:
 	
@@ -765,9 +784,9 @@ permutujemy wielokrotnie kolumnę/y zawierajace interesujące nas efekty, po czy
 
 \end{enumerate}
 
-Przy obliczeniach dotyczących stosunkowo małych zbiorów danych, można użyć każdej z tych metod, ale w przypadku dużej liczby obserwacji, niektóre obliczenia mogą zająć zbyt wiele czasu. Najmniej skomplikowany obliczeniowo jest test Walda, gdzie dokonujemy tylko jednej estymacji współczynników. Przy użyciu testu ilorazu wiarygodności, należy dokonać dwóch estymacji - dla modelu z i bez testowanego efektu. Stosując testy permutacyjne, musimy dokonać obliczeń setki lub tysiące razy. Dlatego w przypadku najbardziej skomplikowanych problemów zwykle stosuje się test Walda, mimo jego gorszych właściwości statystycznych \cite{biecek}.
+Przy obliczeniach dotyczących stosunkowo małych zbiorów danych, można użyć każdej z tych metod, ale w przypadku dużej liczby obserwacji, niektóre obliczenia mogą zająć zbyt wiele czasu. Najmniej skomplikowany obliczeniowo jest test Walda, gdzie dokonujemy tylko jednej estymacji współczynników. Przy użyciu testu ilorazu wiarygodności, należy dokonać dwóch estymacji - dla modelu z i bez testowanego efektu. Stosując testy permutacyjne, musimy dokonać obliczeń setki lub tysiące razy. Dlatego w przypadku najbardziej skomplikowanych problemów zwykle stosuje się dla efektów stałych test Walda, mimo jego gorszych właściwości statystycznych \cite{biecek}.
 
-\fbox{\parbox{\textwidth}{komentarz do ostatniego zdania: jeszcze taka uwaga że nie wszystkie metody nadają się do każdego efektu (nie ma testu Walda dla efektu losowego).}}
+
 
 \subsection{Interpretacja parametrów modelu mieszanego}
 W modelu mieszanym efekty stałe należy interpretować tak jak w przypadku regresji, analizy wariancji lub analizy kowariancji, w zależności od rodzaju zmiennej niezależnej. Trzeba jednak pamiętać, że oszacowane wartości współczynników reprezentują wartość średnią dla całej populacji, a dla poszczególnych obiektów badania będą się różnić o wartość oceny efektu osobniczego.
@@ -1053,6 +1072,55 @@ Wizualnie model z drugą potęgą zmiennej $time$ wydaje się być lepiej dopaso
 
 
 \newpage
+
+
+MODEL Z TRZECIĄ POTĘGĄ - JEGO ZOSTAWIĆ !!!!!
+
+\begin{table}
+	\begin{center}
+		\begin{tabular}{l c}
+			\hline
+			& Model 1 \\
+			\hline
+			(Intercept)                                 & $3101.45^{***}$   \\
+			& $(320.37)$        \\
+			poly(time, 3)1                              & $577597.25^{***}$ \\
+			& $(54939.11)$      \\
+			poly(time, 3)2                              & $202728.96^{***}$ \\
+			& $(28196.37)$      \\
+			poly(time, 3)3                              & $71609.14^{***}$  \\
+			& $(20647.78)$      \\
+			\hline
+			AIC                                         & $675017.16$       \\
+			BIC                                         & $675146.58$       \\
+			Log Likelihood                              & $-337493.58$      \\
+			Num. obs.                                   & $41287$           \\
+			Num. groups: location                       & $151$             \\
+			Var: location (Intercept)                   & $15495330.05$     \\
+			Var: location poly(time, 3)1                & $455584118475.42$ \\
+			Var: location poly(time, 3)2                & $119854000709.20$ \\
+			Var: location poly(time, 3)3                & $64197657040.51$  \\
+			Cov: location (Intercept) poly(time, 3)1    & $2548609171.19$   \\
+			Cov: location (Intercept) poly(time, 3)2    & $329435355.67$    \\
+			Cov: location (Intercept) poly(time, 3)3    & $-105891364.41$   \\
+			Cov: location poly(time, 3)1 poly(time, 3)2 & $113956385885.80$ \\
+			Cov: location poly(time, 3)1 poly(time, 3)3 & $10930922943.81$  \\
+			Cov: location poly(time, 3)2 poly(time, 3)3 & $68483035447.11$  \\
+			Var: Residual                               & $681134.37$       \\
+			\hline
+			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+		\end{tabular}
+		\caption{Wyniki dla modelu mieszanego z potęgami zmiennej $time$ do trzeciej włącznie}
+		\label{table:mod1-poly}
+	\end{center}
+\end{table}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=\linewidth]{rys/mod1_poly_predict.png}
+	\label{fig:mod1_poly_predict}
+	\caption{Model z 3 potęgą time}
+\end{figure}
 
 \subsection{Model 2: zależność między liczbą zachorowań a liczbą wykonywanych testów na COVID-19}
 
@@ -1646,10 +1714,8 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{diabetes\_prevalence}\sqrt[3]{X_{diabete
 Hipoteza 9: Kraje o różnej wysokości odsetka osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
 
 W tym modelu sprawdzamy zależność liczby zachorowań od odsetka osób żyjących w skrajnym ubóstwie:
-
 $$y_{total\_cases}=\beta_0+X_{extreme\_poverty}\beta_{extreme\_poverty}+\varepsilon$$
-
-Model ten ma następujące podsumowanie:
+Model ten ma podsumowanie przedstawione w tabeli \ref{table:model9}:
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1678,16 +1744,16 @@ Model ten ma następujące podsumowanie:
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod9-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego dla zależności pomiędzy liczbą zachorowań a odsetkiem osób żyjącym w skrajnej biedzie}
 	\label{fig:mod9-lin}
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
- Czynnik $extreme\_poverty$ jest istotny statystycznie. Im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów.
+ Czynnik $extreme\_poverty$ jest istotny statystycznie ($p$-value poniżej 0.001). \\Współczynnik $\beta_{extreme\_poverty}$ wynosi $-83.75$. Jest on ujemny, więc im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów. $R^2$ wynosi około $6\%$, co jest bardzo niską wartością. Na rysunku \ref{fig:mod9-lin} przedstawiona jest zależność między liczbą zachorowań a odsetkiem osób żyjących w skrajnej biedzie, z dopasowanym modelem liniowym. Widać, że najwięcej obserwacji to kraje, w których odsetek osób żyjących w skrajnej biedzie jest niski, a krajów z wysoką wartością $extreme\_poverty$ jest niewiele, i charakteryzują się one niskimi wartościami zmiennej zależnej.
 
-Z transformacji Boxa-Coxa otrzymujemy przekształcenie logarytmiczne dla obu zmiennych w modelu.
-
+Stosując transformację Boxa-Coxa, otrzymujemy przekształcenie logarytmiczne dla obu zmiennych w modelu:
 $$\log(y_{total\_cases})=\beta_0+\beta_{extreme\_poverty}\log(X_{extreme\_poverty})+\varepsilon$$
+Podsumowanie dla modelu 9 po przekształceniu zmiennych znajduje się w tabeli \ref{table:mod9-log}. Efekt $\log(extreme\_poverty)$ jest istotny statystycznie i ma wartość $-0.46$, co oznacza, że wraz ze wzrostem zmiennej niezależnej maleje liczba zachorowań. $R^2$ wzrosło do $9\%$, a więc nieznacznie w stosunku do modelu przed przekształceniem zmiennych. Dopasowanie modelu liniowego do danych po przekształceniu widać na rysunku \ref{fig:mod9-log}.
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1714,7 +1780,7 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{extreme\_poverty}\log(X_{extreme\_povert
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod9-log.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych dla zależności pomiędzy liczbą zachorowań a odsetkiem osób żyjącym w skrajnej biedzie}
 	\label{fig:mod9-log}
 	\zrodlo{Opracowanie własne}
 \end{figure}
@@ -1726,11 +1792,12 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{extreme\_poverty}\log(X_{extreme\_povert
 Hipoteza 10: Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
 
 
-W modelu dziesiątym pojawia się zależność liczby zachorowań od PKB na osobę:
+W modelu dziesiątym pojawia się zależność liczby zachorowań od PKB na osobę, więc badamy model postaci:
 
 $$y_{total\_cases}=\beta_0+X_{GDP}\beta_{GDP}+\varepsilon$$
 
-Wyniki są następujące:
+Wyniki są przedstawione w tabeli \ref{table:model10}:
+
 \begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
@@ -1754,19 +1821,23 @@ Wyniki są następujące:
 	\end{center}
 \end{table}
 
+Efekt PKB na osobę jest istotny statystycznie ($p$-value poniżej 0.001). Współczynnik $\beta_{GDP}$ wynosi 0.13. Jest on dodatni, więc im wyższe PKB danego kraju, tym wyższa liczba zachorowań. Współczynnik $R^2$ wynosi 0.11, co oznacza, że zmienna $gdp\_per\_capita$ wyjaśnia około $11\%$ zmienności modelu. Procent wyjaśnionej zmienności jest więc niski. Na rysunku \ref{fig:mod10-lin} widać wykres rozrzutu zmiennej \\$total\_cases\_per\_million$ w zależności od $gdp\_per\_capita$. Obserwacje są rozłożone nierównomiernie, najwięcej jest takich, które mają niskie wartości obu zmiennych. Dlatego, aby poprawić model, dokonamy transformacji zmiennych.
+
+
+
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod10-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego do zależności pomiędzy liczbą zachorowań a PKB na osobę}
 	\label{fig:mod10-lin}
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
-Efekt PKB na osobę jest istotny statystycznie. Im wyższe PKB danego kraju, tym wyższa liczba zachorowań. 
+
 
 Na podstawie przekształcenia Boxa-Coxa otrzymujemy pierwiastek piątego stopnia z $gdp\_per\_capita$ oraz logarytm z $total\_cases\_per\_million$.
-
 $$\log(y_{total\_cases})=\beta_0+\beta_{GDP}\sqrt[5]{X_{GDP}}+\varepsilon$$
+W tabeli \ref{table:mod10-log} widać podsumowanie modelu 10 po przekształceniu zmiennych. Współczynnik przy przekształconym $gdp\_per\_capita$ wynosi 0.79 i jest istotny statystycznie, więc zależność między zmienną zależną a niezależną jest rosnąca. Po przekształceniu zmiennych procent wyjaśnianej wariancji wzrósł do $15\%$, co nadal jest niską wartością. Na rysunku \ref{fig:mod10-log} widać dopasowanie tego modelu do danych po przekształceniu zmiennych.
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1793,7 +1864,7 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{GDP}\sqrt[5]{X_{GDP}}+\varepsilon$$
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod10-log.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych do zależności pomiędzy liczbą zachorowań a PKB na osobę}
 	\label{fig:mod10-log}
 	\zrodlo{Opracowanie własne}
 \end{figure}
@@ -1888,6 +1959,19 @@ Na to, co jest nazywane w tej pracy ,,efektem kraju'', składa się tak naprawd�
 
 
 \bibitem{pulp} \url{https://www.rdocumentation.org/packages/faraway/versions/1.0.7/topics/pulp} (dostęp: 04.01.2021)
+
+\bibitem{bootstrap} Tim Hesterberg, Shaun Monaghan, David S. Moore, Ashley Clipson, Rachel Epstein, \emph{Bootstrap Methods and Permutation Tests. Companion Chapter 18 to the Practice of Business Statistics}, W. H. Freeman and Company, New York, 2003
+
+\bibitem{rozrzut} \url{https://www.naukowiec.org/wiedza/statystyka/interpretacja-wykresow-rozrzutu_769.html} (dostęp: 07.01.2021)
+
+\bibitem{forecasting} Hyndman, R.J.,  Athanasopoulos, G. \emph{Forecasting: principles and practice, 3rd edition}, OTexts: Melbourne, Australia, 2019, \url{OTexts.com/fpp3} (dostęp: 07.01.2021)
+
+\bibitem{boxcox} \url{https://pl.wikipedia.org/wiki/Przekszta\%C5\%82cenie\_Boxa-Coxa} (dostęp: 07.01.2021)
+
+\bibitem{r2} \url{https://pl.wikipedia.org/wiki/Wsp\%C3\%B3\%C5\%82czynnik\_determinacji} (dostęp: 08.01.2021)
+
+\bibitem{skorygowany} \url{https://pl.wikipedia.org/wiki/Model\_statystyczny#Skorygowany\_wsp\%C3\%B3\%C5\%82czynnik\_determinacji} (dostęp: 08.01.2021)
+
 \end{thebibliography}
 
 
