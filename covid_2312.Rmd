@@ -273,7 +273,7 @@ summary(mod4_lm)
 texreg(mod4_lm)
 
 covid_miesiace %>% 
-  ggplot(aes(population_density, total_cases_per_million))+
+  ggplot(aes(log(population_density), log(total_cases_per_million)))+
   geom_point()+
   geom_smooth(method=lm, formula=y~x,se=F)
 
@@ -281,6 +281,7 @@ summary(powerTransform(cbind(population_density, total_cases_per_million)~1,
                        data = covid_miesiace))
 mod4_lm2 <- lm(log(total_cases_per_million)~ log(population_density), covid_miesiace)
 summary(mod4_lm2)
+texreg(mod4_lm2)
 ```
 
 
@@ -342,11 +343,11 @@ texreg(mod5)
 ```
 
 ```{r mod6-liniowy}
-mod5_lm <- lm(total_cases_per_million~human_development_index, covid_hdi)
+mod5_lm <- lm(total_cases_per_million~human_development_index, covid_miesiace)
 summary(mod5_lm)
 texreg(mod5_lm)
 
-covid_hdi %>% 
+covid_miesiace %>% 
   ggplot(aes(human_development_index,total_cases_per_million))+
   geom_point()+
   geom_smooth(method=lm, se=F)
@@ -354,10 +355,10 @@ covid_hdi %>%
 summary(powerTransform(cbind(human_development_index, total_cases_per_million)~1, 
                        data = covid_miesiace))
 inverseResponsePlot(mod5_lm)
-mod5_lm2 <- lm(log(total_cases_per_million)~I(human_development_index^2), covid_hdi)
+mod5_lm2 <- lm(log(total_cases_per_million)~I(human_development_index^2), covid_miesiace)
 summary(mod5_lm2)
 texreg(mod5_lm2)
-covid_hdi %>% 
+covid_miesiace %>% 
   ggplot(aes(human_development_index^2,log(total_cases_per_million)))+
   geom_point()+
   geom_smooth(method=lm,se=F)

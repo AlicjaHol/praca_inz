@@ -892,7 +892,7 @@ Dane były zbierane do dnia 1 grudnia 2020 r.
 
 \section{Dyskusja wyników}
 
-We wszystkich modelach mieszanych kraj jest czynnikiem losowym. Modele mieszane są budowane na podstawie całego zbioru danych. Modele liniowe są budowane na podstawie zbioru danych, gdzie znajdują się po maksymalnie cztery obserwacje dla każdego kraju: po 3, po 6, po 9 i po 12 miesiącach trwania epidemii.
+We wszystkich modelach mieszanych kraj jest czynnikiem losowym. Modele mieszane są budowane na podstawie całego zbioru danych. Modele liniowe są budowane na podstawie zbioru danych, gdzie znajdują się po maksymalnie cztery obserwacje dla każdego kraju: po 3, po 6, po 9 i po 12 miesiącach trwania epidemii. W przypadku modeli liniowych zastosowano konieczne przekształcenia zmiennych za pomocą transformacji Boxa-Coxa.
 
 Modele są dopasowywane przy użyciu środowiska R. Do dopasowania modeli mieszanych zostały wykorzystane pakiety \texttt{lme4} oraz \texttt{lmerTest}. Funkcja \texttt{lmer} z pakietu \texttt{lme4} wykorzystuje opisaną w części teoretycznej metodę oszacowania parametrów modelu mieszanego - algorytm używający macierzy rzadkich oraz dekompozycji Choleskiego \cite{lme4}. Pakiet \texttt{lmerTest} umożliwia obliczenie wartości $p$ dla parametrów modelu mieszanego \cite{lmerTest}. W przypadku modeli liniowych użyto funkcji \texttt{lm} z pakietu bazowego R. Funkcja ta wykorzystuje metodę najmniejszych kwadratów estymacji parametrów modelu liniowego \cite{lm}. W modelach, gdzie dokonano transformacji zmiennych, została użyta funkcja \texttt{powerTransform} z pakietu \texttt{car}. Funkcja ta wykorzystuje transformację Boxa-Coxa \cite{powerTransform}.
 
@@ -1236,52 +1236,13 @@ $$+Z_{0,location}u_{0,location}+Z_{total\_tests, location}u_{total\_tests, locat
 
 Hipoteza 3: kraje o różnej oczekiwanej długości życia różnią się liczbą zachorowań.
 
-Trzeci model jest modelem liniowym:
+Trzeci model jest modelem liniowym, który prezentuje zależność liczby zachorowań od oczekiwanej długości życia w danym kraju.
 
-$$y_{total\_cases}=\beta_0+X_{life\_expectancy}\beta_{life\_expectancy}+\varepsilon$$
-
-Prezentuje on zależność liczby zachorowań od oczekiwanej długości życia w danym kraju.
-
-Dla modelu trzeciego otrzymujemy następujące wyniki:
-
-\begin{table}[!htbp]
-	\begin{center}
-		\begin{tabular}{l c}
-			\hline
-			& Model 1 \\
-			\hline
-			(Intercept)      & $-14780.85^{***}$ \\
-			& $(294.55)$        \\
-			life\_expectancy & $248.30^{***}$    \\
-			& $(4.03)$          \\
-			\hline
-			R$^2$            & $0.08$            \\
-			Adj. R$^2$       & $0.08$            \\
-			Num. obs.        & $41287$           \\
-			\hline
-			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
-		\end{tabular}
-		\caption{Wyniki dla modelu 3}
-		\label{table:model3}
-		\zrodlo{Opracowanie własne}
-	\end{center}
-\end{table}
-\newpage
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\linewidth]{rys/mod3-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego bez przekształcenia zmiennych}
-	\label{fig:mod3-lin}
-	\zrodlo{Opracowanie własne}
-\end{figure}
-
-Z analizy modelu liniowego wynika, że oczekiwana długość życia ma istotny wpływ na liczbę zachorowań. Im większa jest oczekiwana długość życia, tym więcej będzie potwierdzonych przypadków koronawirusa. Z wykresu oraz na podstawie niskiej wartości $R^2$ (około 8\%) wynika, że model jest słabo dopasowany do danych. Można zastosować transformację zmiennych, aby poprawić dopasowanie.
-
-Z transformacji Boxa-Coxa otrzymujemy następujące potęgi dla zmiennych: $3.72$ dla life\_expectancy oraz $0.09$ dla total\_cases\_per\_million. W przybliżeniu przyjmiemy czwartą potęgę dla pierwszej cechy, a dla drugiej 0 czyli logarytm.
-
+Z transformacji Boxa-Coxa otrzymujemy następujące potęgi dla zmiennych: $3.72$ dla life\_expectancy oraz $0.09$ dla total\_cases\_per\_million. W przybliżeniu przyjmiemy czwartą potęgę dla pierwszej cechy, a dla drugiej logarytm.
 $$log(y_{total\_cases})=\beta_0+\beta_{life\_expectancy}X_{life\_expectancy}^4+\varepsilon$$
+Podsumowanie tego modelu jest przedstawione w tabeli \ref{table:mod3-potega}.
 
-\newpage
+
 \begin{table}[!htbp]
 	\begin{center}
 		\begin{tabular}{l c}
@@ -1290,7 +1251,7 @@ $$log(y_{total\_cases})=\beta_0+\beta_{life\_expectancy}X_{life\_expectancy}^4+\
 		\hline
 		(Intercept)          & $3.22^{***}$ \\
 		& $(0.04)$     \\
-		life\_expectancy$^4$ & $0.00^{***}$ \\
+		life\_expectancy$^4$ & $8.54\cdot10^{-8~  ***}$ \\
 		& $(0.00)$     \\
 		\hline
 		R$^2$                & $0.10$       \\
@@ -1304,10 +1265,12 @@ $$log(y_{total\_cases})=\beta_0+\beta_{life\_expectancy}X_{life\_expectancy}^4+\
 	\end{center}
 \end{table}
 
-\begin{figure}[htbp]
+Efekt $life\_expectancy$ jest istotny statystycznie ($p$-value poniżej $0.001$). Współczynnik $\beta_{life\_expectancy}$ wynosi około $8.54 \cdot 10^{-8}$. Jest on dodatni, co oznacza, że ze wzrostem oczekiwanej długości życia rośnie liczba zachorowań na COVID-19. Niska wartość tego współczynnika może wynikać z tego, że zmienna $life\_expectancy$ jest podniesiona do potęgi $4$, więc obserwacje mają duże wartości. Współczynnik $R^2$ wynosi około $0.1$, więc jest niski. Dopasowanie modelu liniowego do danych po przekształceniu jest przedstawione na rysunku \ref{fig:mod3-potega}.
+
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod3-potega.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych do zależności pomiędzy liczbą zachorowań a oczekiwaną długością życia}
 	\label{fig:mod3-potega}
 	\zrodlo{Opracowanie własne}
 \end{figure}
@@ -1315,10 +1278,6 @@ $$log(y_{total\_cases})=\beta_0+\beta_{life\_expectancy}X_{life\_expectancy}^4+\
 
 
 
-	
-
-
-Po przekształceniu, $R^2$ wzrosło nieznacznie, do 10\%. Wniosek pozostaje ten sam - im wyższa oczekiwana długość życia, tym więcej osób chorych na COVID-19.
 
 \newpage
 
@@ -1326,12 +1285,10 @@ Po przekształceniu, $R^2$ wzrosło nieznacznie, do 10\%. Wniosek pozostaje ten 
 
 Hipoteza 4: Kraje o różnej gęstości zaludnienia różnią się liczbą zachorowań.
 
-W czwartym modelu badamy zależność liczby zachorowań od gęstości zaludnienia:
-
-$$y_{total\_cases}=\beta_0+X_{population\_density}\beta_{population\_density}+\varepsilon$$
-
-
-Wyniki są następujące:
+W czwartym modelu badamy zależność liczby zachorowań od gęstości zaludnienia. Stosujemy przekształcenie logarytmiczne obu zmiennych.
+$$\log(y_{total\_cases})=\beta_0+log(X_{population\_density})\beta_{population\_density}+\varepsilon$$
+ Wykres rozrzutu obu zmiennych po przekształceniu znajduje się na rysunku \ref{fig:mod4-lin}.
+Wyniki są przedstawione w tabeli \ref{table:mod4}.
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1339,14 +1296,14 @@ Wyniki są następujące:
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)         & $3606.05^{***}$ \\
-			& $(356.36)$      \\
-			population\_density & $0.64$          \\
-			& $(0.49)$        \\
+			(Intercept)              & $5.05^{***}$ \\
+			& $(0.46)$     \\
+			log(population\_density) & $0.13$       \\
+			& $(0.10)$     \\
 			\hline
-			R$^2$               & $0.00$          \\
-			Adj. R$^2$          & $0.00$          \\
-			Num. obs.           & $537$           \\
+			R$^2$                    & $0.00$       \\
+			Adj. R$^2$               & $0.00$       \\
+			Num. obs.                & $537$        \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -1355,12 +1312,12 @@ Wyniki są następujące:
 	\end{center}
 \end{table}
 
-Gęstośc zaludnienia nie jest czynnikiem istotnym statystycznie, a $R^2$ wynosi 0. Zatem liczba zachorowań na COVID-19 nie zależy od gęstości zaludnienia.
+Gęstośc zaludnienia nie jest czynnikiem istotnym statystycznie ($p$-value powyżej $0.05$), a $R^2$ jest bliskie 0. Nie można mówić o istotnym związku pomiędzy gęstością zaludnienia a liczbą zachorowań.
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=\linewidth]{rys/mod4-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego }
+	\includegraphics[width=\linewidth]{rys/mod4-log.png}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego do zależności pomiędzy liczbą zachorowań a gęstością zaludnienia po przekształceniu logarytmicznym }
 	\label{fig:mod4-lin}
 	\zrodlo{Opracowanie własne}
 \end{figure}
@@ -1469,48 +1426,10 @@ Z wykresu \ref{fig:mod5_predict_slope} widać, że w niektórych krajach przy wz
 
 Hipoteza 6: Kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań.
 
-Szósty model przedstawia zależność liczby zachorowań od wskaźnika rozwoju społecznego:
-
-$$y_{total\_cases}=\beta_0+X_{HDI}\beta_{HDI}+\varepsilon$$
-
-Z tego modelu mamy następujący wynik:
-
-\begin{table}[!htbp]
-	\begin{center}
-		\begin{tabular}{l c}
-			\hline
-			& Model 1 \\
-			\hline
-			(Intercept)               & $-5916.47^{***}$ \\
-			& $(145.15)$       \\
-			human\_development\_index & $12894.77^{***}$ \\
-			& $(198.99)$       \\
-			\hline
-			R$^2$                     & $0.09$           \\
-			Adj. R$^2$                & $0.09$           \\
-			Num. obs.                 & $41027$          \\
-			\hline
-			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
-		\end{tabular}
-		\caption{Wyniki dla modelu 6}
-		\label{table:mod6}
-	\end{center}
-\end{table}
-
-HDI jest istotny i ma wpływ stymulujacy. W krajach z wyższym wskaźnikiem rozwoju społecznego, zachorowań jest znacząco więcej.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\linewidth]{rys/mod6-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
-	\label{fig:mod6-lin}
-	\zrodlo{Opracowanie własne}
-\end{figure}
-\newpage
-
+Szósty model bada zależność liczby zachorowań od wskaźnika rozwoju społecznego.
 Z przekształcenia Boxa-Coxa otrzymujemy potęgę $2$ dla zmiennej $HDI$ oraz logarytm dla $total\_cases\_per\_million$.
-
 $$\log(y_{total\_cases})=\beta_0+\beta_{HDI}X^2_{HDI}+\varepsilon$$
+Podsumowanie modelu wygląda jak w tabeli \ref{table:mod6-log}.
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1518,14 +1437,14 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{HDI}X^2_{HDI}+\varepsilon$$
 			\hline
 			& Model 1 \\
 			\hline
-			(Intercept)                   & $3.11^{***}$ \\
-			& $(0.04)$     \\
-			human\_development\_index$^2$ & $4.98^{***}$ \\
-			& $(0.07)$     \\
+			(Intercept)                   & $2.60^{***}$ \\
+			& $(0.33)$     \\
+			human\_development\_index$^2$ & $5.57^{***}$ \\
+			& $(0.57)$     \\
 			\hline
-			R$^2$                         & $0.12$       \\
-			Adj. R$^2$                    & $0.12$       \\
-			Num. obs.                     & $41027$      \\
+			R$^2$                         & $0.15$       \\
+			Adj. R$^2$                    & $0.15$       \\
+			Num. obs.                     & $534$        \\
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
@@ -1533,67 +1452,29 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{HDI}X^2_{HDI}+\varepsilon$$
 		\label{table:mod6-log}
 	\end{center}
 \end{table}
-\newpage
-\begin{figure}[htbp]
+
+Współczynnik $\beta_{HDI}$ wynosi około $5.57$ i jest istotny statystycznie ($p$-value poniżej $0.001$). Wartość tego współczynnika jest dodatnia, co oznacza, że im wyższy wskaźnik rozwoju społecznego w danym kraju, tym więcej potwierdzonych przypadków COVID-19. Współczynnik determinacji wynosi około $15\%$, więc jest dość niski. Dopasowanie modelu do danych jest ukazane na rysunku \ref{fig:mod6-log}.
+
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod6-log.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego do zależności pomiędzy liczbą zachorowań a wskaźnikiem rozwoju społecznego po przekształceniu zmiennych}
 	\label{fig:mod6-log}
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
-\newpage
+
 
 \subsection{Model 7: zależność między liczbą zachorowań a odsetkiem osób umierających na choroby serca}
 
 Hipoteza 7: Kraje o różnej wysokości odsetka śmierci z powodu chorób serca różnią się liczbą zachorowań.
 
-Model siódmy wygląda następująco:
 
-$$y_{total\_cases}=\beta_0+X_{cardiovasc\_death\_rate}\beta_{cardiovasc\_death\_rate}+\varepsilon$$
-
-i zawiera zależność od odsetka śmierci spowodowanych chorobami serca w danym kraju. 
-
-Otrzymujemy następujące podsumowanie:
-
-\begin{table}[!htbp]
-	\begin{center}
-		\begin{tabular}{l c}
-			\hline
-			& Model 1 \\
-			\hline
-			(Intercept)             & $6602.10^{***}$ \\
-			& $(792.12)$      \\
-			cardiovasc\_death\_rate & $-11.06^{***}$  \\
-			& $(2.76)$        \\
-			\hline
-			R$^2$                   & $0.03$          \\
-			Adj. R$^2$              & $0.03$          \\
-			Num. obs.               & $537$           \\
-			\hline
-			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
-		\end{tabular}
-		\caption{Wyniki dla modelu 7}
-		\label{table:model7}
-		\zrodlo{Opracowanie własne}
-	\end{center}
-\end{table}
-\newpage
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\linewidth]{rys/mod7-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
-	\label{fig:mod7-lin}
-	\zrodlo{Opracowanie własne}
-\end{figure}
-
- Efekt śmiertelności na choroby serca jest istotny statystycznie. Co ciekawe, odsetek śmierci spowodowanych chorobami serca wpływa ograniczająco na liczbę zachorowań. Może to być związane z tym, że osoby chore na serce bardziej uważają, aby się nie zarazić, tym samym zmniejszają liczbę zachorowań w danym kraju.
-
-Na podstawie transformacji Boxa-Coxa otrzymujemy pierwiastek trzeciego stopnia ze zmiennej $cardiovasc\_death\_rate$ oraz logarytm z $total\_cases\_per\_million$.
-
+Na podstawie transformacji Boxa-Coxa otrzymujemy przekształcenie pierwiastkiem trzeciego stopnia dla zmiennej $cardiovasc\_death\_rate$ oraz logarytm z \\$total\_cases\_per\_million$.
 $$\log(y_{total\_cases})=\beta_0+\beta_{cardiovasc\_death\_rate}\sqrt[3]{ X_{cardiovasc\_death\_rate}}+\varepsilon$$
+Podsumowanie tego modelu znajduje się w tabeli \ref{table:mod7-log}.
 
-\begin{table}[!htbp]
+\begin{table}[!ht]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -1614,8 +1495,10 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{cardiovasc\_death\_rate}\sqrt[3]{ X_{car
 		\label{table:mod7-log}
 	\end{center}
 \end{table}
-\newpage
-\begin{figure}[htbp]
+
+Współczynnik $\beta_{cardiovasc\_death\_rate}$ wynosi około $0.52$ i jest istotny statystycznie ($p$-value poniżej $0.001$). Wartość tego efektu jest ujemna, więc im wyższy jest odsetek osób umierających na serce w danym kraju, tym mniej przypadków koronawirusa. $R^2$ wynosi około $3\%$, więc jest bardzo niskie. Dopasowanie modelu liniowego do danych widać na rysunku \ref{fig:mod7-log}.
+
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod7-log.png}
 	\caption{Wykres przedstawiający dopasowanie modelu liniowego po przekształceniu zmiennych}
@@ -1623,59 +1506,19 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{cardiovasc\_death\_rate}\sqrt[3]{ X_{car
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
-\newpage
+
 
 \subsection{Model 8: zależność między liczbą zachorowań a powszechnością cukrzycy}
 
 Hipoteza 8: Kraje o różnej wysokości odsetka osób chorych na cukrzycę różnią się liczbą zachorowań.
 
-$$y_{total\_cases}=\beta_0+X_{diabetes\_prevalence}\beta_{diabetes\_prevalence}+\varepsilon$$
 
 Model ten jest analogiczny do poprzedniego, z tym że zamiast chorób sercowych mamy tu odsetek chorych na cukrzycę.
-
-Otrzymujemy następujący wynik:
-
-\begin{table}[!htbp]
-	\begin{center}
-\begin{tabular}{l c}
-	\hline
-	& Model 1 \\
-	\hline
-	(Intercept)          & $991.31$       \\
-	& $(754.70)$     \\
-	diabetes\_prevalence & $372.06^{***}$ \\
-	& $(91.52)$      \\
-	\hline
-	R$^2$                & $0.03$         \\
-	Adj. R$^2$           & $0.03$         \\
-	Num. obs.            & $537$          \\
-	\hline
-	\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
-\end{tabular}
-		\caption{Wyniki dla modelu 8}
-		\label{table:model8}
-		\zrodlo{Opracowanie własne}
-	\end{center}
-\end{table}
-
-\newpage
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\linewidth]{rys/mod8-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego}
-	\label{fig:mod8-lin}
-	\zrodlo{Opracowanie własne}
-\end{figure}
-
-Rozpowszechnienie cukrzycy wpływa stymulująco na liczbę zachorowań. Może to być spowodowane tym, że osoby chore na cukrzycę mają słabszy organizm i są bardziej narażone na zakażenie.
-
 Na podstawie transformacji Boxa-Coxa otrzymujemy pierwiastek trzeciego stopnia ze zmiennej $diabetes\_prevalence$ oraz logarytm z $total\_cases\_per\_million$.
-
 $$\log(y_{total\_cases})=\beta_0+\beta_{diabetes\_prevalence}\sqrt[3]{X_{diabetes\_prevalence}}+\varepsilon$$
+Wyniki znajdują się w tabeli \ref{table:mod8-log}.
 
-
-\begin{table}[!htbp]
+\begin{table}[htbp]
 	\begin{center}
 		\begin{tabular}{l c}
 			\hline
@@ -1697,59 +1540,26 @@ $$\log(y_{total\_cases})=\beta_0+\beta_{diabetes\_prevalence}\sqrt[3]{X_{diabete
 	\end{center}
 \end{table}
 
-\newpage
+Wartość współczynnika $\beta_{diabetes\_prevalence}$ jest równa $1.65$. Efekt ten jest istotny statystycznie ($p$-value poniżej $0.001$). Ponieważ wartość współczynnika jest dodatnia, to wraz ze wzrostem odsetka osób chorujących na cukrzycę, rośnie liczba zachorowań. Dopasowanie modelu liniowego do danych po przekształceniu jest zaprezentowane na rysunku \ref{fig:mod8-log}.
 
-\begin{figure}[htbp]
+
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod8-log.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych do zależności pomiędzy odsetkiem osób chorych na cukrzycę a liczbą zachorowań na COVID-19}
 	\label{fig:mod8-log}
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
-\newpage
+
 
 \subsection{Model 9: zależność między liczbą zachorowań a odsetkiem osób żyjących w skrajnej biedzie}
 
 Hipoteza 9: Kraje o różnej wysokości odsetka osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
 
 W tym modelu sprawdzamy zależność liczby zachorowań od odsetka osób żyjących w skrajnym ubóstwie:
-$$y_{total\_cases}=\beta_0+X_{extreme\_poverty}\beta_{extreme\_poverty}+\varepsilon$$
-Model ten ma podsumowanie przedstawione w tabeli \ref{table:model9}:
 
-\begin{table}[!htbp]
-	\begin{center}
-		\begin{tabular}{l c}
-			\hline
-			& Model 1 \\
-			\hline
-			(Intercept)      & $4433.28^{***}$ \\
-			& $(406.29)$      \\
-			extreme\_poverty & $-83.75^{***}$  \\
-			& $(17.02)$       \\
-			\hline
-			R$^2$            & $0.06$          \\
-			Adj. R$^2$       & $0.06$          \\
-			Num. obs.        & $389$           \\
-			\hline
-			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
-		\end{tabular}
-		\caption{Wyniki dla modelu 9}
-		\label{table:model9}
-		\zrodlo{Opracowanie własne}
-	\end{center}
-\end{table}
 
-\newpage
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\linewidth]{rys/mod9-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego dla zależności pomiędzy liczbą zachorowań a odsetkiem osób żyjącym w skrajnej biedzie}
-	\label{fig:mod9-lin}
-	\zrodlo{Opracowanie własne}
-\end{figure}
-
- Czynnik $extreme\_poverty$ jest istotny statystycznie ($p$-value poniżej 0.001). \\Współczynnik $\beta_{extreme\_poverty}$ wynosi $-83.75$. Jest on ujemny, więc im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów. $R^2$ wynosi około $6\%$, co jest bardzo niską wartością. Na rysunku \ref{fig:mod9-lin} przedstawiona jest zależność między liczbą zachorowań a odsetkiem osób żyjących w skrajnej biedzie, z dopasowanym modelem liniowym. Widać, że najwięcej obserwacji to kraje, w których odsetek osób żyjących w skrajnej biedzie jest niski, a krajów z wysoką wartością $extreme\_poverty$ jest niewiele, i charakteryzują się one niskimi wartościami zmiennej zależnej.
 
 Stosując transformację Boxa-Coxa, otrzymujemy przekształcenie logarytmiczne dla obu zmiennych w modelu:
 $$\log(y_{total\_cases})=\beta_0+\beta_{extreme\_poverty}\log(X_{extreme\_poverty})+\varepsilon$$
@@ -1776,8 +1586,10 @@ Podsumowanie dla modelu 9 po przekształceniu zmiennych znajduje się w tabeli \
 		\label{table:mod9-log}
 	\end{center}
 \end{table}
-\newpage
-\begin{figure}[htbp]
+
+Czynnik $extreme\_poverty$ jest istotny statystycznie ($p$-value poniżej 0.001). \\Współczynnik $\beta_{extreme\_poverty}$ wynosi $-0.46$. Jest on ujemny, więc im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów. $R^2$ wynosi około $9\%$, co jest niską wartością. Na rysunku \ref{fig:mod9-log} przedstawiona jest zależność między przekształconymi logarytmicznie liczbą zachorowań a odsetkiem osób żyjących w skrajnej biedzie, z dopasowanym modelem liniowym. 
+
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod9-log.png}
 	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych dla zależności pomiędzy liczbą zachorowań a odsetkiem osób żyjącym w skrajnej biedzie}
@@ -1785,59 +1597,19 @@ Podsumowanie dla modelu 9 po przekształceniu zmiennych znajduje się w tabeli \
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
-\newpage
+
 
 \subsection{Model 10: zależność między liczbą zachorowań a wysokością PKB na osobę}
 
 Hipoteza 10: Kraje o różnej wysokości PKB różnią się liczbą zachorowań.
 
 
-W modelu dziesiątym pojawia się zależność liczby zachorowań od PKB na osobę, więc badamy model postaci:
-
-$$y_{total\_cases}=\beta_0+X_{GDP}\beta_{GDP}+\varepsilon$$
-
-Wyniki są przedstawione w tabeli \ref{table:model10}:
-
-\begin{table}[!htbp]
-	\begin{center}
-		\begin{tabular}{l c}
-			\hline
-			& Model 1 \\
-			\hline
-			(Intercept)      & $1174.04^{*}$ \\
-			& $(462.01)$    \\
-			gdp\_per\_capita & $0.13^{***}$  \\
-			& $(0.02)$      \\
-			\hline
-			R$^2$            & $0.11$        \\
-			Adj. R$^2$       & $0.11$        \\
-			Num. obs.        & $531$         \\
-			\hline
-			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
-		\end{tabular}
-		\caption{Wyniki dla modelu 10}
-		\label{table:model10}
-		\zrodlo{Opracowanie własne}
-	\end{center}
-\end{table}
-
-Efekt PKB na osobę jest istotny statystycznie ($p$-value poniżej 0.001). Współczynnik $\beta_{GDP}$ wynosi 0.13. Jest on dodatni, więc im wyższe PKB danego kraju, tym wyższa liczba zachorowań. Współczynnik $R^2$ wynosi 0.11, co oznacza, że zmienna $gdp\_per\_capita$ wyjaśnia około $11\%$ zmienności modelu. Procent wyjaśnionej zmienności jest więc niski. Na rysunku \ref{fig:mod10-lin} widać wykres rozrzutu zmiennej \\$total\_cases\_per\_million$ w zależności od $gdp\_per\_capita$. Obserwacje są rozłożone nierównomiernie, najwięcej jest takich, które mają niskie wartości obu zmiennych. Dlatego, aby poprawić model, dokonamy transformacji zmiennych.
-
-
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\linewidth]{rys/mod10-lin.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego do zależności pomiędzy liczbą zachorowań a PKB na osobę}
-	\label{fig:mod10-lin}
-	\zrodlo{Opracowanie własne}
-\end{figure}
-
+W modelu dziesiątym pojawia się zależność liczby zachorowań od PKB na osobę.
 
 
 Na podstawie przekształcenia Boxa-Coxa otrzymujemy pierwiastek piątego stopnia z $gdp\_per\_capita$ oraz logarytm z $total\_cases\_per\_million$.
 $$\log(y_{total\_cases})=\beta_0+\beta_{GDP}\sqrt[5]{X_{GDP}}+\varepsilon$$
-W tabeli \ref{table:mod10-log} widać podsumowanie modelu 10 po przekształceniu zmiennych. Współczynnik przy przekształconym $gdp\_per\_capita$ wynosi 0.79 i jest istotny statystycznie, więc zależność między zmienną zależną a niezależną jest rosnąca. Po przekształceniu zmiennych procent wyjaśnianej wariancji wzrósł do $15\%$, co nadal jest niską wartością. Na rysunku \ref{fig:mod10-log} widać dopasowanie tego modelu do danych po przekształceniu zmiennych.
+W tabeli \ref{table:mod10-log} widać podsumowanie modelu 10 po przekształceniu zmiennych.
 
 \begin{table}[!htbp]
 	\begin{center}
@@ -1861,7 +1633,9 @@ W tabeli \ref{table:mod10-log} widać podsumowanie modelu 10 po przekształceniu
 	\end{center}
 \end{table}
 
-\begin{figure}[htbp]
+Efekt PKB na osobę jest istotny statystycznie ($p$-value poniżej 0.001). Współczynnik $\beta_{GDP}$ wynosi 0.79. Jest on dodatni, więc im wyższe PKB danego kraju, tym wyższa liczba zachorowań. Współczynnik $R^2$ wynosi 0.15, co oznacza, że zmienna $gdp\_per\_capita$ wyjaśnia około $15\%$ zmienności modelu. Procent wyjaśnionej zmienności jest więc niski. Na rysunku \ref{fig:mod10-log} widać wykres rozrzutu zmiennej \\$total\_cases\_per\_million$ w zależności od $gdp\_per\_capita$ po przekształceniu, z dopasowanym modelem liniowym.
+
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod10-log.png}
 	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych do zależności pomiędzy liczbą zachorowań a PKB na osobę}
