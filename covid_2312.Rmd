@@ -285,6 +285,9 @@ texreg(mod4_lm2)
 ```
 
 
+
+
+
 # Model 5 - zależność liczby zachorowań od siły obostrzeń
 
 ```{r mod5}
@@ -329,6 +332,142 @@ cbind(covid_si,fit_mod4_slope) %>%
                               'Bahrain','Brazil'),
               label_key=location)
 ```
+
+
+```{r opoznianie}
+library(zoo)
+covid_si <- drop_na(covid, stringency_index)
+covid_si <- covid_si %>% select(location, time, total_cases_per_million,new_cases_per_million, stringency_index)
+covid_si$stringency_lag1 <- lag(covid_si$stringency_index, 1, na.pad=T)
+covid_si$stringency_lag5 <- lag(covid_si$stringency_index, 5, na.pad=T)
+covid_si$stringency_lag7 <- lag(covid_si$stringency_index, 7, na.pad=T)
+covid_si$stringency_lag10 <- lag(covid_si$stringency_index, 10, na.pad=T)
+covid_si$stringency_lag14 <- lag(covid_si$stringency_index, 14, na.pad=T)
+covid_si$stringency_lag21 <- lag(covid_si$stringency_index, 21, na.pad=T)
+covid_si$stringency_lag28 <- lag(covid_si$stringency_index, 28, na.pad=T)
+covid_si$stringency_lag35 <- lag(covid_si$stringency_index, 35, na.pad=T)
+covid_si$stringency_lag42 <- lag(covid_si$stringency_index, 42, na.pad=T)
+covid_si$stringency_lag49 <- lag(covid_si$stringency_index, 49, na.pad=T)
+covid_si_lag <- covid_si
+#covid_si_lag[,-c(1,2)] %>% cor()
+cor(covid_si_lag[,c(3,4)]) # 0.08807796
+cor(covid_si_lag[covid_si_lag$time>1,c(3,5)]) # 0.08807796
+cor(covid_si_lag[covid_si_lag$time>5,c(3,6)]) # 0.08920496
+cor(covid_si_lag[covid_si_lag$time>7,c(3,7)]) # 0.08942785 najwyzsza korelacja
+cor(covid_si_lag[covid_si_lag$time>10,c(3,8)]) # 0.08940608
+cor(covid_si_lag[covid_si_lag$time>14,c(3,9)]) # 0.08843869
+cor(covid_si_lag[covid_si_lag$time>21,c(3,10)]) # 0.08576437
+cor(covid_si_lag[covid_si_lag$time>28,c(3,11)]) # 0.08292478
+cor(covid_si_lag[covid_si_lag$time>35,c(3,12)]) # 0.08163252
+cor(covid_si_lag[covid_si_lag$time>42,c(3,13)]) # 0.08039214
+cor(covid_si_lag[covid_si_lag$time>49,c(3,14)]) # 0.08221657
+```
+
+```{r mod5-lag}
+mod4_lag <- lmer(total_cases_per_million~stringency_lag7+(1|location),
+            data = covid_si_lag[covid_si_lag$time>7,])
+summary(mod4_lag)
+texreg(mod4_lag)
+
+mod4_lag2 <- lmer(total_cases_per_million~stringency_lag7+(stringency_lag7|location),
+            data = covid_si_lag[covid_si_lag$time>7,])
+summary(mod4_lag2)
+texreg(mod4_lag2)
+
+
+mod4_lag3 <- lmer(total_cases_per_million~poly(stringency_lag7,2)+(poly(stringency_lag7,2)|location),
+            data = covid_si_lag[covid_si_lag$time>7,])
+summary(mod4_lag3)
+texreg(mod4_lag3)
+
+mod4_lag4 <- lmer(total_cases_per_million~poly(stringency_lag7,3)+(poly(stringency_lag7,3)|location),
+            data = covid_si_lag[covid_si_lag$time>7,])
+summary(mod4_lag4)
+
+
+fit_mod4_lag2 <- predict(mod4_lag2)
+cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag2) %>% 
+  ggplot(aes(x=stringency_lag7, y=fit_mod4_lag2,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil'),
+              label_key=location)
+
+
+fit_mod4_lag3 <- predict(mod4_lag3)
+cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag3) %>% 
+  ggplot(aes(x=stringency_lag7, y=fit_mod4_lag3,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States',
+                              'Italy',
+                              'Germany', 'Norway', 'Spain', 
+                              'United Kingdom','Qatar',
+                              'Bahrain','Brazil'),
+              label_key=location)
+
+fit_mod4_lag4 <- predict(mod4_lag4)
+cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag4) %>% 
+  ggplot(aes(x=stringency_lag7, y=fit_mod4_lag4,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland'),
+              label_key=location)
+
+covid_si_lag[covid_si_lag$time>7,] %>% 
+  ggplot(aes(x=stringency_lag7, y=total_cases_per_million, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland'))
+
+
+covid_si_lag %>% 
+  ggplot(aes(x=time, y=stringency_index, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Bahrain', 'Chile', 'Poland', 'Norway', 'Peru', 'Nicaragua'))
+
+```
+
+
+```{r rysunki-stringency7}
+
+covid_si_lag[covid_si_lag$time>7,] %>% 
+  ggplot(aes(x=stringency_lag7, y=total_cases_per_million, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Bahrain', 'Chile', 'Poland', 'Norway', 'Peru'))
+
+
+cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag4) %>% 
+  ggplot(aes(x=stringency_lag7, y=fit_mod4_lag4,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Bahrain','Chile', 'Poland', 'Norway', 'Peru'),
+              label_key=location)
+
+cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag3) %>% 
+  ggplot(aes(x=stringency_lag7, y=fit_mod4_lag3,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Bahrain','Chile', 'Poland', 'Norway', 'Peru'),
+              label_key=location)
+
+cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag2) %>% 
+  ggplot(aes(x=stringency_lag7, y=fit_mod4_lag2,
+             col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Bahrain','Chile', 'Poland', 'Norway', 'Peru'),
+              label_key=location)
+
+covid_si_lag %>%  
+ group_by(location) %>% 
+  summarize(m=mean(stringency_lag7),
+            m2=mean(total_cases_per_million)) %>% 
+  arrange(m)
+```
+
 
 # Model 6 - zależność liczby zachorowań od HDI
 
@@ -529,6 +668,18 @@ covid %>%
   arrange(-m)
 
 ```
+
+# śmierci a zachorowania
+
+```{r-dead-cases}
+covid_dead %>% 
+  ggplot(aes(total_cases_per_million, total_deaths_per_million, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium', 'Peru'), label_key=location)
+```
+
 
 # Predykcja
 
