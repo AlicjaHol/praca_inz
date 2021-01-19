@@ -270,6 +270,12 @@ covid_miesiace %>%
 ```
 
 
+```{r mod3-mixed}
+mod3_mixed <- lmer(total_cases_per_million~life_expectancy+(1|location), covid)
+summary(mod3_mixed)
+```
+
+
 # Model 4 - zależność liczby zachorowań od gęstości zaludnienia
 
 Przekształcić analogicznie do mod3
