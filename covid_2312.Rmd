@@ -112,7 +112,8 @@ cbind(covid, fit) %>%
   geom_line()+
   gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
                               'Germany', 'Norway', 'Spain', 'United Kingdom',
-                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)+
+  ylab("total_cases_per_million_predicted")
 
 ```
 
@@ -126,18 +127,34 @@ cbind(covid, fit_slope) %>%
   geom_line()+
   gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
                               'Germany', 'Norway', 'Spain', 'United Kingdom',
-                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)+
+  ylab("total_cases_per_million_predicted")
 
 ```
 
 ```{r mod1-kwadratowy}
-mod_kw <- lmer(total_cases_per_million~poly(time,3)+(poly(time,3)|location), covid)
+mod_kw <- lmer(total_cases_per_million~poly(time,2)+(poly(time,2)|location), covid)
 #sprobowac model 3 st
 summary(mod_kw)
 texreg(mod_kw)
 fit_kw <- predict(mod_kw)
 cbind(covid, fit_kw) %>% 
   ggplot(aes(time, fit_kw, col=location))+
+  geom_line()+
+  gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
+                              'Germany', 'Norway', 'Spain', 'United Kingdom',
+                              'Qatar', 'Bahrain','Brazil','Belgium','Peru'), label_key=location)+
+  ylab("total_cases_per_million_predicted")
+```
+
+```{r mod1-wielomianowy}
+mod_poly <- lmer(total_cases_per_million~poly(time,3)+(poly(time,3)|location), covid)
+#sprobowac model 3 st
+summary(mod_poly)
+texreg(mod_poly)
+fit_poly <- predict(mod_poly)
+cbind(covid, fit_poly) %>% 
+  ggplot(aes(time, fit_poly, col=location))+
   geom_line()+
   gghighlight(location %in% c('Poland', 'China', 'United States', 'Italy',
                               'Germany', 'Norway', 'Spain', 'United Kingdom',
@@ -182,7 +199,8 @@ cbind(covid_na,fit_mod1) %>%
                               'United Kingdom','Qatar',
                               'Bahrain','Brazil','Belgium','Peru',
                               'United Arab Emirates','Denmark'),
-              label_key=location)
+              label_key=location)+
+  ylab("total_cases_per_million_predicted")
 ```
 
 
@@ -201,7 +219,8 @@ cbind(covid_na,fit_mod1) %>%
                               'United Kingdom','Qatar',
                               'Bahrain','Brazil','Belgium','Peru',
                               'United Arab Emirates','Denmark'),
-              label_key=location)
+              label_key=location)+
+  ylab("total_cases_per_million_predicted")
 ```
 
 
@@ -395,7 +414,8 @@ cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag2) %>%
                               'Germany', 'Norway', 'Spain', 
                               'United Kingdom','Qatar',
                               'Bahrain','Brazil'),
-              label_key=location)
+              label_key=location)+
+  ylab("total_cases_per_million_predicted")
 
 
 fit_mod4_lag3 <- predict(mod4_lag3)
@@ -408,7 +428,8 @@ cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag3) %>%
                               'Germany', 'Norway', 'Spain', 
                               'United Kingdom','Qatar',
                               'Bahrain','Brazil'),
-              label_key=location)
+              label_key=location)+
+    ylab("total_cases_per_million_predicted")
 
 fit_mod4_lag4 <- predict(mod4_lag4)
 cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag4) %>% 
