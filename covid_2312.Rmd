@@ -351,11 +351,12 @@ cbind(covid_si,fit_mod4_slope) %>%
              col=location))+
   geom_line()+
   gghighlight(location %in% c('Poland', 'China', 'United States',
-                              'Italy',
+                              'Italy', 'Chile',
                               'Germany', 'Norway', 'Spain', 
                               'United Kingdom','Qatar',
                               'Bahrain','Brazil'),
-              label_key=location)
+              label_key=location)+
+  ylab("total_cases_per_million_predicted")
 ```
 
 
@@ -416,7 +417,7 @@ cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag2) %>%
              col=location))+
   geom_line()+
   gghighlight(location %in% c('Poland', 'China', 'United States',
-                              'Italy',
+                              'Italy', 'Chile',
                               'Germany', 'Norway', 'Spain', 
                               'United Kingdom','Qatar',
                               'Bahrain','Brazil'),
@@ -430,7 +431,7 @@ cbind(covid_si_lag[covid_si_lag$time>7,],fit_mod4_lag3) %>%
              col=location))+
   geom_line()+
   gghighlight(location %in% c('Poland', 'China', 'United States',
-                              'Italy',
+                              'Italy', 'Chile',
                               'Germany', 'Norway', 'Spain', 
                               'United Kingdom','Qatar',
                               'Bahrain','Brazil'),

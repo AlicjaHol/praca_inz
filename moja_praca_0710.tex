@@ -401,13 +401,21 @@ nr albumu: 89892
 \chapter*{Wstęp}
 
 
+Matematyka jest często uważana za dyscyplinę teoretyczną, dla której ciężko znaleźć praktyczne zastosowanie. Jednakże śledząc historię cywilizacji można zauważyć, że postęp w tej dziedzinie okazuje się niezbędny, by rozwijać inne gałęzie nauki. Modelowanie matematyczne jest działem matematyki, który pozwala użyć formalnego języka tej nauki do opisu zjawisk rzeczywistych. Poprawne zbudowanie modelu matematycznego pozwala lepiej zrozumieć zależności w otaczającym nas świecie i wyciągnąć użyteczne wnioski. Modele matematyczne można budować właściwie dla każdego zjawiska rzeczywistego. W tej pracy skupimy się na zastosowaniu modelowania matematycznego do opisu rozwoju pandemii choroby COVID-19.
+
+Pierwsza próba matematycznego modelowania epidemii pojawiła się w XVIII w., kiedy Daniel Bernoulli przedstawił opis rozprzestrzeniania się choroby zakaźnej oparty na równaniach różniczkowych \cite{epidemie}. Jego pomysł był wykorzystywany aż do lat 70-tych XX w. W ostatnich czasach gwałtowny rozwój technologii komputerowych umożliwił przeprowadzanie bardziej skomplikowanych obliczeń, co spowodowało ogromny rozwój w dziedzinie modelowania matematycznego. 
+
+Obecnie matematyczne modele epidemii są bardzo cenione, korzystają z nich chociażby rządzący państwami przy podejmowaniu decyzji mających na celu ochronę zdrowia obywateli. Można stworzyć modele, które pozwolą zidentyfikować czynniki wpływające na rozwój lub wygaszenie epidemii, bądź też takie, które umożliwią przybliżone przewidzenie liczby chorych lub zgonów. Takie predykcje pozwolą chociaż do pewnego stopnia przygotować się na wzrost liczby zachorowań i ograniczyć liczbę zgonów. W czasie pandemii koronawirusa, dzięki ogólnemu dostępowi do internetu i~mediów społecznościowych, ludzie na wpół świadomie bardzo często odwoływali się do modeli epidemii, mówiąc na przykład o ,,spłaszczeniu krzywej zachorowań''.
+
+Na moment pisania tej pracy cały świat trwa w ogłoszonym przez WHO stanie pandemii. Mimo ogromnego rozwoju medycyny, nie jesteśmy w stanie całkowicie opanować rozprzestrzeniania się koronawirusa. Tym ważniejsze są podejmowane próby budowy odpowiednich modeli matematycznych. Doświadczenie zdobyte podczas obecnej sytuacji może także pomóc przyszłym pokoleniom, ponieważ z powodu globalizacji mówi się także o groźbie wybuchu kolejnych pandemii.
+
+Niniejsza praca ma na celu pokazanie zastosowania modeli mieszanych oraz modeli liniowych do analizy rozwoju pandemii choroby COVID-19. Modele te co prawda nie pozwolą na dokładną predykcję liczby zachorowań, ale umożliwią identyfikację czynników, które wpływają na wzrost liczby zachorowań na całym świecie. 
+Rozdział teoretyczny stanowi wprowadzenie do pojęć związanych z modelami liniowymi oraz modelami mieszanymi. Przedstawione są podstawowe metody estymacji oraz badania istotności parametrów modelu liniowego, jak również interpretacja ich wartości. Krótko wspomniano także o transformacji zmiennych w modelu. Następnie wprowadzone zostało pojęcie modelu mieszanego. Szczególny nacisk jest położony na estymację parametrów takiego modelu przy użyciu macierzy rzadkich. Opisano także metody doboru najlepszego modelu oraz interpretację efektów stałych i losowych.
+Druga część pracy to rozdział badawczy, w którym przedstawione są hipotezy mające na celu określenie wpływu różnych efektów na liczbę zachorowań na COVID-19.
+Zbadane zostaną czynniki takie jak czas, liczba wykonywanych testów na COVID-19, siła obostrzeń, oczekiwana długość życia, gęstość zaludnienia oraz inne wskaźniki rozwoju gospodarczo-społecznego w kraju (m. in. PKB i HDI). Wyniki, które otrzymamy, dotyczą przede wszystkim przeciętnej sytuacji na świecie, więc mogą być punktem wyjścia do bardziej szczegółowych rozważań na temat poszczególnych państw.
 
 
-Pandemia choroby COVID-19 jest wydarzeniem, które wstrząsnęło całym światem w roku 2019. Właściwie nikt chyba nie może powiedzieć, że nie poczuł się dotknięty przez sytuację związaną z rozprzestrzenianiem się wirusa. Pierwsze przypadki pojawiły się pod koniec 2019 roku we wschodnich Chinach, w mieście Wuhan. Na początku 2020 roku chorowali już obywatele większości państw na świecie. Na moment pisania tej pracy, sytuacja nadal nie jest opanowana i nie wiadomo, jak się rozwinie.
-
-Biorąc to pod uwagę, tym ważniejszy wydaje się temat poruszany w tej pracy. Wiele jednostek naukowych podejmuje próby znalezienia odpowiedniego modelu, aby przewidzieć rozwój pandemii. Przedstawione w tej pracy modele mieszane co prawda nie pozwalają na dokładną predykcję, ale są dobrym narzędziem, aby odkryć, które czynniki mają wpływ na rozwój pandemii w przeciętnym kraju.
-
-
+ 
 
 
 
@@ -418,29 +426,29 @@ Biorąc to pod uwagę, tym ważniejszy wydaje się temat poruszany w tej pracy. 
 
 
 \chapter{Teoretyczne podstawy badań własnych}
-W tej części pracy przedstawimy metody matematyczne, które zostaną użyte w rozdziale poświęconym modelom rozwoju pandemii. Przybliżymy zagadnienia związane z modelami liniowymi: regresję prostą i wieloraką, metody estymacji parametrów modelu liniowego i badania ich istotności oraz interpretację takich modeli. Powiemy także o tym, kiedy jest potrzebna transformacja zmiennych. Następnie rozszerzymy te pojęcia o modele mieszane, skupiając się przede wszystkim na estymacji, wyborze najlepszego modelu oraz interpretacji efektów stałych i losowych.
+W tej części pracy przedstawimy metody matematyczne, które zostaną użyte w~rozdziale poświęconym modelom rozwoju pandemii. Przybliżymy zagadnienia związane z modelami liniowymi: regresję prostą i wieloraką, metody estymacji parametrów modelu liniowego i badania ich istotności oraz interpretację takich modeli. Powiemy także o tym, kiedy jest potrzebna transformacja zmiennych. Następnie rozszerzymy te pojęcia o modele mieszane, skupiając się przede wszystkim na estymacji, wyborze najlepszego modelu oraz interpretacji efektów stałych i losowych.
 \section{Modele liniowe}
 Na początek przypomnimy podstawowe wiadomości o modelach liniowych. Model \textbf{regresji prostej} ma postać $$y=x \beta_1+\beta_0 + \varepsilon,$$ i ma on przedstawiać relację pomiędzy dwoma zmiennymi ilościowymi. Oszacowania parametrów $\beta_1$ i $\beta_0$ obliczamy następująco:
 $$\hat{\beta_1}=\frac{Cov(x,y)}{Var(x)},$$
 $$\hat{\beta_0}=\overline{y}-\overline{x}\hat{\beta_1}.$$ Zmienną $y$ nazywamy zmienną zależną, a $x$ - niezależną.
 
-Jeżeli w modelu występuje więcej niż jedna zmienna niezależna, to mówimy o \textbf{regresji wielorakiej} (lub wielokrotnej). Wówczas model ma postać: $$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k + \varepsilon,$$ lub w zapisie macierzowym $$\yy=\mathbf{X}\beta+\varepsilon$$
+Jeżeli w modelu występuje więcej niż jedna zmienna niezależna, to mówimy o~\textbf{regresji wielorakiej} (lub wielokrotnej). Wówczas model ma postać: $$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k + \varepsilon,$$ lub w zapisie macierzowym $$\yy=\mathbf{X}\beta+\varepsilon,$$
 gdzie $\varepsilon$ to niezależne (tzn. $Cov(\varepsilon_i, \varepsilon_j)=0 \text{ dla }i\neq j$) zakłócenie losowe o rozkładzie normalnym ze średnią 0 i wariancją $\sigma^2$.
 
 \subsection{Metody estymacji parametrów modelu liniowego}
 Aby oszacować wartości parametrów modelu liniowego, możemy wykorzystać poniższe metody estymacji:
 \begin{enumerate}
-	\item \textbf{Metoda najmniejszych kwadratów} (ang. \emph{Ordinary Least Squares, OLS}) - w metodzie tej minimalizujemy błąd kwadratowy, czyli sumę kwadratów reszt, którą oznaczamy $RSS$ (ang. \emph{Residual Sum of Squares}).
-	$$RSS= \sum_{i=1}^{n}(y_i-\hat{y_i})^2$$
+	\item \textbf{Metoda najmniejszych kwadratów} (ang. \emph{Ordinary Least Squares, OLS}) - w~metodzie tej minimalizujemy błąd kwadratowy, czyli sumę kwadratów reszt, którą oznaczamy $RSS$ (ang. \emph{Residual Sum of Squares}):
+	$$RSS= \sum_{i=1}^{n}(y_i-\hat{y_i})^2.$$
 	Twierdzenie Gaussa-Markowa mówi, że taki estymator jest najlepszym (w sensie najmniejszej wariancji) liniowym nieobciążonym estymatorem (ang. \textit{BLUE, Best Linear Unbiased Estimator}) przy założeniach, że $E(\varepsilon_i)=0$ i $Var(\varepsilon_i)=\sigma^2$ dla każdego $i$ oraz $Cov(\varepsilon_i, \varepsilon_j)=0$ dla $i \neq j$.
 
 	\item \textbf{Metoda największej wiarogodności} (ang.\textit{Maximum Likelihood, ML}) polega na maksymalizacji wartości funkcji prawdopodobieństwa ze względu na $\beta$ (w praktyce maksymalizujemy zwykle logarytm z tej funkcji). Estymator wariancji otrzymany tą metodą wygląda następująco:
 	$$\hat{\sigma}^{2}_{ML}=\frac{RSS}{n}.$$
-	Estymując $\sigma^2$, maksymalizujemy funkcję wiarogodności zarówno ze względu na $\beta$, jak i $\sigma^2$.
+	Estymując $\sigma^2$, maksymalizujemy funkcję wiarogodności zarówno ze względu na $\beta$,~jak i $\sigma^2$.
 	Estymatory uzyskane tą metodą są asymptotycznie nieobciążone.
 	
 	\item \textbf{Resztowa metoda największej wiarogodności} (ang. \textit{Residual/Restricted Maximum Likelihood Method, REML}) - z estymacji parametru $\sigma^2$ usuwamy wpływ parametrów zakłócających $\beta$. W tym celu redukuje się wektor $y$ do podprzestrzeni ortogonalnej do macierzy $X$. Estymator wariancji otrzymany metodą REML wygląda następująco:
-	$$\hat{\sigma}^2_{REML}=\frac{RSS}{n-p}$$
+	$$\hat{\sigma}^2_{REML}=\frac{RSS}{n-p}.$$
 	Estymatory uzyskane tą metodą są nieobciążone \cite{biecek}.
 \end{enumerate}
 
@@ -451,29 +459,28 @@ W przypadku modeli liniowych, estymacja współczynników $\beta$ jest prosta, w
 Aby zbadać istotność współczynników modelu liniowego, weryfikujemy hipotezę postaci $H_0: \beta_i = 0$ przeciw hipotezie alternatywnej $H_1: \beta_i \neq 0.																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													$ Do zweryfikowania tej hipotezy wykorzystujemy \textbf{test Walda}. Statystyka testowa ma postać $$T=\frac{\hat{\beta_i}}{\operatorname{se}(\hat{\beta_i})}$$ i jest nazywana \textbf{statystyką t}. Przy założeniu prawdziwości $H_0$ statystyka ta ma rozkład t-Studenta o $n-k-1$ stopniach swobody ($n$ - liczba obserwacji, $k$ - liczba parametrów w modelu, nie licząc wyrazu wolnego).
 
 Badanie efektów brzegowych poszczególnych zmiennych należy poprzedzić \textbf{testem F} (testem globalnym), który weryfikuje hipotezę $$H_0: \beta_1=\beta_2=\ldots=\beta_k=0$$
- przeciwko hipotezie alternatywnej $$H_1: \exists{j} \beta_j \neq 0 $$
+ przeciwko hipotezie alternatywnej $$H_1: \exists{j} \beta_j \neq 0.$$
 
 \subsection{Interpretacja parametrów modelu liniowego}
 
-W modelu postaci $y=\beta_0 +\beta_1 x$ dodatnia wartość $\beta_1$ oznacza, że wzrostowi $x$ towarzyszy wzrost $y$, a ujemna wartość $\beta_1$, że wraz ze wzrostem $x$, maleje $y$ \cite{rozrzut}. Jeżeli model jest dobrze dopasowany do danych, to możemy go interpretować w ten sposób, że wzrost zmiennej $x$ o 1, powoduje zmianę zmiennej $y$ o $\beta_1$. Przykłady takich zależności widać na rysunku \ref{fig:regresje}. Podobnie w przypadku modelu regresji wielorakiej
-$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k$,
-wzrost zmiennej $x_i$ o jedną jednostkę, przy niezmienionych poziomach pozostałych zmiennych, powoduje zmianę wartości $y$ o $\beta_i$.
+W modelu postaci $y=\beta_0 +\beta_1 x$ dodatnia wartość $\beta_1$ oznacza, że wzrostowi $x$~towarzyszy wzrost $y$, a ujemna wartość $\beta_1$, że wraz ze wzrostem $x$, maleje $y$ \cite{rozrzut}. Jeżeli model jest dobrze dopasowany do danych, to możemy go interpretować w ten sposób, że wzrost zmiennej $x$ o 1, powoduje zmianę zmiennej $y$ o $\beta_1$. Przykłady takich zależności widać na rysunku \ref{fig:regresje}. Podobnie w przypadku modelu regresji wielorakiej
+$y=\beta_0+\beta_1 x_1+\beta_2 x_2 + \ldots + \beta_k x_k$, wzrost zmiennej $x_i$ o jedną jednostkę, przy niezmienionych poziomach pozostałych zmiennych, powoduje zmianę wartości $y$ o $\beta_i$.
 
 \begin{figure}[!h]
 	\centering
-	\includegraphics[width=\linewidth]{rys/regresje}
-	\caption{Przykładowe modele regresji prostej. Po lewej dla $\beta_1>0$, po prawej dla $\beta_1<0$}
+	\includegraphics[width=\linewidth]{rys/wykres-rozrzutu.png}
+	\caption{Przykładowe modele regresji prostej, \\po lewej dla $\beta_1>0$, po prawej dla $\beta_1<0$}
 	\label{fig:regresje}
-	\zrodlo{\cite{rozrzut}}
+	\zrodlo{\cite{wykres}}
 \end{figure}
 
 
-Miarami jakości dopasowania modelu do danych są m. in. współczynnik determinacji $R^2$ oraz skorygowany współczynnik determinacji. \textbf{Współczynnik determinacji} informuje o tym, jaka część zmienności (wariancji) zmiennej zależnej w próbie jest wyjaśniona zmiennością modelu. Przyjmuje wartości z przedziału $[0,1]$. Jeżeli w modelu występuje wyraz wolny, a do estymacji wykorzystano metodę najmniejszych kwadratów, to współczynnik determinacji można interpretować jako procent wariancji zmiennej zależnej, która jest wyjaśniana przez model (więc dopasowanie jest tym lepsze, im wartość $R^2$ jest bliższa jedności \cite{r2}). Współczynnik determinacji jest wyrażony wzorem:
+Miarami jakości dopasowania modelu do danych są m. in. współczynnik determinacji $R^2$ oraz skorygowany współczynnik determinacji. \textbf{Współczynnik determinacji} informuje o tym, jaka część zmienności (wariancji) zmiennej zależnej w próbie jest wyjaśniona zmiennością modelu. Przyjmuje wartości z przedziału $[0,1]$. Jeżeli w~modelu występuje wyraz wolny, a do estymacji wykorzystano metodę najmniejszych kwadratów, to współczynnik determinacji można interpretować jako procent wariancji zmiennej zależnej, która jest wyjaśniana przez model (więc dopasowanie jest tym lepsze, im wartość $R^2$ jest bliższa jedności \cite{r2}). Współczynnik determinacji jest wyrażony wzorem:
 $$R^2=\frac{\sum\limits_{i=1}^{n}(\hat{y_i}-\bar{y})^2}{\sum\limits_{i=1}^{n}(y_i-\bar{y})^2},$$ gdzie $y_i$ - $i$-ta obserwacja zmiennej zależnej, $\hat{y_i}$ - oszacowanie $i$-tej wartości zmiennej zależnej na podstawie modelu, $\bar{y}$ - średnia arytmetyczna zaobserwowanych empirycznie wartości zmiennej zależnej.
 
 W przypadku modeli zawierających więcej niż jedną zmienną, zdarza się, że dodanie do modelu nowej zmiennej podniesie współczynnik $R^2$, mimo że faktycznie nie będzie poprawiała dopasowania modelu. Dlatego można także korzystać z miary nazywanej \textbf{skorygowanym współczynnikiem determinacji}, określonej wzorem:
 $$\tilde{R}^2=1-\frac{n-1}{n-k-1}(1-R^2),$$
-gdzie $R^2$ - współczynnik determinacji, $n$ - liczba obserwacji, $k$ - liczba zmiennych w modelu (nie licząc wyrazu wolnego) \cite{skorygowany}. Interpretacja $\tilde{R}^2$ jest taka sama, jak $R^2$, ale jeśli te dwie wartości znacznie się od siebie różnią, to warto interpretować raczej skorygowany współczynnik determinacji niż zwykłe $R^2$.
+gdzie $R^2$ - współczynnik determinacji, $n$ - liczba obserwacji, $k$ - liczba zmiennych w~modelu (nie licząc wyrazu wolnego) \cite{skorygowany}. Interpretacja $\tilde{R}^2$ jest taka sama, jak $R^2$, ale jeśli te dwie wartości znacznie się od siebie różnią, to warto interpretować raczej skorygowany współczynnik determinacji niż zwykłe $R^2$.
 
 \subsection{Transformacja zmiennych}
 
@@ -481,16 +488,16 @@ Jeżeli obserwacje charakteryzują się wariancją, która rośnie lub maleje wr
 
 Innym rodzajem transformacji są \textbf{transformacje potęgowe}, np. pierwiastki kwadratowe lub sześcienne. Te przekształcenia nie zawsze są tak proste w interpretacji jak logarytmiczne. Zapisujemy je jako $w_i=x_i^p$, gdzie $i \in \lbrace{1,2,\ldots,n\rbrace}$, a $p$ to potęga, jaką przekształcamy obserwacje \cite{forecasting}.
 
-\textbf{Transformacja Boxa-Coxa} jest rodziną transformacji zawierającą zarówno przekształcenia logarytmiczne, jak i potęgowe. Przekształcenie Boxa-Coxa ma postać:
+\textbf{Transformacja Boxa-Coxa} jest rodziną transformacji zawierającą zarówno przekształcenia logarytmiczne, jak i potęgowe. Przekształcenie Boxa-Coxa ma postać~\cite{boxcox}:
 $$g^{(\lambda)}(X)=\begin{cases}
 \log(X), & \text{ gdy } \lambda=0 \\
 \frac{X^{\lambda}-1}{\lambda},&\text{ gdy } \lambda \neq 0
-\end{cases}. \cite{boxcox}$$
+\end{cases}. $$
 
 \section{Modele mieszane} 
 W powyżej opisanych modelach liniowych z efektami stałymi zakładamy niezależność kolejnych pomiarów, dlatego nie są to odpowiednie modele w przypadku, kiedy mamy np. kilka pomiarów dla pojedynczego elementu. W takiej sytuacji możemy użyć modeli liniowych z efektami mieszanymi (stałymi i losowymi), które krótko nazywamy modelami mieszanymi.
 
-Modeli mieszanych używamy w przypadku powtarzanych pomiarów bądź hierarchicznej, czyli zagnieżdżonej struktury. Takie dane charakteryzują się korelacją między obserwacjami z tej samej grupy, co nie pozwala na użycie modelu liniowego z efektami stałymi, ponieważ założenie o braku seryjnej korelacji błędu modelu nie jest spełnione. Dlatego do modelu wprowadza się czynnik losowy.  Czynnik stały jest pewnym parametrem, którego wartość estymujemy na podstawie próbki, natomiast czynnik losowy jest zmienną losową, dla której próbujemy oszacować parametry jej rozkładu \cite{faraway}. W przypadku efektu stałego interesuje nas jego wielkość (średnia), natomiast przy efektach losowych bierzemy pod uwagę jedynie fakt, że wprowadzona zmienna wnosi do modelu pewną zmienność (a dokładniej, pozwala odjąć tą zmienność od całkowitej zmienności) i szacujemy wariancję lub odchylenie standardowe, a nie parametry rozkładu. Ponadto efektów losowych można się spodziewać wtedy, gdy nie kontrolujemy wszystkich poziomów zmiennej niezależnej. Przykładową sytuacją, gdzie możemy użyć modelu mieszanego, jest badanie działania leku na grupie pacjentów, gdzie dokonujemy kilku pomiarów na danym pacjencie. W tym przypadku nie interesuje nas efekt konkretnego pacjenta, ale raczej wpływ leku na przeciętną osobę. Dodatkowo zakładamy, że pacjenci byli losowo wybrani. W modelu mieszanym, wpływ konkretnego pacjenta będzie traktowany jako czynnik zakłócający.
+Modeli mieszanych używamy w przypadku powtarzanych pomiarów bądź hierarchicznej, czyli zagnieżdżonej struktury. Takie dane charakteryzują się korelacją między obserwacjami z tej samej grupy, co nie pozwala na użycie modelu liniowego z efektami stałymi, ponieważ założenie o braku seryjnej korelacji błędu modelu nie jest spełnione. Dlatego do modelu wprowadza się czynnik losowy.  Czynnik stały jest pewnym parametrem, którego wartość estymujemy na podstawie próbki, natomiast czynnik losowy jest zmienną losową, dla której próbujemy oszacować parametry jej rozkładu~\cite{faraway}. W~przypadku efektu stałego interesuje nas jego wielkość (średnia), natomiast przy efektach losowych bierzemy pod uwagę jedynie fakt, że wprowadzona zmienna wnosi do modelu pewną zmienność (a dokładniej, pozwala odjąć tą zmienność od całkowitej zmienności) i szacujemy wariancję lub odchylenie standardowe, a nie parametry rozkładu. Ponadto efektów losowych można się spodziewać wtedy, gdy nie kontrolujemy wszystkich poziomów zmiennej niezależnej. Przykładową sytuacją, gdzie możemy użyć modelu mieszanego, jest badanie działania leku na grupie pacjentów, gdzie dokonujemy kilku pomiarów na danym pacjencie. W tym przypadku nie interesuje nas efekt konkretnego pacjenta, ale raczej wpływ leku na przeciętną osobę. Dodatkowo zakładamy, że pacjenci byli losowo wybrani. W modelu mieszanym, wpływ konkretnego pacjenta będzie traktowany jako czynnik zakłócający.
 
 
 
@@ -498,15 +505,13 @@ Modeli mieszanych używamy w przypadku powtarzanych pomiarów bądź hierarchicz
 \subsection{Metody estymacji parametrów modelu mieszanego}
 
 \textbf{Modelem mieszanym} nazywamy model postaci
-$$y=X\beta +Z u + \varepsilon$$
+$$y=X\beta +Z u + \varepsilon,$$
 gdzie $X$ - macierz zmiennych będących efektami stałymi, $Z$ - macierz zmiennych będących efektami losowymi, $\beta$ to wektor nieznanych efektów stałych, $\varepsilon \sim \mathcal{N}(0, \sigma^2 I_{n\times n})$ to zakłócenie losowe, a $u \sim \mathcal{N} (0, \sigma^2D)$ to wektor zmiennych losowych odpowiadających efektom losowym \cite{biecek}.
 
-Znając macierz $D$, możemy estymować parametry $\beta$ uogólnioną metodą najmniejszych kwadratów. Do estymowania $D$ możemy użyć np. metody największej wiarogodności.
-
-Do oceny wartości parametrów modelu mieszanego można stosować metody ML (Największej Wiarogodności) oraz REML (Resztowej Największej Wiarogodności), wspomniane w tej pracy przy okazji modeli liniowych. W przypadku modeli mieszanych obydwoma metodami możemy uzyskać estymatory obciążone, ale to obciążenie jest zazwyczaj mniejsze w przypadku estymatorów uzyskanych metodą REML.
+Znając macierz $D$, możemy estymować parametry $\beta$ uogólnioną metodą najmniejszych kwadratów. Do estymowania $D$ możemy użyć metody ML (Największej Wiarogodności) lub REML (Resztowej Największej Wiarogodności), wspomniane w~tej pracy przy okazji modeli liniowych. W przypadku modeli mieszanych obydwoma metodami możemy uzyskać estymatory obciążone, ale to obciążenie jest zazwyczaj mniejsze w przypadku estymatorów uzyskanych metodą REML.
 
 
-Estymacja parametrów modelu mieszanego jest trudnym zagadnieniem. Można wyróżnić dwa podejścia, jedno z nich wykorzystuje własności macierzy $ZDZ^T$, a drugie polega na rozwijaniu metod numerycznych używanych do znalezienia maksimum funkcji wiarogodności. Przykładową metodą jest użycie algorytmu Newtona-Rapshona - iteracyjnej metody optymalizacji. To podejście jest dobre dla zbioru danych o praktycznie dowolnym rozmiarze, ale ze względu na złożoność pamięciową rzędu $O((p+q)^2)$, źle sprawdza się dla modelu z dużą liczbą parametrów do oszacowania. Pod tym względem bardziej efektywne jest rozwiązanie przy wykorzystaniu własności macierzy rzadkich. Ta właśnie metoda zostanie przedstawione poniżej.
+Estymacja parametrów modelu mieszanego jest trudnym zagadnieniem. Można wyróżnić dwa podejścia, jedno z nich wykorzystuje własności macierzy $ZDZ^T$, a drugie polega na rozwijaniu metod numerycznych używanych do znalezienia maksimum funkcji wiarogodności. Przykładową metodą jest użycie algorytmu Newtona-Rapshona - iteracyjnej metody optymalizacji. To podejście jest dobre dla zbioru danych o praktycznie dowolnym rozmiarze, ale ze względu na kwadratową złożoność pamięciową, źle sprawdza się dla modelu z dużą liczbą parametrów do oszacowania. Pod tym względem bardziej efektywne jest rozwiązanie przy wykorzystaniu własności macierzy rzadkich. Ta właśnie metoda zostanie przedstawione poniżej.
 
 \textbf{Macierz rzadka} jest to macierz, w której większość elementów ma wartość zero. Algorytmy dla macierzy rzadkich są zwykle szybsze niż analogiczne algorytmy dla macierzy gęstych. Zamiast przechowywać wszystkie wartości takiej macierzy, wystarczy zapisać w pamięci wartości i indeksy elementów, które są różne od zera. Macierze rzadkie w praktyce maja często tak wielki rozmiar, że niemożliwe by było opracowanie na nich zwykłymi algorytmami \cite{rzadka}. W modelu mieszanym macierz $Z$ jest macierzą rzadką. Często również macierz X jest taką macierzą.
 
@@ -521,7 +526,7 @@ $$=\frac{\exp(-(y-X\beta -Z \Lambda u)^T(y-X\beta-Z\Lambda u)/(2\sigma^2))}{(2\p
 $$=\frac{\exp(-(||y-X\beta-Z\Lambda u||^2+||u||^2)/(2\sigma^2))}{(2\pi \sigma^2)^{(n+q)/2}},$$ gdzie $||a||^2$ to suma kwadratów współrzędnych wektora $a$.
 
 Minimalizacja tej gęstości po $u$ lub $\beta$ jest równoważna minimalizacji sumy kwadratów reszt z karą za współczynniki $u$:
-$$r^2(\theta, \beta, w)=||y-X\beta-Z\Lambda w||^2+||w||^2.$$ Funkcję $r^2(\theta, \beta, w)$ nazywamy \textbf{sumą kwadratów reszt z karą} i oznaczamy $PRSS$ (\textit{Penalized Residual Sum of Squares}). Przez $r_{\theta}$ określimy $\min\limits_{w,\beta} r^2(\theta, \beta,w)$. Wartości minimalizujące $PRSS$ po $w$ i $\beta$ można znaleźć, rozwiązując układ równań liniowych \ref{eq:ukladPRSS}.
+$$r^2(\theta, \beta, w)=||y-X\beta-Z\Lambda w||^2+||w||^2.$$ Funkcję $r^2(\theta, \beta, w)$ nazywamy \textbf{sumą kwadratów reszt z karą} i oznaczamy $PRSS$ (\textit{Penalized Residual Sum of Squares}). Przez $r_{\theta}$ określimy $\min\limits_{w,\beta} r^2(\theta, \beta,w)$. Wartości minimalizujące $PRSS$ po $w$ i $\beta$ można znaleźć, rozwiązując poniższy układ równań liniowych:
 
 \begin{equation} \label{eq:ukladPRSS}
 \begin{bmatrix}
@@ -535,7 +540,7 @@ w
 \begin{bmatrix}
 X^Ty\\
 \Lambda^TZ^Ty
-\end{bmatrix}
+\end{bmatrix}.
 \end{equation}
 
 Ten układ jest rozwiązywalny efektywnie nawet dla bardzo dużych $q$, dzięki wykorzystaniu rzadkiej dekompozycji Choleskiego \cite{cholesky}. Po lewej stronie równania macierz $\Lambda^TZ^TZ\Lambda+I$ jest macierzą rzadką. Można ją przedstawić jako
@@ -547,7 +552,7 @@ B & L
 \begin{bmatrix}
 A^T & B^T\\
 0 & L
-\end{bmatrix}
+\end{bmatrix},
 $$
 gdzie $A$ i $B$ to nieduże macierze (o ile $p$ jest nieduże), a $L$ to rzadki pierwiastek Choleskiego macierzy $\Lambda^TZ^TZ\Lambda+I_{q\times q}$, czyli jest to rzadka macierz trójkątna dolna spełniająca warunek $$LL^T=\Lambda^TZ^TZ\Lambda +I_{q \times q}.$$ Użycie dekompozycji Choleskiego macierzy rzadkich, która w wyniku także daje macierz rzadką, jest kluczowym momentem pozwalającym na operowanie na dużych macierzach. W tym celu kolumny macierzy $Z$ odpowiednio się permutuje. Dzięki temu można operować na macierzach, które w postaci pełnej nie mieściłyby się w pamięci.
 
@@ -557,34 +562,34 @@ Po wyznaczeniu dekompozycji Choleskiego łatwo rozwiązać układ równań \ref{
 -2\log l(\theta,\beta,\sigma|y)=\log(2\pi \sigma^2)+\log(|L|^2) +\frac{r^2_{\theta}}{\sigma^2}, 
 \end{equation}
 gdzie $|L|$ to wyznacznik macierzy $L$ (która jest trójkątna, więc łatwo go policzyć). Minimalizując powyższe wyrażenie po $\sigma^2$, otrzymujemy warunkowy estymator wariancji (dla zadanego $\theta$):
-$$\hat{\sigma}_{\theta}^2=\frac{r^2_{\theta}}{n}$$
-Podstawiając tą ocenę wariancji do równości \ref{eq:2log}, otrzymujemy funkcję wariancji w zależności od parametru $\theta$
+$$\hat{\sigma}_{\theta}^2=\frac{r^2_{\theta}}{n}.$$
+Podstawiając tą ocenę wariancji do równości \ref{eq:2log}, otrzymujemy funkcję wariancji w~zależności od parametru $\theta$
 
-$$-2 \log l(\theta|y)=\log(|L|^2)+n+n\log\left(\frac{2\pi r^2_{\theta}}{n}\right)$$
+$$-2 \log l(\theta|y)=\log(|L|^2)+n+n\log\left(\frac{2\pi r^2_{\theta}}{n}\right).$$
 
 Wartość tej funkcji możemy wyznaczyć efektywnie, nawet dla dużych $p+q$, a sama funkcja wiarogodności zależy jedynie od parametru $\theta$, którego wymiar $g$ jest zazwyczaj nieduży (jest to liczba komponentów wariancyjnych). Maksymalizację tak opisanej funkcji wiarogodności po przestrzeni parametrów o niewielkim wymiarze wykonuje się standardowymi algorytmami numerycznymi.
 Wyznaczywszy metodą ML (lub REML) ocenę parametru $\hat{\theta}$, możemy obliczyć oceny pozostałych parametrów modelu. 
 
 W powyższej metodzie macierz $V=\sigma^2(I+ZDZ^T)$ mogła mieć prawie dowolną postać. W wielu praktycznych sytuacjach macierz $D$, a tym samym macierz $V$, ma bardzo protą strukturę.
-Rozważmy model niezależnych $g$ komponentów losowych, każdy komponent złożony z niezależnych $q_i$ efektów takich, że $\sum\limits_i q_i=q$. Dodatkowo oznaczmy wariancję kolejnych $q_i$ przez $\sigma^2_i=\sigma^2\theta_i$. W takim modelu macierz $D$ jest macierzą diagonalną
+Rozważmy model niezależnych $g$ komponentów losowych, każdy komponent złożony z niezależnych $q_i$ efektów takich, że $\sum\limits_i q_i=q$. Dodatkowo oznaczmy wariancję kolejnych $q_i$ przez $\sigma^2_i=\sigma^2\theta_i$. W takim modelu macierz $D$ jest macierzą diagonalną postaci
 
 $$D=\begin{bmatrix}
 \theta_1I_{q_1} & 0 & \cdots & 0 \\
 0 & \theta_2I_{q_2} & \cdots & 0 \\
 \cdots & \cdots & \ddots & \cdots \\
 0 & 0 & \cdots & \theta_gI_{q_g}
-\end{bmatrix}$$
+\end{bmatrix}.$$
 Dla takiej macierzy $D$ macierz wariancji $y$ można wyrazić jako
 
-$$Var(y)=V=\sigma^2(I+ZDZ^T)=I\sigma^2+\sum_{i=1}^{g}\sigma_i^2Z_iZ_i^T$$
+$$Var(y)=V=\sigma^2(I+ZDZ^T)=I\sigma^2+\sum_{i=1}^{g}\sigma_i^2Z_iZ_i^T,$$
 gdzie $Z_i$ to macierz złożona z kolumn macierzy $Z$ odpowiadających tym efektom losowym, które mają wariancję $\sigma^2_i$. Każda $Z_i$ to jeden komponent wariancyjny.
 
 \begin{uwaga}
-	Może się zdarzyć, że w wyniku estymacji otrzymamy ujemne oceny pewnych parametrów $\sigma_i^2$. Oczywiście nie można takich wartości interpretować jako oceny wariancji. Problem z ujemnymi wartościami $\hat{\sigma}^2_i$ można rozwiązać na kilka sposobów, np.
+	Może się zdarzyć, że w wyniku estymacji otrzymamy ujemne oceny pewnych parametrów $\sigma_i^2$. Oczywiście nie można takich wartości interpretować jako oceny wariancji. Problem z ujemnymi wartościami $\hat{\sigma}^2_i$ można rozwiązać na kilka sposobów, na przykład \cite{biecek}:
 	\begin{itemize}
 		\item wartość ujemną zastąpić przez 0. Jest to metoda najprostsza, ale generuje obciążenie;
 		\item zastosować optymalizację z ograniczeniami. Na przestrzeni parametrów zadajemy liniowe ograniczenia i szukamy maksimum funkcji wiarogodności na zbiorze ograniczonym do nieujemnych parametrów;
-		\item zamiast $\sigma_i^2$ można używać innych parametrów, które da się przekształcić w nieujemne oceny $\sigma^2_i$. Przykładowo dla nowej parametryzacji $\gamma_i=\log(\sigma^2_i)$ możemy optymalizować funkcję wiarogodności ze względu na parametry $\gamma_i$ po całej prostej, a następnie otrzymane oceny $\hat{\gamma}_i$ możemy przekształcić na dodatnie oceny $\hat{\sigma}_i^2=\exp(\hat{\gamma}_i)$. Wadą tego podejścia jest niemożliwość uzyskania oceny z brzegu przedziału, tzn. nie otrzymamy nigdy oceny $\hat{\sigma}^2_i=0$ \cite{biecek}.
+		\item zamiast $\sigma_i^2$ można używać innych parametrów, które da się przekształcić w nieujemne oceny $\sigma^2_i$. Przykładowo dla nowej parametryzacji $\gamma_i=\log(\sigma^2_i)$ możemy optymalizować funkcję wiarogodności ze względu na parametry $\gamma_i$ po całej prostej, a następnie otrzymane oceny $\hat{\gamma}_i$ możemy przekształcić na dodatnie oceny $\hat{\sigma}_i^2=\exp(\hat{\gamma}_i)$. Wadą tego podejścia jest niemożliwość uzyskania oceny z brzegu przedziału, tzn. nie otrzymamy nigdy oceny $\hat{\sigma}^2_i=0$.
 	\end{itemize}
 \end{uwaga}
 
@@ -605,14 +610,14 @@ Metody, które mają zastosowanie dla modeli liniowych z efektami stałymi, nie 
 	
 	\item \textbf{Test F dla efektów stałych} - metoda taka sama jak ta używana przy modelach z efektami stałymi. W przypadku modeli mieszanych może sprawiać problemy, ponieważ statystyka testowa niekoniecznie musi mieć rozkład F. Należy wówczas wprowadzać poprawkę na liczbę stopni swobody. Na ogół ta metoda daje dobre rezultaty dla mniej skomplikowanych modeli, gdy układ jest zbalansowany (wszystkie grupy są równoliczne). Dla modeli bardziej skomplikowanych lub kiedy brak równoliczności, wartości $p$ oraz statystyki $t$ mogą być błędne \cite{faraway}.
 	
-	\item \textbf{Test permutacyjny} -można go stosować do dokładniejszego wyznaczenia wartości $p$ dla efektu stałego. Funkcja wiarogodności może być użyta jako statystyka testowa. Rozkład statystyki testowej otrzymujemy wykonując permutacje na tej kolumnie macierzy $X$, która odpowiada interesującemu nas efektowi \cite{biecek}. Dla każdej permutacji wyliczamy logarytm funkcji wiarogodności i sprawdzamy, ile z nich przekroczyło logarytm funkcji wiarogodności dla modelu z niepermutowanymi kolumnami. Testy permutacyjne mają wiele zalet, między innymi, nie muszą być spełnione założenia dotyczące rozkładu normalnego danych w próbce. Przy dostatecznie dużej liczbie permutacji, zwykle dają dokładne wartości $p$, niezależnie od wielkości próby \cite{bootstrap}.
+	\item \textbf{Test permutacyjny} -można go stosować do dokładniejszego wyznaczenia wartości $p$ dla efektu stałego. Funkcja wiarogodności może być użyta jako statystyka testowa. Rozkład statystyki testowej otrzymujemy wykonując permutacje na tej kolumnie macierzy $X$, która odpowiada interesującemu nas efektowi \cite{biecek}. Dla każdej permutacji wyliczamy logarytm funkcji wiarogodności i sprawdzamy, ile z~nich przekroczyło logarytm funkcji wiarogodności dla modelu z niepermutowanymi kolumnami. Testy permutacyjne mają wiele zalet, między innymi, nie muszą być spełnione założenia dotyczące rozkładu normalnego danych w próbce. Przy dostatecznie dużej liczbie permutacji, zwykle dają dokładne wartości $p$, niezależnie od wielkości próby \cite{bootstrap}.
 	
 
 
 	\item \textbf{Kryteria informacyjne} - służą do wyboru najlepszego spośród modeli.Pozwalają ocenić jakość dopasowania modelu, kontrolując jednocześnie jego stopień złożoności, aby uniknąć przeuczenia (z ang. \textit{overfitting}) \cite{szeregi}.
 	 Najpopularniejszym jest Kryterium Informacyjne Akaikego (ang. \textit{Akaike Information Criterion, AIC}). Jest ono zdefiniowane następującym wzorem:
-	$$-2(\operatorname{max} \operatorname{log} likelihood)+ 2p,$$
-	gdzie $p$ to liczba parametrów modelu. Można stosować to kryterium do modeli, które różnią się jedynie efektami stałymi, gdzie liczba efektów losowych jest identyczna dla wszystkich modeli, które porównujemy. Gdyby modele różniły się liczbą efektów losowych, należałoby rozważyć, w jaki sposób zliczyć liczbę parametrów $p$ \cite{faraway}. Kryterium Akaikego jest miarą utraconej informacji, więc po obliczeniu go dla rozważanych modeli, należy wybrać ten, gdzie otrzymana wartość jest najmniejsza. Inne popularne kryteria informacyjne to m. in. Skorygowane Kryterium Informacyjne Akaikego (ang. \textit{Corrected AIC}, $AIC_c$) oraz Bayesowskie Kryterium Informacyjne Schwarza (ang. \textit{Bayesian Information Criterion, BIC}), które interpretuje się tak samo jak kryterium Akaikego \cite{szeregi}.
+	$$-2\operatorname{max}(l(\hat{\beta}, \hat{\sigma}, \hat{D}|y))+ 2p,$$
+	gdzie $p$ to liczba parametrów modelu. Można stosować to kryterium do modeli, które różnią się jedynie efektami stałymi, gdzie liczba efektów losowych jest identyczna dla wszystkich modeli, które porównujemy. Gdyby modele różniły się liczbą efektów losowych, należałoby rozważyć, w jaki sposób zliczyć liczbę parametrów~$p$~\cite{faraway}. Kryterium Akaikego jest miarą utraconej informacji, więc po obliczeniu go dla rozważanych modeli, należy wybrać ten, gdzie otrzymana wartość jest najmniejsza. Inne popularne kryteria informacyjne to m. in. Skorygowane Kryterium Informacyjne Akaikego (ang. \textit{Corrected AIC}, $AIC_c$) oraz Bayesowskie Kryterium Informacyjne Schwarza (ang. \textit{Bayesian Information Criterion, BIC}), które interpretuje się tak samo jak kryterium Akaikego \cite{szeregi}.
 
 \end{enumerate}
 
@@ -647,7 +652,7 @@ gdzie $V$ to macierz $\sigma^2(I+ZDZ^T)$ \cite{biecek}. Wówczas predykcja będz
  \cite{experimental}.
  
  Można wyróżnić dwa główne rodzaje modeli mieszanych. Pierwszym typem jest \textbf{model z losowym wyrazem wolnym} (ang. \textit{Random Intercept Model}). W takim modelu jedynie wyraz wolny różni się pomiędzy grupami obserwacji\cite{insurance}. Przykład takiego modelu jest przedstawiony na rysunku \ref{fig:random_types} na wykresie $A$. Widać, że prosta regresji dla poszczególnych grup może być przesunięta w górę lub w dół w stosunku do średniej globalnej ($\mu_{group}$). 
- Innym rodzajem modelu mieszanego jest model, w którym także współczynniki przy niektórych zmiennych także różnią się pomiędzy grupami \cite{insurance}. Przykładem takiego modelu jest \textbf{model z losowym wyrazem wolnym i współczynnikiem nachylenia} (ang. \textit{Random Intercept and Slope}) pokazany na rysunku \ref{fig:random_types} na wykresie $B$. Oprócz zmian w wyrazie wolnym między grupami, widać, że prosta regresji może być nachylona do osi OX pod mniejszym lub większym kątem niż prosta regresji dla całej populacji (oznaczona kolorem czarnym.)
+ Innym rodzajem modelu mieszanego jest model, w którym także współczynniki przy niektórych zmiennych także różnią się pomiędzy grupami \cite{insurance}. Przykładem takiego modelu jest \textbf{model z losowym wyrazem wolnym i współczynnikiem nachylenia} (ang. \textit{Random Intercept and Slope}) pokazany na rysunku \ref{fig:random_types} na wykresie $B$. Oprócz zmian w wyrazie wolnym między grupami, widać, że prosta regresji może być nachylona do osi OX pod mniejszym lub większym kątem niż prosta regresji dla całej populacji (oznaczona kolorem czarnym).
  
 
  
@@ -659,7 +664,7 @@ gdzie $V$ to macierz $\sigma^2(I+ZDZ^T)$ \cite{biecek}. Wówczas predykcja będz
  	\zrodlo{\cite{brief}}
  \end{figure}
 
- Warto dodać, że model mieszany dla danych dotyczących zmian w czasie (ang. \textit{longitudinal data}) lub dla danych grupowanych (ang. \textit{clustered data}) może być uzyskany z odpowiedniego modelu dla danych przekrojowych (ang. \textit{cross-sectional data}) poprzez wprowadzenie do niego efektów losowych. Oznacza to, że oprócz omawianych w tej pracy modeli liniowych z efektami stałymi i losowymi (ang. \textit{Linear Mixed Effects Models, LME models}) wyróżniamy także nieliniowe modele mieszane (ang. \textit{Nonlinear Mixed Effects Models, NLME models}) oraz uogólnione liniowe modele mieszane (ang. \textit{Generalized Linear Mixed Model, GLMM}), które uzyskujemy odpowiednio z modeli nieliniowej regresji oraz uogólnionych modeli liniowych ($GLM$). Z kolei w analizie przeżycia pojawiają się mieszane modele przeżycia nazywane \textit{frailty models} \cite{insurance}. W części praktycznej tej pracy będziemy mieli do czynienia jedynie z modelami liniowymi z efektami stałymi i losowymi.
+ Warto dodać, że model mieszany dla danych dotyczących zmian w czasie (ang. \textit{longitudinal data}) lub dla danych grupowanych (ang. \textit{clustered data}) może być uzyskany z odpowiedniego modelu dla danych przekrojowych (ang. \textit{cross-sectional data}) poprzez wprowadzenie do niego efektów losowych. Oznacza to, że oprócz omawianych w tej pracy modeli liniowych z efektami stałymi i losowymi (ang. \textit{Linear Mixed Effects Models, LME models}) wyróżniamy także nieliniowe modele mieszane (ang. \textit{Nonlinear Mixed Effects Models, NLME models}) oraz uogólnione liniowe modele mieszane (ang. \textit{Generalized Linear Mixed Model, GLMM}), które uzyskujemy odpowiednio z modeli nieliniowej regresji oraz uogólnionych modeli liniowych ($GLM$). Z kolei w analizie przeżycia pojawiają się mieszane modele przeżycia nazywane \textit{frailty models} \cite{insurance}. W~części praktycznej tej pracy będziemy mieli do czynienia jedynie z modelami liniowymi z~efektami stałymi i losowymi.
  
 \chapter{Modele rozwoju pandemii}
 \section{Opis zbioru badawczego}
@@ -667,7 +672,7 @@ gdzie $V$ to macierz $\sigma^2(I+ZDZ^T)$ \cite{biecek}. Wówczas predykcja będz
 Zbiór danych pochodzi z witryny internetowej Our World In Data \cite{owid}, gdzie dane zostały zebrane z różnych źródeł, m. in. ze Światowej Organizacji Zdrowia (WHO) oraz Europejskiego Centrum ds. Zapobiegania i Kontroli Chorób (ECDC). W zbiorze znajduje się 210 krajów, dane dotyczące terytoriów międzynarodowych oraz łącznie dla całego świata. Mamy ponad 40 kolumn z różnymi parametrami - w dalszej części pracy opiszemy, które zmienne będą przez nas użyte.
 
 W zbiorze znajdowało się wiele braków danych. Dla każdego kraju zostały usunięte dane sprzed rozpoczęcia się epidemii na jego terytorium, dni są numerowane kolejnymi liczbami całkowitymi.
-Ze zbioru danych zostały usunięte wszystkie kraje o populacji poniżej miliona mieszkańców, ponieważ w większości były to nieduże wysepki, dla których dane były wybrakowane. Oprócz tego, kilka innych krajów zostało usuniętych, ponieważ mimo większej populacji, dane były niepełne.
+Ze zbioru danych zostały usunięte wszystkie kraje o~populacji poniżej miliona mieszkańców, ponieważ w większości były to nieduże wysepki, dla których dane były wybrakowane. Oprócz tego, kilka innych krajów zostało usuniętych, ponieważ mimo większej populacji, dane były niepełne.
 
 Do formułowania hipotez i budowania modeli będziemy się posługiwać następującymi zmiennymi \cite{codebook}:
 \begin{itemize}
@@ -678,7 +683,7 @@ Do formułowania hipotez i budowania modeli będziemy się posługiwać następu
 	\item gęstość zaludnienia (\textit{population\_density}),
 	\item PKB danego kraju na osobę (\textit{GDP\_per\_capita}) - Produkt Krajowy Brutto, przeliczony na hipotetyczną walutę dolara międzynarodowego \cite{dollars},
 	\item część społeczeństwa żyjąca w skrajnym ubóstwie (\textit{extreme\_poverty}) - stan na możliwie aktualny rok po 2010,
-	\item powszechność występowania cukrzycy (\textit{diabetes\_prevalence}) - odsetek populacji z cukrzycą, brane pod uwagę są osoby w wieku od 20 do 70 lat, stan na rok 2017,
+	\item powszechność występowania cukrzycy (\textit{diabetes\_prevalence}) - odsetek populacji z~cukrzycą, brane pod uwagę są osoby w wieku od 20 do 70 lat, stan na rok 2017,
 	\item wskaźnik rozwoju społecznego, tzw. HDI (\textit{human\_development\_index}) -  miara opisująca stopień rozwoju społeczno-ekonomicznego poszczególnych krajów, do którego pomiaru służą m. in. oczekiwana długość życia, średnia liczba lat edukacji otrzymanej przez mieszkańców w wieku co najmniej 25 lat, oczekiwana liczba lat edukacji, PKB na osobę \cite{hdi},
 	\item oczekiwana długość życia (\textit{life\_expectancy}) - stan na 2019 r.
 	
@@ -696,11 +701,11 @@ We wszystkich modelach mieszanych kraj jest czynnikiem losowym. Modele mieszane 
 
 Modele są dopasowywane przy użyciu środowiska R. Do dopasowania modeli mieszanych zostały wykorzystane pakiety \texttt{lme4} oraz \texttt{lmerTest}. Funkcja \texttt{lmer} z pakietu \texttt{lme4} wykorzystuje opisaną w części teoretycznej metodę oszacowania parametrów modelu mieszanego - algorytm używający macierzy rzadkich oraz dekompozycji Choleskiego \cite{lme4}. Pakiet \texttt{lmerTest} umożliwia obliczenie $p$-value dla parametrów modelu mieszanego \cite{lmerTest}. W przypadku modeli liniowych użyto funkcji \texttt{lm} z pakietu bazowego R. Funkcja ta wykorzystuje metodę najmniejszych kwadratów estymacji parametrów modelu liniowego \cite{lm}. W modelach, gdzie dokonano transformacji zmiennych, została użyta funkcja \texttt{powerTransform} z pakietu \texttt{car}. Funkcja ta wykorzystuje transformację Boxa-Coxa \cite{powerTransform}.
 
-Dla uproszczenia zapisu, we wszystkich poniższych modelach nazwa $total\_cases$ oznacza zmienną $total\_cases\_per\_million$, a $total\_tests$ oznacza \\$total\_tests\_per\_thousand$.
+Dla uproszczenia zapisu, we wszystkich poniższych modelach nazwa $total\_cases$ oznacza zmienną $total\_cases\_per\_million$, a $total\_tests$ jest używane zamiennie z $total\_tests\_per\_thousand$.
 
 \subsection{Zależność między liczbą zachorowań a czasem}
 
-Na początek interesuje nas dynamika rozwoju pandemii, badamy więc hipotezę, że czas ma istotny wpływ na liczbę zachorowań w poszczególnych krajach.
+Na początek interesuje nas dynamika rozwoju pandemii, badamy więc hipotezę, że \textbf{czas ma istotny wpływ na liczbę zachorowań w poszczególnych krajach}.
 Na rysunku \ref{fig:total_cases_countries} jest pokazana zależność pomiędzy liczbą zachorowań a czasem (gdzie czas rozumiemy jako kolejne dni trwania epidemii). Widzimy, że największa liczba zachorowań (na milion mieszkańców) pojawia się w Bahrajnie i Katarze. W krajach takich jak Polska, Niemcy, Włochy, Wielka Brytania, początkowo wzrost liczby zachorowań jest dość wolny, dopiero pomiędzy dwusetnym a trzysetnym dniem epidemii następuje bardziej gwałtowna zmiana. Jest to szczególnie widoczne na przykładzie Belgii, gdzie pod koniec badanego okresu są notowane bardzo wysokie liczby zachorowań. Dla Chin wykres jest dość płaski, prawdopodobnie z powodu bardzo dużej populacji - w przeliczeniu na milion mieszkańców, zachorowań w Chinach było  najmniej.
 
 \begin{figure}[!ht]
@@ -716,7 +721,8 @@ Na rysunku \ref{fig:total_cases_countries} jest pokazana zależność pomiędzy 
 $$y_{total\_cases}=\beta_0 + X_{time}\beta_{time}+Z_{location}u_{location}+\varepsilon,$$
 a więc przedstawia zależność liczby zachorowań od czasu, a kraj jest efektem losowym.
 Podsumowanie tego modelu jest przedstawione w tabeli \ref{table:model1}.
-
+Widać, że efekt losowy jest odpowiedzialny za około połowę wariancji resztowej. Oznacza to, że zmienność liczby zachorowań dla danego kraju jest około dwukrotnie mniejsza niż zmienność liczby zachorowań dla różnych krajów.
+Zarówno wyraz wolny, jak i współczynnik przy zmiennej $time$ są istotne statystycznie ($p$-value poniżej $0.001$). Dodatkowo, $\beta_{time}$ wynosi $37.31$, jest dodatni, więc upływający czas sprawia, że liczba zachorowań rośnie.
 
 
 
@@ -742,7 +748,7 @@ Podsumowanie tego modelu jest przedstawione w tabeli \ref{table:model1}.
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
-		\caption{Wyniki dla modelu mieszanego z uwzględnieniem wpływu kraju na wyraz wolny}
+		\caption{Wyniki dla modelu mieszanego z uwzględnieniem wpływu kraju \\na wyraz wolny}
 		\label{table:model1}
 		\zrodlo{Opracowanie własne}
 	\end{center}
@@ -750,12 +756,11 @@ Podsumowanie tego modelu jest przedstawione w tabeli \ref{table:model1}.
 
 
 
-Widać, że efekt losowy jest odpowiedzialny za około połowę wariancji resztowej. Oznacza to, że zmienność liczby zachorowań dla danego kraju jest około dwukrotnie mniejsza niż zmienność liczby zachorowań dla różnych krajów.
-Zarówno wyraz wolny, jak i współczynnik przy zmiennej $time$ są istotne statystycznie ($p$-value poniżej $0.001$). Dodatkowo, $\beta_{time}$ wynosi $37.31$, jest dodatni, więc upływający czas sprawia, że liczba zachorowań rośnie.
 
 
 
-Na rysunku \ref{fig:mod1_predict} widzimy linie dopasowane do liczby zachorowań w poszczególnych krajach. Każda prosta ma taki sam współczynnik kierunkowy, jedynie punkt przecięcia z osią OY (\textit{Intercept}) różni się pomiędzy poszczególnymi krajami. Z tego wykresu możemy odczytać jedynie, jak różnią się średnie poziomy liczby zachorowań między krajami, widać na przykład, że w Katarze i Bahrajnie jest średnio najwięcej zachorowań, a w Chinach najmniej. Nie ma tu żadnej informacji na temat różnic w dynamice rozwoju pandemii.
+
+Na rysunku \ref{fig:mod1_predict} widzimy linie dopasowane do liczby zachorowań w poszczególnych krajach. Każda prosta ma taki sam współczynnik kierunkowy, jedynie punkt przecięcia z osią OY (\textit{Intercept}) różni się pomiędzy poszczególnymi krajami. Z tego wykresu możemy odczytać jedynie, jak różnią się średnie poziomy liczby zachorowań między krajami, widać na przykład, że w Katarze i Bahrajnie jest średnio najwięcej zachorowań, a w Chinach najmniej. Nie ma tu żadnej informacji na temat różnic w~dynamice rozwoju pandemii.
 
 \newpage
 
@@ -816,7 +821,7 @@ dla którego podsumowanie jest przedstawione w tabeli \ref{table:model1-1}.
 \newpage
 
 Zbudujemy model mieszany, gdzie zależność liczby zachorowań od czasu jest opisana funkcją kwadratową:
-$$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+$$$$+Z_{0,location}u_{0,location}+Z_{time,location}u_{time,location}+$$$$Z_{time^2,location}u_{time^2, location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+$$$$+Z_{0,location}u_{0,location}+Z_{time,location}u_{time,location}+$$$$Z_{time^2,location}u_{time^2, location}+\varepsilon.$$
 Wyniki dla tego modelu znajdują się w tabeli \ref{table:model1-2}.
 
 \newpage
@@ -849,7 +854,7 @@ Wyniki dla tego modelu znajdują się w tabeli \ref{table:model1-2}.
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
-		\caption{Wyniki dla modelu wielomianowego mieszanego uwzględniającego wpływ kraju}
+		\caption{Wyniki dla modelu wielomianowego mieszanego uwzględniającego \\wpływ kraju}
 		\label{table:model1-2}
 		\zrodlo{Opracowanie własne}
 	\end{center}
@@ -873,7 +878,7 @@ Wizualnie model z drugą potęgą zmiennej $time$ wydaje się być lepiej dopaso
 
 
 Wracając do rysunku \ref{fig:total_cases_countries}, można podejrzewać, że do danych będzie dobrze pasował model mieszany, w którym efekt czasu jest opisany wielomianem trzeciego stopnia, czyli
-$$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+X_{time^3}\beta_{time^3}+$$$$+Z_{0,location}u_{0,location}+Z_{time,location}u_{time,location}+$$$$+Z_{time^2,location}u_{time^2, location}+Z_{time^3,location}u_{time^3, location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+X_{time}\beta_{time}+X_{time^2}\beta_{time^2}+X_{time^3}\beta_{time^3}+$$$$+Z_{0,location}u_{0,location}+Z_{time,location}u_{time,location}+$$$$+Z_{time^2,location}u_{time^2, location}+Z_{time^3,location}u_{time^3, location}+\varepsilon.$$
 Podsumowanie tego modelu można odczytać z tabeli \ref{table:mod1-poly}.
 
 \newpage
@@ -931,7 +936,7 @@ Wszystkie trzy potęgi zmiennej $time$ są istotne statystycznie ($p$-value poni
 
 \subsection{Zależność między liczbą zachorowań a liczbą wykonywanych testów na COVID-19}
 
-Liczba zachorowań jest ustalana na podstawie liczby pozytywnych wyników testów na COVID-19. W niektórych krajach potwierdzić zachorowanie można także na podstawie innych badań, na przykład tomografii albo RTG płuc, jednakże najpopularniejszą metodą diagnozowania tej choroby są testy. Z tego powodu zbadamy hipotezę, że istnieje związek pomiędzy liczbą zachorowań a liczbą wykonywanych testów na COVID-19.
+Liczba zachorowań jest ustalana na podstawie liczby pozytywnych wyników testów na COVID-19. W niektórych krajach potwierdzić zachorowanie można także na podstawie innych badań, na przykład tomografii albo RTG płuc, jednakże najpopularniejszą metodą diagnozowania tej choroby są testy. Z tego powodu zbadamy hipotezę, że \textbf{istnieje związek pomiędzy liczbą zachorowań a liczbą wykonywanych testów na COVID-19}.
 
 Na rysunku \ref{fig:tests} przedstawiona jest zależność liczby zachorowań od liczby wykonywanych testów. Na pierwszy rzut oka widać, że wraz ze wzrostem liczby testów rośnie liczba zachorowań. W niektórych krajach (np. Peru, Brazylia) ten wzrost jest bardzo gwałtowny, mimo stosunkowo niewielkiej liczby testów. W krajach takich jak Polska czy Włochy widać też fazy epidemii, o których była mowa przy okazji zależności liczby zachorowań od czasu. W Danii i Zjednoczonych Emiratach Arabskich wykonywane jest bardzo dużo testów, ale wzrost liczby zachorowań jest wolniejszy niż w większości krajów.
 
@@ -945,7 +950,7 @@ Na rysunku \ref{fig:tests} przedstawiona jest zależność liczby zachorowań od
 \end{figure}
 
 \noindent Model mieszany ma postać:
-$$y_{total\_ cases}=\beta_0 + X_{total\_tests}\beta_{total\_ tests}+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_ cases}=\beta_0 + X_{total\_tests}\beta_{total\_ tests}+Z_{location}u_{location}+\varepsilon.$$
 Badamy tutaj, czy liczba wykonywanych testów (w przeliczeniu na 1000 mieszkańców) ma wpływ na liczbę zachorowań.
 Dla tego modelu otrzymujemy wyniki przedstawione w tabeli \ref{table:model2}.
 \newpage
@@ -970,7 +975,7 @@ Dla tego modelu otrzymujemy wyniki przedstawione w tabeli \ref{table:model2}.
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
-		\caption{Wyniki dla modelu 2}
+		\caption{Wyniki dla modelu mieszanego uwzględniającego wpływ \\kraju na wyraz wolny}
 		\label{table:model2}
 		\zrodlo{Opracowanie własne}
 	\end{center}
@@ -992,7 +997,7 @@ Widać po pierwsze, że efekt losowy jest odpowiedzialny za ponad połowę zmien
 
 \noindent Można także dopasować model, w którym współczynnik nachylenia prostej zależy od kraju:
 $$y_{total\_ cases}=\beta_0 + X_{total\_tests}\beta_{total\_ tests}+$$
-$$+Z_{0,location}u_{0,location}+Z_{total\_tests, location}u_{total\_tests, location}+\varepsilon$$
+$$+Z_{0,location}u_{0,location}+Z_{total\_tests, location}u_{total\_tests, location}+\varepsilon.$$
 Dla takiego modelu otrzymujemy wyniki przedstawione w tabeli \ref{table:mod2-1}.
 \newpage
 \begin{table}[!h]
@@ -1018,7 +1023,7 @@ Dla takiego modelu otrzymujemy wyniki przedstawione w tabeli \ref{table:mod2-1}.
 		\hline
 		\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 	\end{tabular}
-	\caption{Wyniki dla modelu mieszanego z losowym wyrazem wolnym i współczynnikiem nachylenia}
+	\caption{Wyniki dla modelu liniowego uwzględniającego wpływ kraju \\na parametry modelu}
 	\label{table:mod2-1}
 \end{center}
 \end{table}
@@ -1038,10 +1043,10 @@ Proste regresji dopasowane z tego modelu są widoczne na wykresie \ref{fig:mod2-
 
 \subsection{Zależność między liczbą zachorowań a oczekiwaną długością życia}
 
-Można się spodziewać, że kraje o wyższej oczekiwanej długości życia charakteryzują się wyższą liczbą zachorowań, gdyż osoby starsze są bardziej narażone na zachorowanie, podczas gdy młodsi albo nie chorują, albo przechodzą infekcję bezobjawowo. Zbadamy hipotezę o tym, że kraje o różnej oczekiwanej długości życia różnią się liczbą zachorowań.
+Można się spodziewać, że kraje o wyższej oczekiwanej długości życia charakteryzują się wyższą liczbą zachorowań, gdyż osoby starsze są bardziej narażone na zachorowanie, podczas gdy młodsi albo nie chorują, albo przechodzą infekcję bezobjawowo. Zbadamy hipotezę o tym, że \textbf{kraje o różnej oczekiwanej długości życia różnią się liczbą zachorowań}.
 
-Trzeci model jest modelem liniowym, ponieważ cecha $life\_expectancy$ nie zmienia się dla danego kraju. Z transformacji Boxa-Coxa otrzymujemy następujące potęgi dla zmiennych: $3.72$ dla $life\_expectancy$ oraz $0.09$ dla $total\_cases\_per\_million$. W przybliżeniu przyjmiemy czwartą potęgę dla pierwszej zmiennej, a dla drugiej logarytm.
-$$log(y_{total\_cases})=\beta_0+\beta_{life\_expectancy}X_{life\_expectancy}^4+\varepsilon$$
+Trzeci model jest modelem liniowym, ponieważ cecha $life\_expectancy$ nie zmienia się dla danego kraju. Z transformacji Boxa-Coxa otrzymujemy następujące potęgi dla zmiennych: $3.72$ dla $life\_expectancy$ oraz $0.09$ dla $total\_cases\_per\_million$. W~przybliżeniu przyjmiemy czwartą potęgę dla pierwszej zmiennej, a dla drugiej logarytm, co daje model
+$$log(y_{total\_cases})=\beta_0+\beta_{life\_expectancy}X_{life\_expectancy}^4+\varepsilon.$$
 Podsumowanie tego modelu jest przedstawione w tabeli \ref{table:mod3-potega}.
 
 \newpage
@@ -1063,7 +1068,7 @@ Podsumowanie tego modelu jest przedstawione w tabeli \ref{table:mod3-potega}.
 		\hline
 		\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 	\end{tabular}
-		\caption{Wyniki dla modelu trzeciego po przekształceniu zmiennych}
+		\caption{Wyniki dla modelu regresji prostej po przekształceniu zmiennych}
 		\label{table:mod3-potega}
 	\end{center}
 \end{table}
@@ -1086,10 +1091,10 @@ Efekt $life\_expectancy$ jest istotny statystycznie ($p$-value poniżej $0.001$)
 
 \subsection{Zależność między liczbą zachorowań a gęstością zaludnienia}
 
-Koronawirus rozprzestrzenia się drogą kropelkową, rozwojowi pandemii sprzyjają więc miejsca, gdzie dużo osób ma ze sobą kontakt osobisty. Dlatego rozważymy hipotezę, że gęstość zaludnienia ma wpływ na liczbę zachorowań.
+Koronawirus rozprzestrzenia się drogą kropelkową, rozwojowi pandemii sprzyjają więc miejsca, gdzie dużo osób ma ze sobą kontakt osobisty. Dlatego rozważymy hipotezę, że \textbf{gęstość zaludnienia ma wpływ na liczbę zachorowań}.
 
-Czwarty model również jest modelem regresji prostej. Stosujemy przekształcenie logarytmiczne obu zmiennych.
-$$\log(y_{total\_cases})=\beta_0+log(X_{population\_density})\beta_{population\_density}+\varepsilon$$
+Czwarty model również jest modelem regresji prostej. Stosujemy przekształcenie logarytmiczne obu zmiennych:
+$$\log(y_{total\_cases})=\beta_0+log(X_{population\_density})\beta_{population\_density}+\varepsilon.$$
  Wykres rozrzutu obu zmiennych po przekształceniu znajduje się na rysunku \ref{fig:mod4-lin}.
 Wyniki dla modelu są przedstawione w tabeli \ref{table:mod4}.
 
@@ -1112,7 +1117,7 @@ Wyniki dla modelu są przedstawione w tabeli \ref{table:mod4}.
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
-		\caption{Wyniki dla modelu 4 z przekształceniem zmiennych}
+		\caption{Wyniki dla modelu regresji prostej z przekształceniem zmiennych}
 		\label{table:mod4}
 	\end{center}
 \end{table}
@@ -1138,9 +1143,9 @@ Gęstość zaludnienia nie jest czynnikiem istotnym statystycznie ($p$-value pow
 
 \subsection{Zależność między liczbą zachorowań a siłą obostrzeń}
 
-Aby spowolnić wzrost liczby zachorowań, kraje wprowadzają różne polityki obostrzeń takich jak ograniczenia w przemieszczaniu się, zamknięcie szkół itp. Sprawdzimy więc prawdziwość hipotezy, że siła obostrzeń ma wpływ na liczbę zachorowań.
+Aby spowolnić wzrost liczby zachorowań, kraje wprowadzają różne polityki obostrzeń takich jak ograniczenia w przemieszczaniu się, zamknięcie szkół itp. Sprawdzimy więc prawdziwość hipotezy, że \textbf{siła obostrzeń ma wpływ na liczbę zachorowań}.
 
-Siła obostrzeń jest mierzona za pomocą zmiennej $stringency\_index$. Zarówno wartość średnia, jak i zmienność $stringency\_index$ bardzo się różnią pomiędzy krajami. Na rysunku \ref{fig:stringency_time} przedstawiono przebieg zmienności $stringency\_index$ w czasie. Jak widać, są kraje jak np. Nikaragua, gdzie siła obostrzeń jest na niskim poziomie i ma małą zmienność. Mamy też kraje takie jak Chile lub Peru, w których obostrzenia wzrastały silnie na początku pandemii, a potem zmieniały się już mniej znacznie. W Norwegii obostrzenia początkowo były wysokie, a potem znacząco spadły. W Polsce początkowo poziom siły obostrzeń zmieniał się podobnie jak w Norwegii, ale pod koniec badanego przedziału czasowego znacząco wzrósł.
+Siła obostrzeń jest mierzona za pomocą zmiennej $stringency\_index$. Zarówno wartość średnia, jak i zmienność $stringency\_index$ bardzo się różnią pomiędzy krajami. Na rysunku \ref{fig:stringency_time} przedstawiono przebieg zmienności $stringency\_index$ w czasie. Jak widać, są kraje jak np. Nikaragua, gdzie siła obostrzeń jest na niskim poziomie i~ma małą zmienność. Mamy też kraje takie jak Chile lub Peru, w których obostrzenia wzrastały silnie na początku pandemii, a potem zmieniały się już mniej znacznie. W~Norwegii obostrzenia początkowo były wysokie, a potem znacząco spadły. W Polsce początkowo poziom siły obostrzeń zmieniał się podobnie jak w Norwegii, ale pod koniec badanego przedziału czasowego znacząco wzrósł.
  
 \newpage
 
@@ -1154,7 +1159,7 @@ Siła obostrzeń jest mierzona za pomocą zmiennej $stringency\_index$. Zarówno
 
 
 
-Przed budową modelu, zostały przeanalizowane korelacje pomiędzy liczbą zachorowań, a zmienną $stringency\_index$ bez opóźnienia oraz z opóźnieniem kolejno 7, 14, 21, 28, 35 i 42 dni. Najwyższa korelacja wystąpiła przy opóźnieniu o 7 dni, więc tak opóźnionej zmiennej użyjemy do budowy modelu mieszanego. Rysunek \ref{fig:stringency_lag} jest wykresem zależności liczby zachorowań od siły obostrzeń opóźnionej o 7 dni.
+Przed budową modelu, zostały przeanalizowane korelacje pomiędzy liczbą zachorowań, a zmienną $stringency\_index$ bez opóźnienia oraz z opóźnieniem kolejno 7,~14, 21, 28, 35 i 42 dni. Najwyższa korelacja wystąpiła przy opóźnieniu o 7 dni, więc tak opóźnionej zmiennej użyjemy do budowy modelu mieszanego. Rysunek \ref{fig:stringency_lag} jest wykresem zależności liczby zachorowań od siły obostrzeń opóźnionej o 7 dni.
 \newpage
 \begin{figure}[!h]
 	\centering
@@ -1165,7 +1170,7 @@ Przed budową modelu, zostały przeanalizowane korelacje pomiędzy liczbą zacho
 \end{figure}
 
 Na początku zbudujemy model postaci
-$$y_{total\_cases}=\beta_0+\beta_{stringency\_lag7} X_{stringency\_lag7}+Z_{location}u_{location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+\beta_{stringency\_lag7} X_{stringency\_lag7}+Z_{location}u_{location}+\varepsilon.$$
 Wyniki dla tego modelu są przedstawione w tabeli \ref{table:mod5-intercept}. Zmienna $stringency\_lag7$ jest istotna statystycznie, choć jest na granicy istotności, gdyż $p$-value wynosi około $0.0464$. Współczynnik $\beta_{stringency\_lag7}$ ma wartość $-2.89$, jest ujemny, co oznacza, że im wyższą wartość przyjmuje $stringency\_lag7$, tym mniejsza liczba zachorowań.
 
 \newpage
@@ -1196,7 +1201,7 @@ Wyniki dla tego modelu są przedstawione w tabeli \ref{table:mod5-intercept}. Zm
 \end{table}
 
 \noindent Spróbujemy także zbudować model, gdzie nachylenie prostej regresji również będzie zależało od kraju
-$$y_{total\_cases}=\beta_0+\beta_{stringency\_lag7} X_{stringency\_lag7}+Z_{location}u_{location}+$$$$+Z_{stringency\_lag7,location}u_{stringency\_lag7,location}+\varepsilon$$
+$$y_{total\_cases}=\beta_0+\beta_{stringency\_lag7} X_{stringency\_lag7}+Z_{location}u_{location}+$$$$+Z_{stringency\_lag7,location}u_{stringency\_lag7,location}+\varepsilon.$$
 Podsumowanie tego modelu można odczytać z tabeli \ref{table:mod5-slope}.
 \newpage
 \begin{table}[!htpb]
@@ -1238,9 +1243,9 @@ Współczynnik przy $stringency\_lag7$ jest istotny statystycznie ($p$-value oko
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
-Ponieważ z wykresu \ref{fig:stringency_lag} widać, że zależność między opóźnioną siłą obostrzeń a liczbą zachorowań raczej nie jest liniowa, to dopasujemy model mieszany z drugą potęgą zmiennej $stringency\_lag7$
-$$y_{total\_cases}=\beta_0+\beta_{stringency\_lag7} X_{stringency\_lag7}+ \beta_{stringency\_lag7^2} X_{stringency\_lag7^2}+$$$$+Z_{location}u_{location}+Z_{stringency\_lag7,time}u_{stringency\_lag7,time}+$$$$+Z_{stringency\_lag7^2, location}u+_{stringency\_lag7^2, location}+\varepsilon$$
-Podsumowanie tego modelu widać w tabeli \ref{table:mod5-2st}. Współczynnik przy drugiej potędze $stringency\_lag7$ jest istotny statystycznie ($p$-value poniżej $0.001$) i wynosi $-402699.65$. Efekt pierwszej potęgi $stringency\_lag7$ nie jest istotny, ale nie możemy go usunąć z modelu, ponieważ jest istotny efekt wyższego rzędu.
+Ponieważ z wykresu \ref{fig:stringency_lag} widać, że zależność między opóźnioną siłą obostrzeń a liczbą zachorowań raczej nie jest liniowa, to dopasujemy model mieszany z drugą potęgą zmiennej $stringency\_lag7$:
+$$y_{total\_cases}=\beta_0+\beta_{stringency\_lag7} X_{stringency\_lag7}+ \beta_{stringency\_lag7^2} X_{stringency\_lag7^2}+$$$$+Z_{location}u_{location}+Z_{stringency\_lag7,time}u_{stringency\_lag7,time}+$$$$+Z_{stringency\_lag7^2, location}u+_{stringency\_lag7^2, location}+\varepsilon.$$
+Podsumowanie tego modelu widać w tabeli \ref{table:mod5-2st}. Współczynnik przy drugiej potędze $stringency\_lag7$ jest istotny statystycznie ($p$-value poniżej $0.001$) i wynosi $-402699.65$. Efekt pierwszej potęgi $stringency\_lag7$ nie jest istotny, ale nie możemy go usunąć z~modelu, ponieważ jest istotny efekt wyższego rzędu.
 
 
 \begin{table}
@@ -1291,12 +1296,12 @@ Wykres zależności liczby zachorowań od $stringency\_lag7$ i drugiej potęgi t
 
 \subsection{Zależność między liczbą zachorowań a wskaźnikiem rozwoju społecznego}
 
-Wskaźnik rozwoju społecznego mówi o tym, jak rozwinięty jest kraj pod względem m. in. gospodarki i edukacji, bierze się w nim pod uwagę także oczekiwaną długość życia. Zbadamy hipotezę mówiącą, że kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań.
+Wskaźnik rozwoju społecznego mówi o tym, jak rozwinięty jest kraj pod względem m. in. gospodarki i edukacji, bierze się w nim pod uwagę także oczekiwaną długość życia. Zbadamy hipotezę mówiącą, że \textbf{kraje o różnej wysokości wskaźnika rozwoju społecznego (HDI) różnią się liczbą zachorowań}.
 
 Ponieważ wartość HDI nie zmienia się dla kraju w trakcie trwania epidemii, to szósty model jest modelem regresji prostej.
-Z przekształcenia Boxa-Coxa otrzymujemy potęgę $2$ dla zmiennej $HDI$ oraz logarytm dla $total\_cases\_per\_million$.
-$$\log(y_{total\_cases})=\beta_0+\beta_{HDI}X^2_{HDI}+\varepsilon$$
-Podsumowanie modelu wygląda jak w tabeli \ref{table:mod6-log}.
+Z przekształcenia Boxa-Coxa otrzymujemy potęgę $2$ dla zmiennej $HDI$ oraz logarytm dla $total\_cases\_per\_million$:
+$$\log(y_{total\_cases})=\beta_0+\beta_{HDI}X^2_{HDI}+\varepsilon.$$
+
 \newpage
 \begin{table}[!htbp]
 	\begin{center}
@@ -1315,12 +1320,12 @@ Podsumowanie modelu wygląda jak w tabeli \ref{table:mod6-log}.
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
-		\caption{Wyniki dla modelu 6 po przekształceniu zmiennych}
+		\caption{Wyniki dla modelu regresji prostej po przekształceniu zmiennych}
 		\label{table:mod6-log}
 	\end{center}
 \end{table}
 
-Współczynnik $\beta_{HDI}$ wynosi około $5.57$ i jest istotny statystycznie ($p$-value poniżej $0.001$). Wartość tego współczynnika jest dodatnia, co oznacza, że im wyższy wskaźnik rozwoju społecznego w danym kraju, tym więcej potwierdzonych przypadków COVID-19. Współczynnik determinacji wynosi około $15\%$, więc jest dość niski. Dopasowanie modelu do danych jest ukazane na rysunku \ref{fig:mod6-log}.
+Podsumowanie modelu wygląda jak w tabeli \ref{table:mod6-log}. Współczynnik $\beta_{HDI}$ wynosi około $5.57$ i jest istotny statystycznie ($p$-value poniżej $0.001$). Wartość tego współczynnika jest dodatnia, co oznacza, że im wyższy wskaźnik rozwoju społecznego w danym kraju, tym więcej potwierdzonych przypadków COVID-19. Współczynnik determinacji wynosi około $15\%$, więc jest dość niski. Dopasowanie modelu do danych jest ukazane na rysunku \ref{fig:mod6-log}.
 
 \begin{figure}[!ht]
 	\centering
@@ -1335,10 +1340,10 @@ Współczynnik $\beta_{HDI}$ wynosi około $5.57$ i jest istotny statystycznie (
 
 \subsection{Zależność między liczbą zachorowań a powszechnością cukrzycy}
 
-Wśród czynników osłabiających odporność organizmu często jest wymieniana cukrzyca. Dlatego zbadamy hipotezę, że rozpowszechnienie cukrzycy wpływa na liczbę zachorowań na COVID-19.
+Wśród czynników osłabiających odporność organizmu często jest wymieniana cukrzyca. Dlatego zbadamy hipotezę, że \textbf{rozpowszechnienie cukrzycy wpływa na liczbę zachorowań na COVID-19}.
 
-Model ten jest modelem regresji prostej. Na podstawie transformacji Boxa-Coxa otrzymujemy pierwiastek trzeciego stopnia ze zmiennej $diabetes\_prevalence$ oraz logarytm z $total\_cases\_per\_million$.
-$$\log(y_{total\_cases})=\beta_0+\beta_{diabetes\_prevalence}\sqrt[3]{X_{diabetes\_prevalence}}+\varepsilon$$
+Model ten jest modelem regresji prostej. Na podstawie transformacji Boxa-Coxa otrzymujemy pierwiastek trzeciego stopnia ze zmiennej $diabetes\_prevalence$ oraz logarytm z $total\_cases\_per\_million$:
+$$\log(y_{total\_cases})=\beta_0+\beta_{diabetes\_prevalence}\sqrt[3]{X_{diabetes\_prevalence}}+\varepsilon.$$
 Wyniki znajdują się w tabeli \ref{table:mod8-log}.
 
 \begin{table}[htbp]
@@ -1358,34 +1363,33 @@ Wyniki znajdują się w tabeli \ref{table:mod8-log}.
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
-		\caption{Wyniki dla modelu 8 po przekształceniu zmiennych}
+		\caption{Wyniki dla modelu regresji prostej po przekształceniu zmiennych}
 		\label{table:mod8-log}
 	\end{center}
 \end{table}
 
-Wartość współczynnika $\beta_{diabetes\_prevalence}$ jest równa $1.65$. Efekt ten jest istotny statystycznie ($p$-value poniżej $0.001$). Ponieważ wartość współczynnika jest dodatnia, to wraz ze wzrostem odsetka osób chorujących na cukrzycę, rośnie liczba zachorowań. Dopasowanie modelu liniowego do danych po przekształceniu jest zaprezentowane na rysunku \ref{fig:mod8-log}.
+Wartość współczynnika $\beta_{diabetes\_prevalence}$ jest równa $1.65$. Efekt ten jest istotny statystycznie ($p$-value poniżej $0.001$). Ponieważ wartość współczynnika jest dodatnia, to wraz ze wzrostem części populacji chorą na cukrzycę, rośnie liczba zachorowań. Dopasowanie modelu liniowego do danych po przekształceniu jest zaprezentowane na rysunku \ref{fig:mod8-log}.
 
 \newpage
 
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod8-log.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych do zależności pomiędzy odsetkiem osób chorych na cukrzycę a liczbą zachorowań na COVID-19}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych do zależności pomiędzy częścią populacji chorującą na cukrzycę a liczbą zachorowań na COVID-19}
 	\label{fig:mod8-log}
 	\zrodlo{Opracowanie własne}
 \end{figure}
 
 
 
-\subsection{Zależność między liczbą zachorowań a odsetkiem osób żyjących w skrajnej biedzie}
+\subsection{Zależność między liczbą zachorowań a częścią populacji żyjącą w skrajnej biedzie}
 
-Kraje, w których więcej osób żyje w ubóstwie na ogół charakteryzują się słabszym dostępem do służby zdrowia oraz niższym poziomem opieki medycznej. Zajmiemy się więc hipotezą mówiącą, że kraje o różnej liczbie osób żyjących w skrajnej biedzie różnią się liczbą zachorowań.
+Kraje, w których więcej osób żyje w ubóstwie na ogół charakteryzują się słabszym dostępem do służby zdrowia oraz niższym poziomem opieki medycznej. Zajmiemy się więc hipotezą mówiącą, że \textbf{kraje o różnej liczbie osób żyjących w skrajnej biedzie różnią się liczbą zachorowań}.
 
 
 
 Ten model jest modelem regresji prostej. Stosując transformację Boxa-Coxa, otrzymujemy przekształcenie logarytmiczne dla obu zmiennych w modelu:
-$$\log(y_{total\_cases})=\beta_0+\beta_{extreme\_poverty}\log(X_{extreme\_poverty})+\varepsilon$$
-Podsumowanie dla modelu po przekształceniu zmiennych znajduje się w tabeli \ref{table:mod9-log}. Efekt $\log(extreme\_poverty)$ jest istotny statystycznie i ma wartość $-0.46$, co oznacza, że wraz ze wzrostem zmiennej niezależnej maleje liczba zachorowań. $R^2$ wzrosło do $9\%$, a więc nieznacznie w stosunku do modelu przed przekształceniem zmiennych. Dopasowanie modelu liniowego do danych po przekształceniu widać na rysunku \ref{fig:mod9-log}.
+$$\log(y_{total\_cases})=\beta_0+\beta_{extreme\_poverty}\log(X_{extreme\_poverty})+\varepsilon.$$
 
 \newpage
 
@@ -1411,14 +1415,14 @@ Podsumowanie dla modelu po przekształceniu zmiennych znajduje się w tabeli \re
 	\end{center}
 \end{table}
 
-Czynnik $extreme\_poverty$ jest istotny statystycznie ($p$-value poniżej 0.001). \\Współczynnik $\beta_{extreme\_poverty}$ wynosi $-0.46$. Jest on ujemny, więc im większy jest w danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów. $R^2$ wynosi około $9\%$, co jest niską wartością. Na rysunku \ref{fig:mod9-log} przedstawiona jest zależność między przekształconymi logarytmicznie liczbą zachorowań a odsetkiem osób żyjących w skrajnej biedzie, z dopasowanym modelem liniowym. 
+Podsumowanie dla modelu po przekształceniu zmiennych znajduje się w tabeli~\ref{table:mod9-log}. Czynnik $extreme\_poverty$ jest istotny statystycznie ($p$-value poniżej 0.001). \\Współczynnik $\beta_{extreme\_poverty}$ wynosi $-0.46$. Jest on ujemny, więc im większy jest w~danym kraju odsetek osób żyjących w biedzie, tym niższa liczba zachorowań. Prawdopodobnie jest to spowodowane mniejszą dostępnością do służby zdrowia w biedniejszych krajach i mniejszą liczbą wykonywanych testów. $R^2$ wynosi około $9\%$, co jest niską wartością. Na rysunku \ref{fig:mod9-log} przedstawiona jest zależność między przekształconymi logarytmicznie liczbą zachorowań a odsetkiem osób żyjących w skrajnej biedzie, z~dopasowanym modelem liniowym. 
 
 \newpage
 
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{rys/mod9-log.png}
-	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych dla zależności pomiędzy liczbą zachorowań a odsetkiem osób żyjącym w skrajnej biedzie}
+	\caption{Wykres przedstawiający dopasowanie modelu liniowego z przekształceniem zmiennych dla zależności pomiędzy liczbą zachorowań a częścią populacji żyjącą w skrajnej biedzie}
 	\label{fig:mod9-log}
 	\zrodlo{Opracowanie własne}
 \end{figure}
@@ -1427,12 +1431,11 @@ Czynnik $extreme\_poverty$ jest istotny statystycznie ($p$-value poniżej 0.001)
 
 \subsection{Zależność między liczbą zachorowań a wysokością PKB na osobę}
 
-Wysokie PKB na osobę wskazuje na kraje dobrze rozwinięte gospodarczo, spodziewamy się w nich dobrego dostępu do opieki medycznej. Sprawdzimy hipotezę, że kraje o różnej wysokości PKB na osobę różnią się liczbą zachorowań.
+Wysokie PKB na osobę wskazuje na kraje dobrze rozwinięte gospodarczo, spodziewamy się w nich dobrego dostępu do opieki medycznej. Sprawdzimy hipotezę, że \textbf{kraje o różnej wysokości PKB na osobę różnią się liczbą zachorowań}.
 
 
-Model dziewiąty jest modelem regresji prostej. Na podstawie przekształcenia Boxa-Coxa otrzymujemy pierwiastek piątego stopnia z $gdp\_per\_capita$ oraz logarytm z $total\_cases\_per\_million$.
-$$\log(y_{total\_cases})=\beta_0+\beta_{GDP}\sqrt[5]{X_{GDP}}+\varepsilon$$
-W tabeli \ref{table:mod10-log} widać podsumowanie modelu 10 po przekształceniu zmiennych.
+Model dziewiąty jest modelem regresji prostej. Na podstawie przekształcenia Boxa-Coxa otrzymujemy pierwiastek piątego stopnia z $gdp\_per\_capita$ oraz logarytm z $total\_cases\_per\_million$:
+$$\log(y_{total\_cases})=\beta_0+\beta_{GDP}\sqrt[5]{X_{GDP}}+\varepsilon.$$
 
 \newpage
 
@@ -1453,11 +1456,12 @@ W tabeli \ref{table:mod10-log} widać podsumowanie modelu 10 po przekształceniu
 			\hline
 			\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
 		\end{tabular}
-		\caption{Wyniki dla modelu 9 z przekształceniem zmiennych}
+		\caption{Wyniki dla modelu regresji prostej z przekształceniem zmiennych}
 		\label{table:mod10-log}
 	\end{center}
 \end{table}
 
+W tabeli \ref{table:mod10-log} widać podsumowanie modelu 10 po przekształceniu zmiennych.
 Efekt PKB na osobę jest istotny statystycznie ($p$-value poniżej 0.001). Współczynnik $\beta_{GDP}$ wynosi 0.79. Jest on dodatni, więc im wyższe PKB danego kraju, tym wyższa liczba zachorowań. Współczynnik $R^2$ wynosi 0.15, co oznacza, że zmienna $gdp\_per\_capita$ wyjaśnia około $15\%$ zmienności modelu. Procent wyjaśnionej zmienności jest więc niski. Na rysunku \ref{fig:mod10-log} widać wykres rozrzutu zmiennej \\$total\_cases\_per\_million$ w zależności od $gdp\_per\_capita$ po przekształceniu, z dopasowanym modelem liniowym.
 
 \begin{figure}[!ht]
@@ -1486,7 +1490,7 @@ W tabeli \ref{tab:istotnosc} znajduje się podsumowanie istotności poszczególn
 	Powszechność występowania cukrzycy & istotny, im wyższy jest ten współczynnik, tym więcej przypadków koronawirusa \\ \hline
 	Część populacji żyjąca w skrajnym ubóstwie & istotny, im większa jest część mieszkańców żyjąca w biedzie, tym mniej zachorowań \\ \hline
 	PKB na osobę & istotny, im wyższe PKB, tym więcej zachorowań \\ \hline
-	\caption{Porównanie istotności i wpływu różnych czynników na liczbę zachorowań w przeciętnym kraju}
+	\caption{Porównanie istotności i wpływu różnych czynników na liczbę \\zachorowań w przeciętnym kraju}
 	
 	\label{tab:istotnosc}
 	
@@ -1495,19 +1499,17 @@ W tabeli \ref{tab:istotnosc} znajduje się podsumowanie istotności poszczególn
 	\end{center}
 
 
-W niniejszej pracy wpływ różnych czynników na liczbę zachorowań na COVID-19 w około 150 krajach został zbadany przy pomocy siedmiu modeli liniowych oraz trzech mieszanych. Z modeli liniowych otrzymaliśmy cztery czynniki, których wzrost powoduje wyższą liczbę zachorowań. Są to: oczekiwana długość życia, wskaźnik rozwoju społecznego, powszechność występowania cukrzycy oraz PKB na osobę. Takie wnioski wydają się dość oczywiste. Wiele źródeł mówi, że na COVID-19 są szczególnie narażone osoby starsze oraz osoby z obniżoną odpornością lub chorobami współistniejącymi \cite{narazenie}. Szczególnie wiek, nadwaga i cukrzyca są wymieniane jako czynniki zwiększające prawdopodobieństwo zakażenia i ciężkiego przebiegu choroby \cite{covid-19}. Z kolei wysokie PKB oraz wskaźnik rozwoju społecznego sugerują, że w danym kraju opieka medyczna jest dobrze rozwinięta, co skutkuje większą liczbą wykonywanych testów, pozwalając wykryć więcej przypadków wirusa. Dodatkowo, w krajach wysoko rozwiniętych większą popularnością cieszą się podróże międzynarodowe (zarówno prywatne, jak i służbowe), co sprzyja rozprzestrzenianiu się pandemii.
+W niniejszej pracy wpływ różnych czynników na liczbę zachorowań na COVID-19 w około 150 krajach został zbadany przy pomocy sześciu modeli liniowych oraz trzech mieszanych. Z modeli liniowych otrzymaliśmy cztery czynniki, których wzrost powoduje wyższą liczbę zachorowań. Są to: oczekiwana długość życia, wskaźnik rozwoju społecznego, powszechność występowania cukrzycy oraz PKB na osobę. Takie wnioski wydają się dość oczywiste. Wiele źródeł mówi, że na COVID-19 są szczególnie narażone osoby starsze oraz osoby z obniżoną odpornością lub chorobami współistniejącymi \cite{narazenie}. Szczególnie wiek, nadwaga i cukrzyca są wymieniane jako czynniki zwiększające prawdopodobieństwo zakażenia i ciężkiego przebiegu choroby \cite{covid-19}. Z kolei wysokie PKB oraz wskaźnik rozwoju społecznego sugerują, że w danym kraju opieka medyczna jest dobrze rozwinięta, co skutkuje większą liczbą wykonywanych testów, pozwalając wykryć więcej przypadków wirusa. Dodatkowo, w krajach wysoko rozwiniętych większą popularnością cieszą się podróże międzynarodowe (zarówno prywatne, jak i służbowe), co sprzyja rozprzestrzenianiu się pandemii.
 
 Ograniczająco na liczbę wykrytych przypadków koronawirusa wpływa odsetek populacji żyjący w skrajnym ubóstwie. Jednakże najprawdopodobniej ubóstwo nie wpływa bezpośrednio na zmniejszenie liczby chorych. Można przypuszczać, że mniejsza liczba zachorowań jest raczej spowodowana słabiej rozwiniętą opieką medyczną i niższą liczbą wykonywanych testów, więc znaczna część osób chorych nie jest diagnozowana.
 
-Czynnikiem niemającym wpływu na liczbę przypadków koronawirusa okazała się gęstość zaludnienia. Jest to zaskakujący wniosek, ponieważ zdawałoby się, że w krajach o większej gęstości zaludnienia wirus może łatwiej się rozprzestrzeniać, więc zachorowań powinno być więcej. Brak zależności może być spowodowany tym, że gęstość zaludnienia jest podawana dla całego kraju, a przecież może bardzo się różnić wewnątrz terytorium danego państwa.
+Czynnikiem niemającym wpływu na liczbę przypadków koronawirusa okazała się gęstość zaludnienia. Jest to zaskakujący wniosek, ponieważ zdawałoby się, że w~krajach o większej gęstości zaludnienia wirus może łatwiej się rozprzestrzeniać, więc zachorowań powinno być więcej. Brak zależności może być spowodowany tym, że gęstość zaludnienia jest podawana dla całego kraju, a przecież może bardzo się różnić wewnątrz terytorium danego państwa.
 
-Za pomocą modeli mieszanych w tej pracy zbadano wpływ czasu, liczby wykonywanych testów oraz wskaźnika siły obostrzeń na liczbę zachorowań. Zależność liczby zachorowań od czasu została opisana wielomianem trzeciego stopnia, którego współczynniki różnią się pomiędzy krajami. Wpływ liczby testów na liczbę wykrytych przypadków koronawirusa jest stymulujący, czego można było się spodziewać, ponieważ liczba wykrytych przypadków to nic innego jak liczba testów z pozytywnym wynikiem (w niektórych krajach można także potwierdzić przypadek COVID-19 na podstawie samych objawów). Model badający zależność liczby zachorowań od wskaźnika siły obostrzeń dawał niejednoznaczne wyniki, generalnie silniejsze obostrzenia sprawiały, że liczba zachorowań w danym kraju malała (po około tygodniu od wprowadzenia silniejszych obostrzeń), ale w niektórych państwach zależność ta nie zachodziła.
+Za pomocą modeli mieszanych w tej pracy zbadano wpływ czasu, liczby wykonywanych testów oraz wskaźnika siły obostrzeń na liczbę zachorowań. Zależność liczby zachorowań od czasu została opisana wielomianem trzeciego stopnia, którego współczynniki różnią się pomiędzy krajami. W przypadku wielu krajów, dopasowany w ten sposób wielomian pozwala zauważyć trzy fazy epidemii: początkowy wzrost liczby zachorowań, następnie stabilizacja, a pod koniec badanego w tej pracy okresu - gwałtowny wzrost. Wpływ liczby testów na liczbę wykrytych przypadków koronawirusa jest stymulujący, czego można było się spodziewać, ponieważ liczba wykrytych przypadków to nic innego jak liczba testów z pozytywnym wynikiem (w niektórych krajach można także potwierdzić przypadek COVID-19 na podstawie innych badań, lecz zazwyczaj to właśnie testy są główną metodą). Model badający zależność liczby zachorowań od wskaźnika siły obostrzeń dawał niejednoznaczne wyniki, generalnie silniejsze obostrzenia sprawiały, że liczba zachorowań w danym kraju malała (po około tygodniu od wprowadzenia silniejszych obostrzeń), ale w niektórych państwach zależność ta nie zachodziła.
 
-Wszystkie modele mieszane jednoznacznie pokazują, że efekt kraju jako czynnika zakłócającego jest bardzo istotny, w wielu przypadkach wyjaśnia ponad połowę wariancji resztowej modelu, więc zmienność liczby zachorowań pomiędzy różnymi krajami jest około dwukrotnie większa niż zmienność liczby zachorowań w pojedynczym kraju.
+Modele mieszane jednoznacznie pokazały, że efekt kraju jako czynnika zakłócającego jest bardzo istotny, jako że wyjaśniał znaczną część wariancji resztowej modelu. Oznacza to, że zmienność liczby zachorowań między różnymi krajami jest znacznie większa niż wewnątrz danego kraju. Na to, co jest nazywane tutaj ,,efektem kraju'', składa się tak naprawdę wiele innych czynników, m. in. gęstość zaludnienia, sytuacja ekonomiczna danego kraju, odsetek osób z chorobami towarzyszącymi, rozkład wieku, jak również przyjęta strategia walki z koronawirusem, na którą z kolei składają się m. in. liczba wykonywanych testów, przepisy w sprawie zamykania szkół, miejsc publicznych, ograniczenie kontaktów międzyludzkich, i wiele innych.
 
-Na to, co jest nazywane w tej pracy ,,efektem kraju'', składa się tak naprawdę wiele innych czynników, m. in. gęstość zaludnienia, sytuacja ekonomiczna danego kraju, odsetek osób z chorobami towarzyszącymi, rozkład wieku, jak również przyjęta strategia walki z koronawirusem, na którą z kolei składają się m. in. liczba wykonywanych testów, przepisy w sprawie zamykania szkół, miejsc publicznych, ograniczenie kontaktów międzyludzkich, i wiele innych.
-
-
+Przedstawione w tej pracy modele pozwoliły wstępnie zidentyfikować czynniki mające wpływ na rozwój pandemii koronawirusa. Należy jednak pamiętać, że te efekty są istotne dla ,,przeciętnego kraju'', więc nie w każdym kraju zależności te będą wyglądać tak samo - dobrze widać to na przykładzie modelu z siłą obostrzeń, który to czynnik bardzo różnił się pomiędzy badanymi krajami. Rozwój pandemii jest procesem niezwykle złożonym, jednakże widać, że nawet użycie prostych metod statystycznych pozwala na wyciągnięcie pewnych wniosków na ten temat.
 
 \begin{thebibliography}{99}
 
@@ -1534,6 +1536,8 @@ Rychard A.,  Smiatacz T., \emph{Zrozumieć COVID-19. Opracowanie zespołu ds. CO
 
 \bibitem{insurance} de Jong P., Heller G., \emph{Generalized Linear Models for Insurance Data}, Cambridge University Press, New York, 2008
 
+\bibitem{epidemie} Kosiński R., Grabowski A., \emph{Modelowanie epidemii. Jak epidemie się szerzą i jak im przeciwdziałać}, Bezpieczeństwo Pracy 05/2009, str. 3-5, \url{http://www.bhportal.pl/32543} (dostęp: 21.01.2021)
+
 \bibitem{rozrzut} naukowiec.org, \emph{Interpretacja wykresów rozrzutu} \url{https://www.naukowiec.org/wiedza/statystyka/interpretacja-wykresow-rozrzutu_769.html} (dostęp: 07.01.2021)
 
 \bibitem{codebook} Our World In Data, \emph{Covid Codebook} \url{https://github.com/owid/covid-19-data/blob/master/public/data/owid-covid-codebook.csv} (dostęp: 09.01.2021)
@@ -1543,6 +1547,8 @@ Rychard A.,  Smiatacz T., \emph{Zrozumieć COVID-19. Opracowanie zespołu ds. CO
 \bibitem{dollars} Our World In Data, Ortiz-Ospina E., Molteni M. \emph{What are PPP adjustments and why do we need them?} \url{https://ourworldindata.org/what-are-ppps} (dostęp 31.10.2020)
 
 \bibitem{narazenie} Pawlak M., \emph{Kto jest w największej grupie ryzyka koronawirusa?} \url{https://www.medonet.pl/koronawirus-pytania-i-odpowiedzi/sars-cov-2,kto-jest-w-najwiekszej-grupie-ryzyka-koronawirusa-,artykul,48398767.html} (dostęp: 09.01.2021)
+
+\bibitem{wykres} Pogotowie Statystyczne, \emph{Analizy statystyczne bez tajemnic, czyli dziwne wyniki analizy korelacji w podziale na podzbiory - cz.1} (dostęp: 21.01.2021)
 
 \bibitem{lm} R Documentation, \emph{lm function} \url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lm} (dostęp: 03.01.2021)
 
@@ -1573,8 +1579,7 @@ Rychard A.,  Smiatacz T., \emph{Zrozumieć COVID-19. Opracowanie zespołu ds. CO
 \bibitem{zuur} Zuur A., Ieno E., Walker N.,
 Saveliev A., Smith G., \emph{Mixed Effects Models and Extensions in Ecology with R}, Springer, New York 2009
 
-
-
+ \url{https://pogotowiestatystyczne.pl/analizy-statystyczne-bez-tajemnic-czyli-dziwne-wyniki-analizy-korelacji-podziale-podzbiory-cz-1/}
 
 \end{thebibliography}
 
